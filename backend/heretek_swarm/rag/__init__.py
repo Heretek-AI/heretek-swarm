@@ -5,11 +5,11 @@ Provides vector search, document retrieval, and context augmentation capabilitie
 """
 
 from heretek_swarm.rag.hybrid_retriever import HybridRetriever, HybridRetrieverConfig
-from heretek_swarm.rag.rag_pipeline import RAGPipeline, RAGPipelineConfig
+from heretek_swarm.rag.cognee_rag import CogneeRAGRetriever, get_rag_retriever
 
 __all__ = [
     "HybridRetriever",
     "HybridRetrieverConfig",
-    "RAGPipeline",
-    "RAGPipelineConfig",
+    "CogneeRAGRetriever",
+    "get_rag_retriever",
 ]

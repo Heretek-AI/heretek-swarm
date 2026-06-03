@@ -124,7 +124,7 @@ class HistorianAgent(
         )
 
         self._cognee_writer = cognee_writer or CogneeMemoryWriter()
-        self.rag_pipeline = kwargs.get("rag_pipeline")
+        self.rag_retriever = kwargs.get("rag_retriever")
         self.context_window = context_window
 
         # Historian-specific state with LRU caches
@@ -187,16 +187,16 @@ class HistorianAgent(
         self._jsonl_path = _h_mod._HISTORIAN_FILE
 
         # Initialize unified knowledge access layer
-        if self.rag_pipeline:
+        if self.rag_retriever:
             self.knowledge_access = UnifiedKnowledgeAccess(
                 memory_system=self._cognee_writer,
-                rag_pipeline=self.rag_pipeline,
+                rag_retriever=self.rag_retriever,
             )
             logger.info(f"[{self.agent_id}] Unified knowledge access initialized")
         else:
             self.knowledge_access = UnifiedKnowledgeAccess(
                 memory_system=self._cognee_writer,
-                rag_pipeline=None,
+                rag_retriever=None,
             )
             logger.info(f"[{self.agent_id}] Knowledge access initialized (memory only)")
 

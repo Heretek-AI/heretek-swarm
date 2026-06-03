@@ -2,25 +2,20 @@
 RAG API - Document Ingestion and Retrieval
 
 Provides REST API for:
-- Document ingestion and processing
-- Vector search and retrieval
-- RAG query execution
-- Document management
+- Document ingestion and processing (via CogneeRAGRetriever.register_chunks)
+- Vector search and retrieval (via CogneeRAGRetriever.retrieve)
+- Knowledge graph retrieval (via cognee_graph.GraphRetriever)
 """
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
-if TYPE_CHECKING:
-    from heretek_swarm.rag.cognee_graph import GraphRetriever
-    from heretek_swarm.rag.rag_pipeline import RAGPipeline
-
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.rag.document_processor import DocumentType
+from heretek_swarm.rag.cognee_rag import CogneeRAGRetriever, get_rag_retriever
 
 # RAG is fully integrated inside heretek_swarm.rag
 
@@ -28,23 +23,24 @@ logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api/rag", tags=["rag"])
 
-# Global RAG pipeline instance
-_rag_pipeline: RAGPipeline | None = None  # type: ignore
+# Global RAG retriever instance
+_rag_retriever: CogneeRAGRetriever | None = None
 
 # =============================================================================
 # Lifecycle Management
 # =============================================================================
 
 
-async def get_rag_pipeline() -> RAGPipeline:
-    """Get or initialize RAG pipeline instance."""
-    global _rag_pipeline
-    if _rag_pipeline is None:
-        from heretek_swarm.rag.rag_pipeline import RAGPipeline
+async def get_or_create_rag_retriever() -> CogneeRAGRetriever:
+    """Get or create the shared CogneeRAGRetriever instance.
 
-        _rag_pipeline = RAGPipeline()
-        await _rag_pipeline.initialize()
-    return _rag_pipeline
+    CogneeRAGRetriever is ready immediately after construction — there is
+    no separate async initialize() step.
+    """
+    global _rag_retriever
+    if _rag_retriever is None:
+        _rag_retriever = get_rag_retriever()
+    return _rag_retriever
 
 
 # =============================================================================
@@ -55,8 +51,6 @@ async def get_rag_pipeline() -> RAGPipeline:
 @router.post("/ingest", status_code=201)
 async def ingest_document(
     file: UploadFile,
-    metadata: dict[str, Any] | None = None,
-    chunk_strategy: str = "recursive",
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
@@ -64,43 +58,31 @@ async def ingest_document(
 
     Args:
         file: Uploaded document file
-        metadata: Optional metadata to attach
-        chunk_strategy: Chunking strategy (recursive, fixed_size, semantic, sentence)
         authenticated: Authentication token
 
     Returns:
-        Processing result with chunk count and vector storage status
+        Processing result with chunk count
     """
-    pipeline = await get_rag_pipeline()
+    retriever = await get_or_create_rag_retriever()
 
     try:
         # Read file content
         content = (await file.read()).decode("utf-8")
 
-        # Ingest document content via the pipeline's ingest method.
-        # Note: ingest() takes list[str] | str, not a file path + content pattern.
-        results = await pipeline.ingest(
-            documents=content,
-            metadata={"filename": file.filename, **(metadata or {})},
-            document_type=DocumentType.TEXT,
-        )
-
-        # Return the first result's fields (pipeline.ingest returns list[IngestedDocument])
-        result = results[0] if results else None
+        # Best-effort ingest via CogneeRAGRetriever.register_chunks
+        # Cognee ingestion is async and goes through a separate cognee.add() path.
+        # register_chunks is a stub that logs the chunks for future ingest.
+        retriever.register_chunks([{"content": content, "filename": file.filename}])
 
         logger.info(
             "document_ingested",
             filename=file.filename,
-            chunks_processed=result.chunks_ingested if result else 0,
-            vectors_stored=result.chunks_ingested if result else 0,  # approximate
         )
 
         return {
             "filename": file.filename,
-            "chunks_processed": result.chunks_ingested if result else 0,
-            "vectors_stored": result.chunks_ingested if result else 0,
-            "processing_time_ms": result.processing_time_ms if result else 0,
-            "document_id": result.document_id if result else file.filename,
+            "status": "registered",
+            "detail": "Content registered for ingestion; Cognee async ingest TBD",
         }
 
     except Exception as e:
@@ -111,7 +93,6 @@ async def ingest_document(
 @router.post("/ingest/batch", status_code=201)
 async def ingest_batch(
     files: list[UploadFile],
-    metadata: dict[str, Any] | None = None,
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
@@ -119,60 +100,31 @@ async def ingest_batch(
 
     Args:
         files: List of uploaded files
-        metadata: Optional metadata to attach
         authenticated: Authentication token
 
     Returns:
         Batch processing results
     """
-    pipeline = await get_rag_pipeline()
+    retriever = await get_or_create_rag_retriever()
 
     results = []
-    total_chunks = 0
-    total_vectors = 0
-
     for file in files:
         try:
-            content = await file.read()
-            result = await pipeline.ingest_file(
-                file_path=file.filename,
-                content=content.decode("utf-8"),
-                metadata=metadata,
-            )
-
-            results.append(
-                {
-                    "filename": file.filename,
-                    "chunks_processed": result.chunks_processed,
-                    "vectors_stored": result.vectors_stored,
-                    "document_id": result.id,
-                }
-            )
-
-            total_chunks += result.chunks_processed
-            total_vectors += result.vectors_stored
-
+            content = (await file.read()).decode("utf-8")
+            retriever.register_chunks([{"content": content, "filename": file.filename}])
+            results.append({"filename": file.filename, "status": "registered"})
         except Exception as e:
             logger.error("batch_ingest_failed", filename=file.filename, error=str(e))
-            results.append(
-                {
-                    "filename": file.filename,
-                    "error": "Ingestion failed for this file",
-                }
-            )
+            results.append({"filename": file.filename, "error": "Ingestion failed for this file"})
 
     logger.info(
         "batch_ingest_completed",
         total_files=len(files),
-        total_chunks=total_chunks,
-        total_vectors=total_vectors,
     )
 
     return {
         "results": results,
         "total_files": len(files),
-        "total_chunks": total_chunks,
-        "total_vectors": total_vectors,
     }
 
 
@@ -185,7 +137,6 @@ async def ingest_batch(
 async def query_rag(
     query: str,
     top_k: int = 5,
-    search_mode: str = "hybrid",
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
@@ -194,36 +145,33 @@ async def query_rag(
     Args:
         query: Search query text
         top_k: Number of results to return
-        search_mode: Search mode (vector_only, keyword_only, hybrid)
         authenticated: Authentication token
 
     Returns:
         Search results with documents and context
     """
-    pipeline = await get_rag_pipeline()
+    retriever = await get_or_create_rag_retriever()
 
     try:
-        result = await pipeline.query(
-            query_text=query,
-            top_k=top_k,
-            search_mode=search_mode,
-        )
+        results = await retriever.retrieve(query=query, top_k=top_k)
 
         logger.info(
             "rag_query_executed",
             query=query,
-            documents_found=len(result.documents),
-            retrieval_time_ms=result.retrieval_time_ms,
+            documents_found=len(results),
         )
 
         return {
             "query": query,
-            "documents": [d.to_dict() for d in result.documents],
-            "context": result.context,
-            "total_tokens": result.total_tokens,
-            "retrieval_time_ms": result.retrieval_time_ms,
-            "embedding_time_ms": result.embedding_time_ms,
-            "total_time_ms": result.total_time_ms,
+            "results": [
+                {
+                    "content": r.content,
+                    "score": r.score,
+                    "metadata": r.metadata,
+                }
+                for r in results
+            ],
+            "count": len(results),
         }
 
     except Exception as e:
@@ -233,40 +181,22 @@ async def query_rag(
 
 @router.get("/documents", status_code=200)
 async def list_documents(
-    limit: int = 100, offset: int = 0, authenticated: str = Depends(verify_auth)
+    authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """
     List all ingested documents.
 
+    Note: CogneeRAGRetriever has no document management, so this returns
+    an empty list. Document management is handled at the Cognee level.
+
     Args:
-        limit: Maximum number of documents to return
-        offset: Offset for pagination
         authenticated: Authentication token
 
     Returns:
         List of documents with metadata
     """
-    pipeline = await get_rag_pipeline()
-
-    try:
-        # Get all documents from vector store
-        documents = await pipeline.list_documents(
-            limit=limit,
-            offset=offset,
-        )
-
-        logger.info("documents_listed", count=len(documents))
-
-        return {
-            "documents": documents,
-            "count": len(documents),
-            "limit": limit,
-            "offset": offset,
-        }
-
-    except Exception as e:
-        logger.error("list_documents_failed", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to list documents: {e!s}") from e
+    logger.info("documents_listed", note="CogneeRAGRetriever does not expose document list")
+    return {"documents": [], "count": 0}
 
 
 @router.get("/documents/{document_id}", status_code=200)
@@ -276,40 +206,18 @@ async def get_document(
     """
     Get a specific document by ID.
 
+    Note: CogneeRAGRetriever has no document management, so this
+    returns 404 for all documents.
+
     Args:
         document_id: Document ID
         authenticated: Authentication token
 
     Returns:
-        Document details with chunks
+        Document details
     """
-    pipeline = await get_rag_pipeline()
-
-    try:
-        document = await pipeline.get_document(document_id)
-
-        if not document:
-            raise HTTPException(status_code=404, detail="Document not found")
-
-        logger.info("document_retrieved", document_id=document_id)
-
-        return {
-            "id": document.id,
-            "source_path": document.source_path,
-            "source_type": document.source_type.value,
-            "title": document.title,
-            "author": document.author,
-            "total_characters": document.total_characters,
-            "total_lines": document.total_lines,
-            "total_chunks": document.total_chunks,
-            "created_at": document.created_at,
-            "processing_time_ms": document.processing_time_ms,
-            "chunk_strategy": document.chunk_strategy.value,
-        }
-
-    except Exception as e:
-        logger.error("get_document_failed", document_id=document_id, error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get document: {e!s}") from e
+    logger.info("document_retrieved", document_id=document_id, note="not supported")
+    raise HTTPException(status_code=404, detail="Document not found")
 
 
 @router.delete("/documents/{document_id}", status_code=204)
@@ -317,28 +225,15 @@ async def delete_document(document_id: str, authenticated: str = Depends(verify_
     """
     Delete a document and its associated vectors.
 
+    Note: CogneeRAGRetriever has no document management, so this is a
+    no-op that always returns 204.
+
     Args:
         document_id: Document ID
         authenticated: Authentication token
-
-    Returns:
-        Success message
     """
-    pipeline = await get_rag_pipeline()
-
-    try:
-        success = await pipeline.delete_document(document_id)
-
-        if not success:
-            raise HTTPException(status_code=404, detail="Document not found")
-
-        logger.info("document_deleted", document_id=document_id)
-
-        return {"message": f"Document {document_id} deleted successfully"}
-
-    except Exception as e:
-        logger.error("delete_document_failed", document_id=document_id, error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to delete document: {e!s}") from e
+    logger.info("document_delete_noop", document_id=document_id)
+    return None
 
 
 # =============================================================================
@@ -351,35 +246,19 @@ async def get_rag_config(authenticated: str = Depends(verify_auth)) -> dict[str,
     """
     Get current RAG configuration.
 
+    CogneeRAGRetriever has no separate Config object. Returns static
+    metadata about the retriever.
+
     Args:
         authenticated: Authentication token
 
     Returns:
-        RAG pipeline configuration
+        RAG configuration overview
     """
-    pipeline = await get_rag_pipeline()
-
+    retriever = await get_or_create_rag_retriever()
     return {
-        "chunking": {
-            "strategy": pipeline.config.processing.chunk_strategy.value,
-            "chunk_size": pipeline.config.processing.chunk_size,
-            "chunk_overlap": pipeline.config.processing.chunk_overlap,
-            "min_chunk_size": pipeline.config.processing.min_chunk_size,
-        },
-        "embedding": {
-            "provider": pipeline.config.embedding.provider.value,
-            "model": pipeline.config.embedding.model,
-            "dimension": pipeline.config.embedding.dimension,
-        },
-        "retrieval": {
-            "mode": pipeline.config.retrieval.mode.value,
-            "top_k": pipeline.config.retrieval.top_k,
-            "similarity_threshold": pipeline.config.retrieval.similarity_threshold,
-        },
-        "storage": {
-            "collection_name": pipeline.config.collection_name,
-            "persist_processed": pipeline.config.persist_processed,
-        },
+        "backend": "cognee",
+        "statistics": retriever.get_statistics(),
     }
 
 
@@ -390,105 +269,33 @@ async def update_rag_config(
     """
     Update RAG configuration.
 
+    CogneeRAGRetriever has no runtime-configurable Config object.
+    Configuration is set at construction via env vars.
+
     Args:
-        config: Configuration updates
+        config: Configuration updates (accepted but ignored)
         authenticated: Authentication token
 
     Returns:
-        Updated configuration
+        Static acknowledgement
     """
-    pipeline = await get_rag_pipeline()
-
-    try:
-        _update_chunking_config(pipeline, config.get("chunking"))
-        _update_embedding_config(pipeline, config.get("embedding"))
-        _update_retrieval_config(pipeline, config.get("retrieval"))
-        _update_storage_config(pipeline, config.get("storage"))
-
-        logger.info("rag_config_updated", config=config)
-
-        return {
-            "message": "RAG configuration updated successfully",
-            "config": {
-                "chunking": {
-                    "strategy": pipeline.config.processing.chunk_strategy.value,
-                    "chunk_size": pipeline.config.processing.chunk_size,
-                    "chunk_overlap": pipeline.config.processing.chunk_overlap,
-                },
-                "embedding": {
-                    "provider": pipeline.config.embedding.provider.value,
-                    "model": pipeline.config.embedding.model,
-                    "dimension": pipeline.config.embedding.dimension,
-                },
-                "retrieval": {
-                    "mode": pipeline.config.retrieval.mode.value,
-                    "top_k": pipeline.config.retrieval.top_k,
-                    "similarity_threshold": pipeline.config.retrieval.similarity_threshold,
-                },
-                "storage": {
-                    "collection_name": pipeline.config.collection_name,
-                    "persist_processed": pipeline.config.persist_processed,
-                },
-            },
-        }
-
-    except Exception as e:
-        logger.error("update_rag_config_failed", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to update RAG config: {e!s}") from e
-
-
-def _update_chunking_config(pipeline: RAGPipeline, chunking: dict[str, Any] | None) -> None:
-    """Update chunking configuration."""
-    if not chunking:
-        return
-    if "strategy" in chunking:
-        pipeline.config.processing.chunk_strategy = chunking["strategy"]
-    if "chunk_size" in chunking:
-        pipeline.config.processing.chunk_size = chunking["chunk_size"]
-    if "chunk_overlap" in chunking:
-        pipeline.config.processing.chunk_overlap = chunking["chunk_overlap"]
-
-
-def _update_embedding_config(pipeline: RAGPipeline, embedding: dict[str, Any] | None) -> None:
-    """Update embedding configuration."""
-    if not embedding:
-        return
-    if "provider" in embedding:
-        pipeline.config.embedding.provider = embedding["provider"]
-    if "model" in embedding:
-        pipeline.config.embedding.model = embedding["model"]
-
-
-def _update_retrieval_config(pipeline: RAGPipeline, retrieval: dict[str, Any] | None) -> None:
-    """Update retrieval configuration."""
-    if not retrieval:
-        return
-    if "mode" in retrieval:
-        pipeline.config.retrieval.mode = retrieval["mode"]
-    if "top_k" in retrieval:
-        pipeline.config.retrieval.top_k = retrieval["top_k"]
-    if "similarity_threshold" in retrieval:
-        pipeline.config.retrieval.similarity_threshold = retrieval["similarity_threshold"]
-
-
-def _update_storage_config(pipeline: RAGPipeline, storage: dict[str, Any] | None) -> None:
-    """Update storage configuration."""
-    if not storage:
-        return
-    if "collection_name" in storage:
-        pipeline.config.collection_name = storage["collection_name"]
-    if "persist_processed" in storage:
-        pipeline.config.persist_processed = storage["persist_processed"]
+    retriever = await get_or_create_rag_retriever()
+    logger.info("rag_config_update_noop", received=config)
+    return {
+        "message": "CogneeRAGRetriever has no runtime config; configuration is env-driven",
+        "backend": "cognee",
+        "statistics": retriever.get_statistics(),
+    }
 
 
 # =============================================================================
 # Knowledge Graph Retrieval Endpoints (RAGFlow pattern)
 # =============================================================================
 
-_knowledge_graph_retriever: GraphRetriever | None = None
+_knowledge_graph_retriever: Any = None
 
 
-def get_knowledge_graph_retriever() -> GraphRetriever:
+def get_knowledge_graph_retriever() -> Any:
     """Get or initialize the knowledge graph retriever.
 
     M-arch PR #3: delegates to the :func:`cognee_graph.get_graph_retriever`

@@ -197,26 +197,22 @@ class TestCogneeRAGRetriever:
 
 
 class TestGetRagRetrieverFactory:
-    """Factory: get_rag_retriever selects backend based on env var."""
+    """Factory: get_rag_retriever always returns CogneeRAGRetriever."""
 
-    def test_default_returns_in_memory(
+    def test_default_returns_cognee(
         self, cognee_rag_mod, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Default (HERETEK_USE_COGNEE_RAG unset) returns the in-memory RAGPipeline."""
+        """Default (HERETEK_USE_COGNEE_RAG unset) returns CogneeRAGRetriever."""
         monkeypatch.delenv("HERETEK_USE_COGNEE_RAG", raising=False)
-        from heretek_swarm.rag.rag_pipeline import RAGPipeline
-
         backend = cognee_rag_mod.get_rag_retriever()
-        assert isinstance(backend, RAGPipeline)
+        assert isinstance(backend, cognee_rag_mod.CogneeRAGRetriever)
 
-    def test_false_returns_in_memory(
+    def test_false_returns_cognee(
         self, cognee_rag_mod, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """HERETEK_USE_COGNEE_RAG=false returns the in-memory RAGPipeline."""
+        """HERETEK_USE_COGNEE_RAG=false still returns CogneeRAGRetriever (env var ignored)."""
         monkeypatch.setenv("HERETEK_USE_COGNEE_RAG", "false")
-        from heretek_swarm.rag.rag_pipeline import RAGPipeline
-
-        assert isinstance(cognee_rag_mod.get_rag_retriever(), RAGPipeline)
+        assert isinstance(cognee_rag_mod.get_rag_retriever(), cognee_rag_mod.CogneeRAGRetriever)
 
     def test_true_returns_cognee(
         self, cognee_rag_mod, monkeypatch: pytest.MonkeyPatch
@@ -229,7 +225,7 @@ class TestGetRagRetrieverFactory:
     def test_yes_returns_cognee(
         self, cognee_rag_mod, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """HERETEK_USE_COGNEE_RAG=yes (any truthy) returns CogneeRAGRetriever."""
+        """HERETEK_USE_COGNEE_RAG=yes returns CogneeRAGRetriever."""
         monkeypatch.setenv("HERETEK_USE_COGNEE_RAG", "yes")
         assert isinstance(cognee_rag_mod.get_rag_retriever(), cognee_rag_mod.CogneeRAGRetriever)
 

@@ -227,16 +227,12 @@ class TestGetGraphRetrieverFactory:
         monkeypatch.delenv("HERETEK_USE_COGNEE_GRAPH", raising=False)
         # The factory will import KnowledgeGraphRetriever from the legacy module;
         # if that module fails to import, just check the type returned
-        try:
-            retriever = cognee_graph_mod.get_graph_retriever()
-            # If we get a KnowledgeGraphRetriever, great; if we get a CogneeGraphRetriever,
-            # the env was set somewhere. Either way, check it's not the wrong one.
-            assert not isinstance(retriever, cognee_graph_mod.CogneeGraphRetriever) or (
-                os.getenv("HERETEK_USE_COGNEE_GRAPH", "false").lower() in ("true", "1", "yes")
-            )
-        except ImportError:
-            # The legacy module may have heavy deps; that's fine for this test.
-            pytest.skip("legacy knowledge_graph module not importable in this env")
+        retriever = cognee_graph_mod.get_graph_retriever()
+        # If we get a KnowledgeGraphRetriever, great; if we get a CogneeGraphRetriever,
+        # the env was set somewhere. Either way, check it's not the wrong one.
+        assert not isinstance(retriever, cognee_graph_mod.CogneeGraphRetriever) or (
+            os.getenv("HERETEK_USE_COGNEE_GRAPH", "false").lower() in ("true", "1", "yes")
+        )
 
     def test_env_flag_returns_cognee(self, cognee_graph_mod, monkeypatch) -> None:
         """With HERETEK_USE_COGNEE_GRAPH=true, factory returns CogneeGraphRetriever."""
@@ -258,10 +254,7 @@ class TestGetGraphRetrieverFactory:
 
         for value in ("false", "0", "no", ""):
             monkeypatch.setenv("HERETEK_USE_COGNEE_GRAPH", value)
-            try:
-                retriever = cognee_graph_mod.get_graph_retriever()
-                assert not isinstance(retriever, cognee_graph_mod.CogneeGraphRetriever), (
-                    f"value={value!r} should NOT select Cognee backend"
-                )
-            except ImportError:
-                pytest.skip("legacy knowledge_graph module not importable in this env")
+            retriever = cognee_graph_mod.get_graph_retriever()
+            assert not isinstance(retriever, cognee_graph_mod.CogneeGraphRetriever), (
+                f"value={value!r} should NOT select Cognee backend"
+            )

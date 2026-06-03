@@ -2,18 +2,13 @@
 CogneeRAGRetriever — Cognee-backed implementation of the RAG retrieval
 interface defined in :mod:`heretek_swarm.rag.retriever`.
 
-M-arch PR #4 adds a Cognee-backed retrieval path alongside the existing
-in-memory RAG pipeline. The public interface is preserved so callers
-can swap backends transparently via :func:`get_rag_retriever`.
+Cognee is the default and only RAG retriever backend. The legacy
+in-memory ``RAGPipeline`` has been removed.
 
 Honest mapping notes
 --------------------
 Cognee is a knowledge graph + vector memory engine, not a structural
-document pipeline. Where the existing ``RAGPipeline`` exposes
-ingest/query/retrieve_context, Cognee provides cognify/search. This
-module implements just the *retrieval* surface — the rest of the
-``RAGPipeline`` (ingestion, LLM response generation) is out of scope
-for this PR and stays as-is.
+document pipeline. This module implements the retrieval surface:
 
 * :meth:`retrieve` — implemented via CogneeMemoryReader.search
 * :meth:`register_chunks` — best-effort: logs chunks (Cognee ingestion
@@ -21,15 +16,10 @@ for this PR and stays as-is.
 * :meth:`health` — implemented via CogneeMemoryReader.health
 * :meth:`close` — closes the injected client if owned
 * :meth:`get_statistics` — light telemetry (recent retrievals, uptime)
-
-This module does NOT delete the in-memory implementation in
-:mod:`heretek_swarm.rag.rag_pipeline` — that is deferred to a
-follow-up PR after 1 week of Cognee sidecar parity (per PLAN.md §M-arch).
 """
 
 from __future__ import annotations
 
-import os
 import time
 from collections.abc import Iterable
 from typing import Any, Protocol, runtime_checkable
@@ -46,11 +36,10 @@ logger = structlog.get_logger(__name__)
 class RAGRetriever(Protocol):
     """Public interface for the RAG retriever.
 
-    Both :class:`heretek_swarm.rag.rag_pipeline.RAGPipeline` (in-memory,
-    legacy) and :class:`CogneeRAGRetriever` (new) implement these
-    methods. Methods that are not meaningful for the Cognee backend
-    return sensible no-ops (empty list / False) so callers can use
-    a single interface without branching.
+    :class:`CogneeRAGRetriever` implements these methods. Methods that
+    are not meaningful for the Cognee backend return sensible no-ops
+    (empty list / False) so callers can use a single interface without
+    branching.
     """
 
     async def retrieve(
@@ -160,37 +149,11 @@ class CogneeRAGRetriever:
         }
 
 
-def _env_use_cognee() -> bool:
-    """Check env var ``HERETEK_USE_COGNEE_RAG`` (default: False).
-
-    Default OFF so the in-memory RAG pipeline remains the production
-    path until Cognee sidecar parity is validated. Flip to ``true``
-    after the 1-week observation window required by PLAN.md §M-arch.
-    """
-    return os.getenv("HERETEK_USE_COGNEE_RAG", "false").lower() in (
-        "true",
-        "1",
-        "yes",
-    )
-
-
 def get_rag_retriever() -> RAGRetriever:
-    """Factory: return the configured RAG retriever backend.
+    """Factory: return ``CogneeRAGRetriever`` (the only RAG backend).
 
-    Selects between:
-        * :class:`heretek_swarm.rag.rag_pipeline.RAGPipeline`
-          (in-memory, default — preserves the existing RAGFlow pattern)
-        * :class:`CogneeRAGRetriever` (Cognee-backed, opt-in via
-          ``HERETEK_USE_COGNEE_RAG=true``)
-
-    The returned object satisfies the :class:`RAGRetriever` Protocol.
-    Callers that need the full RAGPipeline API (ingest, query, etc.)
-    should construct it directly.
+    Cognee is now the default and only retriever. The legacy in-memory
+    ``RAGPipeline`` has been removed.
     """
-    if _env_use_cognee():
-        logger.info("rag_retriever_backend_selected", backend="cognee")
-        return CogneeRAGRetriever()
-    from heretek_swarm.rag.rag_pipeline import RAGPipeline
-
-    logger.debug("rag_retriever_backend_selected", backend="in_memory")
-    return RAGPipeline()
+    logger.info("rag_retriever_backend_selected", backend="cognee")
+    return CogneeRAGRetriever()

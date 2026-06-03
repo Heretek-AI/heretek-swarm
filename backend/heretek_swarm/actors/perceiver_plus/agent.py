@@ -163,11 +163,11 @@ class PerceiverPlusAgent(
         """Initialize the Perceiver+ agent."""
         # Initialize unified knowledge access layer
         memory_system = getattr(self, "memory_system", None)
-        rag_pipeline = getattr(self, "rag_pipeline", None)
-        if memory_system or rag_pipeline:
+        rag_retriever = getattr(self, "rag_retriever", None)
+        if memory_system or rag_retriever:
             self.knowledge_access = UnifiedKnowledgeAccess(
                 memory_system=memory_system,
-                rag_pipeline=rag_pipeline,
+                rag_retriever=rag_retriever,
             )
             logger.info(f"[{self.agent_id}] Unified knowledge access initialized")
 

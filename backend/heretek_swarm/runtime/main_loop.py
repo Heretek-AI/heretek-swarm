@@ -37,7 +37,7 @@ from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.llm.model_garage import ModelGarage
 from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
 from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
-from heretek_swarm.rag.rag_pipeline import RAGPipeline
+from heretek_swarm.rag.cognee_rag import CogneeRAGRetriever, get_rag_retriever
 from heretek_swarm.routing.model_router import set_global_model_garage
 from heretek_swarm.runtime.actor_orchestrator import ActorOrchestrator
 from heretek_swarm.runtime.deliberation_orchestrator import DeliberationOrchestrator
@@ -82,7 +82,7 @@ class AutonomousSwarm:
         self.event_mesh: NATSEventMeshWithJetStream | None = None
         self._cognee_reader: CogneeMemoryReader | None = None
         self._cognee_writer: CogneeMemoryWriter | None = None
-        self.rag: RAGPipeline | None = None
+        self.rag: CogneeRAGRetriever | None = None
         self.consensus: MAKERConsensus | None = None
         self.channel_registry: ChannelRegistry | None = None
         self.group_registry: GroupRegistry | None = None
@@ -210,16 +210,7 @@ class AutonomousSwarm:
         logger.warning("infra_skipped_no_infra_flag")
         self.channel_registry = ChannelRegistry()
         self.group_registry = GroupRegistry(self.channel_registry)
-        from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
-
-        rag_cfg = RAGPipelineConfig(
-            embedding_provider=self.config.get("rag", {}).get("embedding_provider", "openai"),
-            embedding_model="text-embedding-3-small",
-            llm_provider="openai",
-            llm_model="gpt-4o-mini",
-            top_k=5,
-        )
-        self.rag = RAGPipeline(config=rag_cfg)
+        self.rag = get_rag_retriever()
         consensus_config = self.config.get("consensus", {})
         self.consensus = MAKERConsensus(
             ahead_by_k=consensus_config.get("ahead_by_k", 2),
@@ -229,7 +220,7 @@ class AutonomousSwarm:
         self.mcp_tools = CoreMCPTools(
             cognee_reader=None,
             cognee_writer=None,
-            rag_pipeline=self.rag,
+            rag_retriever=self.rag,
             consensus_engine=self.consensus,
             event_mesh=None,
         )
@@ -285,17 +276,8 @@ class AutonomousSwarm:
 
     async def _initialize_rag(self) -> None:
         try:
-            from heretek_swarm.rag.rag_pipeline import RAGPipelineConfig
-            rag_config_dict = self.config.get("rag", {})
-            rag_cfg = RAGPipelineConfig(
-                embedding_provider=rag_config_dict.get("embedding_provider", "openai"),
-                embedding_model=rag_config_dict.get("embedding_model", "text-embedding-3-small"),
-                llm_provider=rag_config_dict.get("llm_provider", "openai"),
-                llm_model=rag_config_dict.get("llm_model", "gpt-4o-mini"),
-                top_k=rag_config_dict.get("top_k", 5),
-            )
-            self.rag = RAGPipeline(config=rag_cfg)
-            logger.info("rag_pipeline_initialized")
+            self.rag = get_rag_retriever()
+            logger.info("cognee_rag_retriever_initialized")
         except Exception as exc:
             logger.warning("rag_init_failed", error=str(exc))
             self.rag = None
@@ -349,7 +331,7 @@ class AutonomousSwarm:
             self.mcp_tools = CoreMCPTools(
                 cognee_reader=self._cognee_reader,
                 cognee_writer=self._cognee_writer,
-                rag_pipeline=self.rag,
+                rag_retriever=self.rag,
                 consensus_engine=self.consensus,
                 event_mesh=self.event_mesh,
             )

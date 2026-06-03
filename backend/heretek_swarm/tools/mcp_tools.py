@@ -394,13 +394,13 @@ class CoreMCPTools:
         self,
         cognee_reader=None,
         cognee_writer=None,
-        rag_pipeline=None,
+        rag_retriever=None,
         consensus_engine=None,
         event_mesh=None,
     ):
         self._cognee_reader = cognee_reader
         self._cognee_writer = cognee_writer
-        self.rag = rag_pipeline
+        self.rag = rag_retriever
         self.consensus = consensus_engine
         self.event_mesh = event_mesh
         self.registry = MCPToolRegistry()
@@ -555,13 +555,12 @@ class CoreMCPTools:
     ) -> dict:
         """Handle RAG query request."""
         if not self.rag:
-            return {"error": "RAG pipeline not initialized"}
+            return {"error": "RAG retriever not initialized"}
 
         query = arguments.get("query")
-        arguments.get("mode", "hybrid")
         top_k = arguments.get("top_k", 10)
 
-        result = await self.rag.query(
+        results = await self.rag.retrieve(
             query=query,
             top_k=top_k,
         )
@@ -569,11 +568,11 @@ class CoreMCPTools:
         return {
             "documents": [
                 {
-                    "content": doc.content if hasattr(doc, "content") else doc,
-                    "metadata": getattr(doc, "metadata", {}),
-                    "score": getattr(doc, "score", 0),
+                    "content": r.content,
+                    "metadata": r.metadata,
+                    "score": r.score,
                 }
-                for doc in (result.documents if hasattr(result, "documents") else result)
+                for r in results
             ]
         }
 

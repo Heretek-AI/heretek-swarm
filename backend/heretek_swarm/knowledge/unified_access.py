@@ -137,7 +137,7 @@ class UnifiedKnowledgeAccess:
     - Performance metrics tracking
 
     Usage:
-        knowledge = UnifiedKnowledgeAccess(memory_system, rag_pipeline)
+        knowledge = UnifiedKnowledgeAccess(memory_system, rag_retriever)
         result = await knowledge.query(
             query="What was the decision about X?",
             sources=["memory", "rag"],
@@ -150,12 +150,12 @@ class UnifiedKnowledgeAccess:
     def __init__(
         self,
         memory_system=None,
-        rag_pipeline=None,
+        rag_retriever=None,
         hybrid_retriever: Optional["HybridRetriever"] = None,
         strategy_selector: Optional["StrategySelector"] = None,
     ):
         self.memory = memory_system
-        self.rag = rag_pipeline
+        self.rag = rag_retriever
         self.hybrid_retriever = hybrid_retriever
         self.strategy_selector = strategy_selector
         self._query_stats: dict[str, dict] = {}
@@ -407,31 +407,28 @@ class UnifiedKnowledgeAccess:
         return entries
 
     async def _query_rag(self, query: str, filters: dict[str, Any]) -> list[KnowledgeEntry]:
-        """Query the RAG pipeline."""
+        """Query the CogneeRAGRetriever."""
         if not self.rag:
             return []
 
         # Build query parameters
         top_k = filters.get("rag_top_k", 50)
-        filters.get("rag_mode", "hybrid")
 
-        # Query RAG
-        result = await self.rag.query(
+        # Query CogneeRAGRetriever.retrieve() returns list[SearchResult]
+        results = await self.rag.retrieve(
             query=query,
             top_k=top_k,
         )
 
         entries = []
-        documents = result.documents if hasattr(result, "documents") else result
-
-        for doc in documents:
+        for result in results:
             entries.append(
                 KnowledgeEntry(
-                    content=doc.content if hasattr(doc, "content") else doc,
+                    content=result.content,
                     source="rag",
-                    source_id=getattr(doc, "id", getattr(doc, "doc_id", "unknown")),
-                    metadata=getattr(doc, "metadata", {}),
-                    score=getattr(doc, "score", getattr(doc, "similarity", 0.5)),
+                    source_id=result.id,
+                    metadata=result.metadata,
+                    score=result.score,
                     created_at=None,
                 )
             )
@@ -738,7 +735,7 @@ class KnowledgeQueryBuilder:
 
 def create_unified_knowledge_access(
     memory_system=None,
-    rag_pipeline=None,
+    rag_retriever=None,
     embedding_provider=None,
     vector_store=None,
     sparse_index=None,
@@ -750,7 +747,7 @@ def create_unified_knowledge_access(
 
     Args:
         memory_system: Memory system instance
-        rag_pipeline: Legacy RAG pipeline instance
+        rag_retriever: CogneeRAGRetriever instance
         embedding_provider: Embedding provider for dense retrieval
         vector_store: Vector store for dense retrieval
         sparse_index: Sparse index for BM25 retrieval
@@ -762,7 +759,7 @@ def create_unified_knowledge_access(
     """
     if not RAG_STRATEGIES_AVAILABLE:
         logger.warning("rag_strategies_not_available_using_legacy")
-        return UnifiedKnowledgeAccess(memory_system=memory_system, rag_pipeline=rag_pipeline)
+        return UnifiedKnowledgeAccess(memory_system=memory_system, rag_retriever=rag_retriever)
 
     try:
         # Create hybrid retriever config
@@ -780,7 +777,7 @@ def create_unified_knowledge_access(
         # Create unified access with hybrid retriever
         knowledge_access = UnifiedKnowledgeAccess(
             memory_system=memory_system,
-            rag_pipeline=rag_pipeline,
+            rag_retriever=rag_retriever,
             hybrid_retriever=hybrid_retriever,
         )
 
@@ -790,4 +787,4 @@ def create_unified_knowledge_access(
     except Exception as e:
         logger.error("unified_knowledge_access_creation_failed", error=str(e))
         # Fall back to legacy
-        return UnifiedKnowledgeAccess(memory_system=memory_system, rag_pipeline=rag_pipeline)
+        return UnifiedKnowledgeAccess(memory_system=memory_system, rag_retriever=rag_retriever)
