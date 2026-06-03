@@ -32,6 +32,19 @@ from heretek_swarm.actors.mixins import (
     PatternMixin,
     ValidationMixin,
 )
+from heretek_swarm.actors.perceiver.extraction import (
+    audio_suffix_from_format as _ext_audio_suffix_from_format,
+    decode_audio_bytes as _ext_decode_audio_bytes,
+    decode_image_bytes as _ext_decode_image_bytes,
+    decode_video_bytes as _ext_decode_video_bytes,
+    detect_bytes_modality as _ext_detect_bytes_modality,
+    detect_image_mime as _ext_detect_image_mime,
+    detect_text_structure as _ext_detect_text_structure,
+    extract_text_features as _ext_extract_text_features,
+    merge_image_features as _ext_merge_image_features,
+    parse_r_frame_rate as _ext_parse_r_frame_rate,
+    video_suffix_from_format as _ext_video_suffix_from_format,
+)
 from heretek_swarm.actors.perceiver.types import ModalityType
 from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.collective.learning import PatternExtractor
@@ -400,14 +413,13 @@ class PerceiverAgent(
 
     @staticmethod
     def _detect_bytes_modality(data: bytes) -> str:
-        """Detect modality from bytes magic numbers."""
-        if data.startswith(b"\xff\xd8\xff"):
-            return ModalityType.IMAGE.value  # JPEG
-        if data.startswith(b"\x89PNG"):
-            return ModalityType.IMAGE.value  # PNG
-        if data.startswith(b"RIFF") and data[8:12] == b"WAVE":
-            return ModalityType.AUDIO.value  # WAV
-        return ModalityType.TEXT.value
+        """Detect modality from bytes magic numbers.
+
+        Thin delegate to
+        :mod:`heretek_swarm.actors.perceiver.extraction`
+        (Phase 2.3 of PLAN.md).
+        """
+        return _ext_detect_bytes_modality(data) or ModalityType.TEXT.value
 
     def _generate_input_id(self, input_data: Any, modality: str) -> str:
         """Generate unique input identifier."""
@@ -501,61 +513,30 @@ class PerceiverAgent(
     def _merge_image_features(
         base: dict[str, Any], pil_features: dict[str, Any], llm_description: str | None
     ) -> dict[str, Any]:
-        result = dict(base)
-        if pil_features:
-            result.update(pil_features)
-            result["description"] = llm_description or ""
-            result["analyzed_by"] = "pil+llm" if llm_description else "pil"
-        elif llm_description:
-            result["description"] = llm_description
-            result["analyzed_by"] = "llm"
-        else:
-            result["analyzed_by"] = "metadata"
-        return result
+        """Combine base + PIL + LLM image features.
+
+        Thin delegate to
+        :mod:`heretek_swarm.actors.perceiver.extraction`.
+        """
+        return _ext_merge_image_features(base, pil_features, llm_description)
 
     @staticmethod
     def _decode_image_bytes(image_data: Any) -> bytes:
         """Decode ``image_data`` to raw bytes regardless of input format.
 
-        Handles:
-        - ``data:image/xxx;base64,...`` data URLs
-        - plain base64 strings
-        - ``bytes``
+        Thin delegate to
+        :mod:`heretek_swarm.actors.perceiver.extraction`.
         """
-        if isinstance(image_data, bytes):
-            return image_data
-        if not isinstance(image_data, str):
-            return b""
-        payload = image_data
-        if payload.startswith("data:"):
-            # Strip the "data:image/xxx;base64," prefix
-            try:
-                payload = payload.split(",", 1)[1]
-            except IndexError:
-                payload = ""
-        try:
-            return base64.b64decode(payload)
-        except Exception as e:
-            return image_data.encode("utf-8")
+        return _ext_decode_image_bytes(image_data)
 
     @staticmethod
     def _detect_image_mime(image_data: Any) -> str:
-        """Infer a MIME type string from the input shape."""
-        if isinstance(image_data, str) and image_data.startswith("data:"):
-            try:
-                return image_data.split(":")[1].split(";")[0]
-            except IndexError:
-                return "unknown"
-        if isinstance(image_data, bytes):
-            # Sniff magic bytes
-            if image_data.startswith(b"\xff\xd8\xff"):
-                return "image/jpeg"
-            if image_data.startswith(b"\x89PNG"):
-                return "image/png"
-            if image_data.startswith((b"GIF87a", b"GIF89a")):
-                return "image/gif"
-            return _OCTET_STREAM_MIME
-        return "unknown"
+        """Infer a MIME type string from the input shape.
+
+        Thin delegate to
+        :mod:`heretek_swarm.actors.perceiver.extraction`.
+        """
+        return _ext_detect_image_mime(image_data)
 
     @staticmethod
     def _extract_image_pil(image_bytes: bytes) -> dict[str, Any]:
@@ -658,50 +639,19 @@ class PerceiverAgent(
     def _decode_audio_bytes(audio_data: Any) -> tuple[bytes, str]:
         """Decode ``audio_data`` to raw bytes and infer a MIME type.
 
-        Returns ``(bytes, mime_type)``.
+        Thin delegate to
+        :mod:`heretek_swarm.actors.perceiver.extraction`.
         """
-        if isinstance(audio_data, bytes):
-            return audio_data, _OCTET_STREAM_MIME
-        if not isinstance(audio_data, str):
-            return b"", "unknown"
-
-        payload = audio_data
-        mime_type = _OCTET_STREAM_MIME
-        if payload.startswith("data:"):
-            try:
-                header, payload = payload.split(",", 1)
-                mime_type = header.split(":")[1].split(";")[0]
-            except (IndexError, ValueError):
-                pass
-
-        try:
-            return base64.b64decode(payload), mime_type
-        except Exception as e:
-            return audio_data.encode("utf-8"), mime_type
+        return _ext_decode_audio_bytes(audio_data)
 
     @staticmethod
     def _audio_suffix_from_format(format_hint: str | None, mime_type: str) -> str:
-        """Return a file extension (with dot) for a known audio format or mime."""
-        format_lower = (format_hint or "").lower()
-        mime_ext_map = {
-            "audio/wav": ".wav", "audio/wave": ".wav", "audio/x-wav": ".wav",
-            "audio/mpeg": ".mp3", "audio/mp3": ".mp3",
-            "audio/ogg": ".ogg", "audio/vorbis": ".ogg",
-            "audio/flac": ".flac",
-            "audio/aac": ".aac", "audio/x-aac": ".aac",
-            "audio/webm": ".webm",
-        }
-        # Known bare extensions
-        if format_lower in {"wav", "mp3", "ogg", "flac", "aac", "webm"}:
-            return f".{format_lower}"
-        # MIME type lookup (only when we actually have a non-empty mime)
-        if mime_type and mime_type != _OCTET_STREAM_MIME:
-            for mime_key, ext in mime_ext_map.items():
-                if mime_type == mime_key or mime_type.startswith(mime_key):
-                    return ext
-        if format_lower:
-            return f".{format_lower}"
-        return ".audio"
+        """Return a file extension (with dot) for a known audio format or mime.
+
+        Thin delegate to
+        :mod:`heretek_swarm.actors.perceiver.extraction`.
+        """
+        return _ext_audio_suffix_from_format(format_hint, mime_type)
 
     async def _extract_audio_features(
         self, audio_data: Any, format_hint: str | None
@@ -808,67 +758,28 @@ class PerceiverAgent(
     def _decode_video_bytes(video_data: Any) -> tuple[bytes, str]:
         """Decode ``video_data`` to raw bytes and infer a MIME type.
 
-        Returns ``(bytes, mime_type)``.
+        Thin delegate to
+        :mod:`heretek_swarm.actors.perceiver.extraction`.
         """
-        if isinstance(video_data, bytes):
-            return video_data, _OCTET_STREAM_MIME
-        if not isinstance(video_data, str):
-            return b"", "unknown"
-
-        payload = video_data
-        mime_type = _OCTET_STREAM_MIME
-        if payload.startswith("data:"):
-            try:
-                header, payload = payload.split(",", 1)
-                mime_type = header.split(":")[1].split(";")[0]
-            except (IndexError, ValueError):
-                pass
-
-        try:
-            return base64.b64decode(payload), mime_type
-        except Exception as e:
-            return video_data.encode("utf-8"), mime_type
+        return _ext_decode_video_bytes(video_data)
 
     @staticmethod
     def _video_suffix_from_format(format_hint: str | None, mime_type: str) -> str:
-        """Return a file extension (with dot) for a known video format or mime."""
-        format_lower = (format_hint or "").lower()
-        mime_ext_map: dict[str, str] = {
-            "video/mp4": ".mp4",
-            "video/mpeg": ".mpg",
-            "video/avi": ".avi",
-            "video/x-msvideo": ".avi",
-            "video/quicktime": ".mov",
-            "video/webm": ".webm",
-            "video/x-matroska": ".mkv",
-        }
-        if format_lower in {"mp4", "avi", "mov", "webm", "mkv", "mpg", "mpeg"}:
-            return f".{format_lower}"
-        if mime_type and mime_type != _OCTET_STREAM_MIME:
-            for mime_key, ext in mime_ext_map.items():
-                if mime_type == mime_key or mime_type.startswith(mime_key):
-                    return ext
-        if format_lower:
-            return f".{format_lower}"
-        return ".video"
+        """Return a file extension (with dot) for a known video format or mime.
+
+        Thin delegate to
+        :mod:`heretek_swarm.actors.perceiver.extraction`.
+        """
+        return _ext_video_suffix_from_format(format_hint, mime_type)
 
     @staticmethod
     def _parse_r_frame_rate(r_frame_rate: str | None) -> float | None:
-        """Convert ``r_frame_rate`` string (e.g. "30/1" or "30000/1001") to float.
+        """Convert ``r_frame_rate`` string to float.
 
-        Returns None when input is empty, malformed, or zero-denominator.
+        Thin delegate to
+        :mod:`heretek_swarm.actors.perceiver.extraction`.
         """
-        if not r_frame_rate:
-            return None
-        try:
-            num, denom = r_frame_rate.split("/", 1)
-            n = int(num)
-            d = int(denom)
-            if d == 0:
-                return None
-            return round(n / d, 2)
-        except (ValueError, ZeroDivisionError):
-            return None
+        return _ext_parse_r_frame_rate(r_frame_rate)
 
     async def _extract_video_features(
         self, video_data: Any, format_hint: str | None
@@ -1003,7 +914,8 @@ class PerceiverAgent(
     def _detect_text_structure(text: str, fmt: str) -> dict[str, Any]:
         """Detect document structure from text content.
 
-        Returns a ``structure`` dict with format-specific markers.
+        Thin delegate to
+        :mod:`heretek_swarm.actors.perceiver.extraction`.
         """
         structure: dict[str, Any] = {}
 
