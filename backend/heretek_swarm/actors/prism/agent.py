@@ -46,7 +46,7 @@ from heretek_swarm.actors.prism.types import (
 )
 
 # Session 44: Collective Learning Integration
-from research.consciousness.phi_training import (
+from heretek_swarm.consciousness.phi_training import (
     DecisionCoherenceTrainingScenario,
     PhiTrainingEnvironment,
     TrainingScenario,

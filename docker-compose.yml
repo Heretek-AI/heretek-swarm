@@ -161,6 +161,8 @@ services:
     volumes:
       - config_keys:/config
       - ./certs:/etc/nats/certs:ro,z
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       postgres:
         condition: service_healthy

@@ -31,7 +31,7 @@ from heretek_swarm.research import (
     evolution_engine,
 )
 from heretek_swarm.collective import agency_tracking
-from research.consciousness import (
+from heretek_swarm.consciousness import (
     ast,
     fep,
     fep_active_inference,

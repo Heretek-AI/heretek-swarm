@@ -22,8 +22,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'zustand', 'axios'],
+        manualChunks(id: string) {
+          if (id.includes('node_modules/react') || id.includes('node_modules/zustand') || id.includes('node_modules/axios')) {
+            return 'vendor';
+          }
         },
       },
     },

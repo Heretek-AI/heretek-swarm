@@ -23,8 +23,8 @@ from typing import Any
 
 import structlog
 
-from research.consciousness.fep_active_inference import FEPResult, FreeEnergyCalculator
-from research.consciousness.iit_phi import PhiCalculator
+from heretek_swarm.consciousness.fep_active_inference import FEPResult, FreeEnergyCalculator
+from heretek_swarm.consciousness.iit_phi import PhiCalculator
 
 logger = structlog.get_logger("ConsciousnessMetrics")
 

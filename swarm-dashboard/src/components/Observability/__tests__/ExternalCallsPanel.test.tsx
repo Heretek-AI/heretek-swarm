@@ -29,6 +29,7 @@ const mockWsInstance = {
 };
  
 class MockWebSocket {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(_url: string | URL) {
     return mockWsInstance;
   }

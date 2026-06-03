@@ -27,7 +27,7 @@ from typing import Any
 
 import structlog
 
-from research.consciousness.agency_metrics import (
+from heretek_swarm.consciousness.agency_metrics import (
     ActionOrigin,
     AgencyLevel,
     AgencyMetricsCalculator,

@@ -20,7 +20,7 @@ from typing import Any
 
 # Import cycle detector and phi training for metrics integration
 try:
-    from research.consciousness.phi_training import PhiTrainingEnvironment
+    from heretek_swarm.consciousness.phi_training import PhiTrainingEnvironment
     from heretek_swarm.workflow.engine import (
         get_cycle_detector_metrics,
     )
@@ -500,8 +500,8 @@ class SwarmMetricsCollector:
         """Collect consciousness metrics computed from IIT Phi and FEP calculators."""
         import structlog
 
-        from research.consciousness.fep_active_inference import FreeEnergyCalculator
-        from research.consciousness.iit_phi import PhiCalculator
+        from heretek_swarm.consciousness.fep_active_inference import FreeEnergyCalculator
+        from heretek_swarm.consciousness.iit_phi import PhiCalculator
 
         _log = structlog.get_logger(__name__)
 
