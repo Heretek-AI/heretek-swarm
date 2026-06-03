@@ -31,7 +31,7 @@ from heretek_swarm.actors.sentinel.immune import ImmuneResponseManager
 from heretek_swarm.actors.sentinel.safety import SafetyScanner
 from heretek_swarm.actors.sentinel.types import AnomalyAlert, SafetyLevel
 from heretek_swarm.actors.validation import validate_message
-from heretek_swarm.consensus.immune import (
+from heretek_swarm.security.immune import (
     ImmuneResponseBuilding,
     PatternClassification,
     ResponseOutcome,

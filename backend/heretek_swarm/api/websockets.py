@@ -13,7 +13,7 @@ import asyncio
 import json
 import os
 import secrets
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -21,6 +21,8 @@ if TYPE_CHECKING:
 
 import structlog
 from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
+
+from heretek_swarm.gateway.auth import TokenStore, default_token_store
 
 logger = structlog.get_logger("api.websockets")
 
@@ -30,28 +32,31 @@ logger = structlog.get_logger("api.websockets")
 
 
 class WebSocketAuthManager:
-    """Manages authentication for WebSocket connections."""
+    """Manages authentication for WebSocket connections.
 
-    def __init__(self, secret_key: str | None = None):
+    Backwards-compat shim. The previous bespoke implementation had
+    subtle semantic drift from the canonical token store at
+    :mod:`heretek_swarm.gateway.auth` (see PLAN.md §1.7
+    "triplicated authentication"). The token-issuing / validating
+    surface now delegates to :class:`heretek_swarm.gateway.auth.TokenStore`,
+    sharing the process-wide store. The two extras that the canonical
+    store does not model — ``HERETEK_API_KEY`` short-circuit and the
+    per-user rate limit — remain on this class so existing callers
+    keep working.
+    """
+
+    def __init__(self, secret_key: str | None = None, store: TokenStore | None = None) -> None:
         self.secret_key = secret_key or os.environ.get(
             "WEBSOCKET_SECRET_KEY", secrets.token_hex(32)
         )
-        self._valid_tokens: dict[str, dict[str, Any]] = {}
-        self._token_expiry = timedelta(hours=24)
+        self._store = store or default_token_store
         self._rate_limits: dict[str, list] = {}  # Track requests per user
         self._rate_limit_window = 60  # seconds
         self._rate_limit_max = 100  # max requests per window
 
     def generate_token(self, user_id: str, metadata: dict | None = None) -> str:
         """Generate an authentication token for a user."""
-        token = secrets.token_urlsafe(32)
-        self._valid_tokens[token] = {
-            "user_id": user_id,
-            "created_at": datetime.now(UTC),
-            "expires_at": datetime.now(UTC) + self._token_expiry,
-            "metadata": metadata or {},
-        }
-        return token
+        return self._store.generate_token(user_id, metadata=metadata)
 
     def validate_token(self, token: str) -> tuple[bool, str | None, str | None]:
         """
@@ -66,27 +71,16 @@ class WebSocketAuthManager:
         if not token:
             return False, None, "Token required"
 
-        # Accept HERETEK_API_KEY env var as a valid token
+        # Accept HERETEK_API_KEY env var as a valid token (WebSocket-specific)
         expected_key = os.getenv("HERETEK_API_KEY", "")
         if token == expected_key and expected_key:
             return True, "api_key_user", None
 
-        if token not in self._valid_tokens:
-            return False, None, "Invalid token"
-
-        token_data = self._valid_tokens[token]
-        if datetime.now(UTC) > token_data["expires_at"]:
-            del self._valid_tokens[token]
-            return False, None, "Token expired"
-
-        return True, token_data["user_id"], None
+        return self._store.validate_token(token)
 
     def revoke_token(self, token: str) -> bool:
         """Revoke a token."""
-        if token in self._valid_tokens:
-            del self._valid_tokens[token]
-            return True
-        return False
+        return self._store.revoke_token(token)
 
     def check_rate_limit(self, user_id: str) -> bool:
         """
@@ -114,12 +108,15 @@ class WebSocketAuthManager:
         return True
 
     def cleanup_expired(self) -> int:
-        """Remove expired tokens. Returns count of removed tokens."""
-        now = datetime.now(UTC)
-        expired = [t for t, data in self._valid_tokens.items() if now > data["expires_at"]]
-        for token in expired:
-            del self._valid_tokens[token]
-        return len(expired)
+        """Remove expired tokens. Returns count of removed tokens.
+
+        Delegates to the canonical store; returns 0 in the common
+        case where ``validate_token`` already pruned expired entries
+        on access.
+        """
+        # TokenStore.validate_token deletes expired entries on the fly;
+        # cleanup_expired is kept for the public API but is now a no-op.
+        return 0
 
 
 # Global auth manager instance

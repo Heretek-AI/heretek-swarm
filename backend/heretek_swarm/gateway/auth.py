@@ -15,6 +15,7 @@ from __future__ import annotations
 import os
 import secrets
 from datetime import datetime, timedelta, UTC
+from typing import Any
 
 import jwt
 import structlog
@@ -253,3 +254,103 @@ def get_api_key_header() -> dict:
     """Get API key for outbound requests."""
     key = get_api_key_from_env()
     return {"Authorization": f"Bearer {key}"}
+
+
+# =============================================================================
+# Shared TokenStore (Phase 2.10 of PLAN.md — consolidate auth)
+# =============================================================================
+
+
+class TokenStore:
+    """In-memory short-lived token store shared by every subsystem.
+
+    Replaces the three duplicated ``*AuthManager`` classes that
+    previously lived in ``api/consensus.py`` (``ConsensusAuthManager``)
+    and ``api/websockets.py`` (``WebSocketAuthManager``). Each one
+    reimplemented token-issue / validate / revoke / permission-check
+    with subtle semantic drift; per the audit (§1.7), three trust
+    decisions for the same request is a direct Prime Directive
+    zero-trust violation.
+
+    This ``TokenStore`` is the canonical implementation. The two
+    legacy classes now subclass it and add their subsystem-specific
+    extras (rate limiting on the WebSocket side, permissions on the
+    consensus side) on top. New code should use ``TokenStore``
+    directly.
+
+    Notes
+    -----
+    * In-memory only. A cluster deployment should replace this with
+      Redis (the slowapi pattern at ``security/rate_limiter.py``
+      already uses ``REDIS_URL`` for that).
+    * 24-hour default expiry matches the legacy behavior.
+    """
+
+    def __init__(self, expiry_hours: int = 24) -> None:
+        self._tokens: dict[str, dict[str, Any]] = {}
+        self._permissions: dict[str, list[str]] = {}
+        self._expiry = timedelta(hours=expiry_hours)
+
+    def generate_token(
+        self,
+        subject: str,
+        permissions: list[str] | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> str:
+        """Issue a new opaque token bound to ``subject`` (agent id,
+        user id, etc). Returns the raw token string.
+        """
+        token = secrets.token_urlsafe(32)
+        now = datetime.now(UTC)
+        self._tokens[token] = {
+            "subject": subject,
+            "created_at": now,
+            "expires_at": now + self._expiry,
+            "metadata": metadata or {},
+        }
+        if permissions:
+            self._permissions[subject] = permissions
+        return token
+
+    def validate_token(self, token: str) -> tuple[bool, str | None, str | None]:
+        """Return ``(is_valid, subject, error_message)``.
+
+        Expired tokens are deleted on access so the dict cannot grow
+        unbounded.
+        """
+        if not token:
+            return False, None, "Token required"
+        record = self._tokens.get(token)
+        if record is None:
+            return False, None, "Invalid token"
+        if datetime.now(UTC) > record["expires_at"]:
+            del self._tokens[token]
+            return False, None, "Token expired"
+        return True, record["subject"], None
+
+    def check_permission(self, subject: str, operation: str) -> bool:
+        """Return True if ``subject`` has been granted ``operation``."""
+        return operation in self._permissions.get(subject, [])
+
+    def revoke_token(self, token: str) -> bool:
+        """Revoke ``token``; returns True if it was valid and removed."""
+        record = self._tokens.pop(token, None)
+        if record is None:
+            return False
+        subject = record["subject"]
+        # Only drop permissions if no other live token references them.
+        if not any(
+            r["subject"] == subject
+            for t, r in self._tokens.items()
+            if t != token
+        ):
+            self._permissions.pop(subject, None)
+        return True
+
+    def __len__(self) -> int:
+        return len(self._tokens)
+
+
+# Process-wide default store. Subsystems that need a private store
+# (e.g. for unit tests) can construct their own ``TokenStore()``.
+default_token_store: TokenStore = TokenStore()

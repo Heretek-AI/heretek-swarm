@@ -26,7 +26,7 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.consensus.immune import (
+from heretek_swarm.security.immune import (
     ImmuneResponseBuilding,
     PatternClassification,
     ResponseOutcome,

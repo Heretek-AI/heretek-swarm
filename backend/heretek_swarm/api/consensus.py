@@ -14,8 +14,7 @@ SECURITY: All endpoints require authentication. Agent identity verification requ
 
 import asyncio
 import os
-import secrets
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from typing import Annotated, Any
 from uuid import uuid4
 
@@ -42,6 +41,7 @@ from heretek_swarm.consensus.tribunal import (
     RulingType,
     Tribunal,
 )
+from heretek_swarm.gateway.auth import TokenStore, default_token_store
 
 logger = structlog.get_logger("api.consensus")
 
@@ -82,58 +82,43 @@ security = HTTPBearer(auto_error=False)
 
 
 class ConsensusAuthManager:
-    """Manages authentication for consensus operations."""
+    """Manages authentication for consensus operations.
 
-    def __init__(self):
-        self._valid_tokens: dict[str, dict[str, Any]] = {}
-        self._token_expiry = timedelta(hours=24)
-        self._agent_permissions: dict[str, list[str]] = {}  # agent_id -> allowed operations
+    Backwards-compat shim. The previous bespoke implementation had
+    subtle semantic drift from the canonical token store at
+    :mod:`heretek_swarm.gateway.auth` (see PLAN.md §1.7
+    "triplicated authentication" — three trust decisions for the same
+    request was a direct zero-trust violation). This class now
+    delegates to :class:`heretek_swarm.gateway.auth.TokenStore` so
+    the three implementations share one source of truth. Existing
+    callers (``generate_token``, ``validate_token``,
+    ``check_permission``, ``revoke_token``) keep working.
+    """
+
+    def __init__(self, store: TokenStore | None = None) -> None:
+        # Default to the process-wide store. Tests can inject a private
+        # store by passing one in.
+        self._store = store or default_token_store
 
     def generate_token(self, agent_id: str, permissions: list[str] | None = None) -> str:
         """Generate an authentication token for an agent."""
-        token = secrets.token_urlsafe(32)
-        self._valid_tokens[token] = {
-            "agent_id": agent_id,
-            "created_at": datetime.now(UTC),
-            "expires_at": datetime.now(UTC) + self._token_expiry,
-        }
-        self._agent_permissions[agent_id] = permissions or ["vote", "create", "view"]
-        return token
+        return self._store.generate_token(agent_id, permissions=permissions)
 
     def validate_token(self, token: str) -> tuple[bool, str | None, str | None]:
-        """
-        Validate an authentication token.
+        """Validate an authentication token.
 
         Returns:
             Tuple of (is_valid, agent_id, error_message)
         """
-        if not token:
-            return False, None, "Token required"
-
-        if token not in self._valid_tokens:
-            return False, None, "Invalid token"
-
-        token_data = self._valid_tokens[token]
-        if datetime.now(UTC) > token_data["expires_at"]:
-            del self._valid_tokens[token]
-            return False, None, "Token expired"
-
-        return True, token_data["agent_id"], None
+        return self._store.validate_token(token)
 
     def check_permission(self, agent_id: str, operation: str) -> bool:
         """Check if agent has permission for operation."""
-        permissions = self._agent_permissions.get(agent_id, [])
-        return operation in permissions
+        return self._store.check_permission(agent_id, operation)
 
     def revoke_token(self, token: str) -> bool:
         """Revoke a token."""
-        if token in self._valid_tokens:
-            agent_id = self._valid_tokens[token]["agent_id"]
-            del self._valid_tokens[token]
-            if agent_id in self._agent_permissions:
-                del self._agent_permissions[agent_id]
-            return True
-        return False
+        return self._store.revoke_token(token)
 
 
 # Global auth manager instance

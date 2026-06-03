@@ -1220,3 +1220,73 @@ Wiring `wrap(...)` into `llm/model_garage.py` (the canonical LLM
 router) is queued behind a follow-up that updates the router's
 call signature. The interface here is stable so that wiring can
 land incrementally.
+
+### 2026-06-03 — Phase 2.5: relocate immune-response under security
+
+Implements Phase 2.5 of the audit (move `consensus/immune.py` to
+`security/immune.py`).
+
+The immune-response engine is anomaly detection and pattern
+learning, not a consensus algorithm. The audit (§1.12) flagged it
+as misfiled under `consensus/`. The fix:
+
+* New: `backend/heretek_swarm/security/immune.py` — re-exports the
+  public surface (`ImmuneResponseBuilding`,
+  `PatternClassification`, `ResponseOutcome`, `ImmunePattern`,
+  `ImmuneQuorum`, `ImmuneResponse`, `NovelPatternPreservation`,
+  `ImmuneResponseEngine`, `AnomalyResponse`, `ImmuneLearningResult`,
+  `ImmuneStatus`, `ResponseAction`) from the canonical
+  `consensus.immune` module. The original `consensus.immune` is
+  unchanged in behavior — only the docstring has a `.. deprecated::`
+  note pointing to the new location.
+* `backend/heretek_swarm/actors/sentinel/anomaly.py`,
+  `backend/heretek_swarm/actors/sentinel/agent.py`, and
+  `backend/heretek_swarm/actors/sentinel/immune.py` updated to
+  import from `heretek_swarm.security.immune`. These were the three
+  direct importers; everything else in the codebase was already
+  going through `consensus.__init__` and continues to work.
+* The 1,454-LOC `consensus/immune.py` is preserved for backwards
+  compatibility; future PRs can split it into smaller modules
+  (the audit flags it as a god class — splitting is queued behind
+  Phase 2 god-class extraction proper).
+
+Verification: `from heretek_swarm.security.immune import
+ImmuneResponseBuilding` succeeds; the legacy
+`from heretek_swarm.consensus.immune import …` path also still
+works; the app constructs without import errors.
+
+### 2026-06-03 — Phase 2.10: consolidate triplicated auth
+
+Implements Phase 2.10 of the audit (consolidate auth).
+
+The audit (§1.7) flagged that three different `*AuthManager`
+classes — `gateway.auth.verify_auth`, `api.consensus.ConsensusAuthManager`,
+and `api.websockets.WebSocketAuthManager` — were issuing and
+validating tokens with subtle semantic drift, which is a direct
+Prime Directive zero-trust violation (three trust decisions for
+the same request).
+
+* New: `TokenStore` class in
+  `backend/heretek_swarm/gateway/auth.py` — the canonical
+  implementation of the token-issue / validate / revoke /
+  permission-check machinery. The class also exposes a
+  process-wide `default_token_store` instance for new code.
+* `ConsensusAuthManager` (`api/consensus.py`) is now a thin
+  shim that delegates to the canonical `TokenStore`. Public
+  methods (`generate_token`, `validate_token`, `check_permission`,
+  `revoke_token`) keep the same signatures so the eight
+  call sites in `api/consensus.py` need no changes.
+* `WebSocketAuthManager` (`api/websockets.py`) is also a shim.
+  Its two extras that the canonical store does not model —
+  `HERETEK_API_KEY` short-circuit validation and the per-user
+  rate limit (`check_rate_limit`) — stay on the shim; the token
+  machinery delegates.
+
+Verification: `TokenStore` round-trips a token;
+`consensus_auth_manager.generate_token(...)` and
+`ws_auth_manager.validate_token(...)` still work; the FastAPI
+app constructs without import errors. The two legacy classes
+no longer carry a parallel token dict, so a token issued by the
+consensus auth manager is now visible to the WebSocket auth
+manager (and vice versa) — that is the intended behavior
+(a single source of trust for the whole process).

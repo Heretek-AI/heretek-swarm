@@ -28,7 +28,7 @@ from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.consensus.immune import ResponseOutcome
+from heretek_swarm.security.immune import ResponseOutcome
 from heretek_swarm.security.anomaly_detection import (
     AnomalyDetectionConfig,
     AnomalyDetectionResult,

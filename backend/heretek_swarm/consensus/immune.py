@@ -1,6 +1,14 @@
 """
 Immune Response Building Module for Heretek Swarm.
 
+.. deprecated::
+    This module lives in the wrong package. The immune-response
+    engine is anomaly detection and pattern learning, not a
+    consensus algorithm. It has moved to
+    :mod:`heretek_swarm.security.immune` per Phase 2.5 of PLAN.md
+    (§1.12 "4 consensus algorithms + immune" — immune is misfiled).
+    This file remains as a backwards-compat re-export.
+
 This module implements the "immune system" of the swarm - the ability to:
 - Learn from anomaly responses (like an immune system learning from infection)
 - Build persistent immunity to attack patterns
