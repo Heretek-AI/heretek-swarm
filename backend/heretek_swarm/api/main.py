@@ -586,6 +586,18 @@ app.middleware("http")(security_headers_middleware)
 setup_logging_middleware(app)
 logging_logger.info("Logging middleware configured")
 
+# Install slowapi-backed per-request rate limiter (Phase 1.5 of PLAN.md,
+# §3.1 Replace). The hand-rolled RateLimiter in security/ddos_protection.py
+# is retained for DDoS-pattern detection (sliding window, geo-anomaly,
+# mitigation) but the per-route token bucket is now slowapi's
+# moving-window strategy. Routes opt in via ``@limiter.limit("100/minute")``
+# in their handlers. The state is exposed on app.state.limiter for
+# middleware-style enforcement.
+from heretek_swarm.security.rate_limiter import install_rate_limiter  # noqa: E402
+
+install_rate_limiter(app)
+logging_logger.info("Rate limiter (slowapi) configured")
+
 
 # Register routers
 app.include_router(websockets.router)

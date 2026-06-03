@@ -9,6 +9,11 @@ Features:
 - Endpoint-specific limits
 - Redis-backed for distributed rate limiting
 - Graceful degradation when Redis unavailable
+
+Note (Phase 1.5 of PLAN.md, §3.1 Replace): the canonical limiter
+implementation now lives in :mod:`heretek_swarm.security.rate_limiter`.
+This module is the FastAPI app wiring layer; it delegates to that
+module so there is one source of truth.
 """
 
 import os
@@ -18,21 +23,18 @@ from collections.abc import Callable
 import structlog
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 from starlette.middleware.base import BaseHTTPMiddleware
+
+from heretek_swarm.security.rate_limiter import install_rate_limiter, limiter
 
 logger = structlog.get_logger(__name__)
 
-# Try to import slowapi
-try:
-    from slowapi import Limiter
-    from slowapi.errors import RateLimitExceeded
-    from slowapi.util import get_remote_address
-
-    SLOWAPI_AVAILABLE = True
-except ImportError:
-    SLOWAPI_AVAILABLE = False
-    Limiter = None
-    logger.warning("slowapi not installed - rate limiting disabled")
+# Backwards-compat flag for code that still imports ``SLOWAPI_AVAILABLE``
+# from this module. Now that slowapi is a base dependency, this is
+# always True; the flag is kept to avoid breaking older imports.
+SLOWAPI_AVAILABLE = True
 
 
 class InMemoryRateLimiter:
@@ -288,41 +290,31 @@ def setup_rate_limiting(app: FastAPI, enabled: bool = True) -> None:
     Args:
         app: FastAPI application
         enabled: Whether rate limiting is enabled
+
+    Notes
+    -----
+    Delegates to :func:`heretek_swarm.security.rate_limiter.install_rate_limiter`
+    so the canonical limiter instance lives in one place. The
+    ``REDIS_URL`` env var is honored here (where the app's config
+    surface lives) rather than in the security module.
     """
     if not enabled:
         logger.info("rate_limiting_disabled")
         return
 
-    if SLOWAPI_AVAILABLE:
-        # Use slowapi for production
-        limiter = Limiter(
-            key_func=get_remote_address,
-            default_limits=[RATE_LIMITS["default"]],
-            storage_uri=os.getenv("REDIS_URL", "memory://"),
-        )
+    # Configure the process-wide limiter's storage URI from REDIS_URL
+    # if provided. This must happen before install_rate_limiter is
+    # called so the first request sees the configured backend.
+    redis_url = os.getenv("REDIS_URL")
+    if redis_url:
+        # slowapi/limits accept the redis:// scheme directly
+        try:
+            limiter._storage_uri = redis_url  # type: ignore[attr-defined]
+        except Exception:  # pragma: no cover - defensive
+            logger.debug("limiter_storage_uri_set_failed", redis_url=redis_url)
 
-        app.state.limiter = limiter
-
-        # Add exception handler
-        @app.exception_handler(RateLimitExceeded)
-        async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
-            return JSONResponse(
-                status_code=429,
-                content={
-                    "error": "Rate limit exceeded",
-                    "detail": str(exc.detail),
-                },
-            )
-
-        logger.info("rate_limiting_enabled", backend="slowapi")
-    else:
-        # Use in-memory middleware
-        app.add_middleware(
-            RateLimitMiddleware,
-            default_limit=RATE_LIMITS["default"],
-            enabled=True,
-        )
-        logger.info("rate_limiting_enabled", backend="memory")
+    install_rate_limiter(app)
+    logger.info("rate_limiting_enabled", backend="slowapi")
 
 
 # Decorator for custom rate limits on endpoints
