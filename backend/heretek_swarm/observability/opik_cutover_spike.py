@@ -71,6 +71,7 @@ from __future__ import annotations
 
 from opik import track
 
+
 # ---------------------------------------------------------------------------
 # Spike: wrap the LLM call path with @opik.track
 # ---------------------------------------------------------------------------
