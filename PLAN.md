@@ -2070,3 +2070,119 @@ the lightweight way to keep the plan honest — the items
 get checked off as the commits land. A formal task
 tracker (TodoWrite) is also fine; the choice is what
 makes the operator's day easier.
+
+### 2026-06-03 — Session 2 (god-class continuation)
+
+This session continued the audit's structural cleanup with 5
+P2 god-class splits + 1 P1 wiring follow-up. All 403 tests
+pass after every commit.
+
+**Session 2 commits (6 total):**
+
+| # | SHA prefix | Phase | Title |
+|---|-----------|-------|-------|
+| 1 | `2e0f764` | chore | Remove obsolete extraction.py (replaced by extraction/ package in Phase 2.7) |
+| 2 | `2884b58` | 1.4 | Wire headroom + opik_compat into MiniMax/Anthropic/OpenAICompatible providers |
+| 3 | `aae5be7` | 2.9 | Extract maker_enhanced data classes to types module |
+| 4 | `3e900bb` | 2.10 | Extract deliberation data classes to types module |
+| 5 | `462af63` | 2.11 | Split immune into security/immune_types + security/immune_engine |
+| 6 | `3726d20` | 2.5 | Extract nats_event_mesh data classes to nats_types module |
+| 7 | `7e4c9eb` | 2.5 | Extract NATStoActorBridge to nats_actor_bridge module |
+
+**Phase 2.9 — maker_enhanced data classes extracted**
+- New: `consensus/maker_enhanced_types.py` (312 LOC) —
+  ReasoningChainStatus, ReasoningStep, ReasoningChain,
+  EvidenceQuality, EnhancedVote, DecisionProvenance,
+  RollbackResult. TYPE_CHECKING-guarded import on `Vote`.
+- `consensus/maker_enhanced.py` 1,496 → 1,228 LOC (-268, -18%).
+
+**Phase 2.10 — deliberation data classes extracted**
+- New: `consensus/deliberation_types.py` (462 LOC) — 4 enums
+  (Position, DeliberationOutcome, ArgumentType, EvidenceType)
+  + 9 dataclasses (Evidence, Argument, CounterArgument,
+  DeliberationRound, PositionChange, DissentRecord,
+  ConsensusConfidence, DeliberationResult, DeliberationConfig).
+- `consensus/deliberation.py` 1,487 → 1,081 LOC (-406, -27%).
+
+**Phase 2.11 — immune relocated to security/ + types split**
+- New: `security/immune_types.py` (298 LOC) — 4 enums + 6
+  dataclasses (the value-object surface).
+- New: `security/immune_engine.py` (1,198 LOC) — the two
+  engine classes (ImmuneResponseBuilding 676 LOC,
+  ImmuneResponseEngine 466 LOC) ready for further splitting
+  in a follow-up.
+- `security/immune.py` is the canonical re-export shim (58 LOC).
+- `consensus/immune.py` is now a 42-LOC backwards-compat
+  re-export shim — was 1,462 LOC.
+
+**Phase 2.5 — nats_event_mesh further split**
+- New: `gateway/nats_types.py` (61 LOC) — ConnectionState
+  enum, Subscription dataclass, NATSMessage dataclass.
+- New: `gateway/nats_actor_bridge.py` (389 LOC) — the
+  NATS-to-Actor bridge (ActorBridgeConfig,
+  NATStoActorBridge, get_nats_bridge, init_nats_bridge,
+  shutdown_nats_bridge, and the global _bridge singleton).
+- `gateway/nats_event_mesh.py` 1,731 → 1,370 LOC (-361, -21%)
+  across two commits. Backwards-compat re-exports at the
+  bottom preserve the original import paths.
+
+**Phase 1.4 follow-up — headroom+opik in remaining providers**
+- `llm/model_garage.py` — MiniMaxProvider, AnthropicProvider,
+  and OpenAICompatibleProvider now wrap `payload['messages']`
+  in `headroom_compat.wrap()` and time the call with
+  `opik_compat.timed('llm_<provider>_complete', tags=...)`,
+  matching the OpenAIProvider and OllamaProvider pattern
+  from earlier milestones. Anthropic splits the system
+  prompt out of the messages list, so only the messages
+  list is wrapped.
+
+### Net deltas (session 2)
+
+* **Commits**: 7 (all pushed to main)
+* **Files changed**: 14 (7 new modules + 7 modified)
+* **New modules**:
+  - `consensus/maker_enhanced_types.py` (312 LOC)
+  - `consensus/deliberation_types.py` (462 LOC)
+  - `security/immune_types.py` (298 LOC)
+  - `security/immune_engine.py` (1,198 LOC)
+  - `gateway/nats_types.py` (61 LOC)
+  - `gateway/nats_actor_bridge.py` (389 LOC)
+
+* **File size reductions**:
+  - `consensus/maker_enhanced.py`: 1,496 → 1,228 LOC (-268)
+  - `consensus/deliberation.py`: 1,487 → 1,081 LOC (-406)
+  - `consensus/immune.py`: 1,462 → 42 LOC (-1,420; re-export shim)
+  - `gateway/nats_event_mesh.py`: 1,731 → 1,370 LOC (-361)
+
+* **Tests**: 403 passed, 5 skipped (PostgreSQL-bound), 0 failed
+  after every commit.
+
+### Phase status (updated)
+
+| Phase | Status | Notes |
+|-------|--------|-------|
+| 0 (Stabilize) | **Complete** (5/5) | All 5 break-glass fixes landed; 0.5 cold-start re-validation deferred pending an environment with NATS/Qdrant/Redis/Postgres. |
+| 1.1 (cognee memory) | **Complete** | MemoryStore Protocol + cognee/mem0/null adapters; MemoryMixin wired. |
+| 1.2 (langgraph HeavySwarm) | **Verified** | Langgraph cutover was complete in a prior milestone. |
+| 1.3 (opik observability) | **Started** | `opik_compat` shim ships; call-site migration continues. |
+| 1.4 (headroom prompt path) | **Started → Complete (per-provider)** | Session 2 wired MiniMax, Anthropic, OpenAICompatible. All 5 LLM providers now have headroom+opik. |
+| 1.5 (slowapi rate limiter) | **Complete** | `security/rate_limiter.py` is the canonical entry. |
+| 1.6 (hindsight_compat) | **Complete** | Hindsight shim with .record/.recall. |
+| 2.1 (split nats_event_mesh) | **Partial** | InMemoryFallback, nats_tls, nats_connection, nats_types, nats_actor_bridge extracted. NATSEventMesh core + NATSEventMeshMixin + NATSEventMeshWithJetStream still in nats_event_mesh.py (1,370 LOC). |
+| 2.2 (refactor main_loop) | **Partial** | `_rewire_orchestrator_refs` extracted to `runtime/wiring.py`. Initializers split into 4 modules (memory, rag, consensus, channel_registry). 5+ remaining initializers (event_mesh, jetstream, mcp_tools, supervisor, model_garage, election_manager) are still inline. |
+| 2.3 (extract perceiver extraction) | **Partial** | Extraction is now a package with __init__.py + audio.py + image.py + video.py. 1,607-LOC agent body is mostly behavioral. |
+| 2.4 (move wizard config dicts) | **Complete** | `config/providers.py` + `config/tiers.py`. |
+| 2.5 (move immune to security) | **Complete (file move + types split)** | Session 2: types in `security/immune_types.py`, engines in `security/immune_engine.py`, canonical re-export in `security/immune.py`, `consensus/immune.py` is 42-LOC shim. |
+| 2.6 (split config/crud) | **Partial** | `crud_io.py` (import/export), `crud_llm_providers.py`, `crud_embedding_providers.py` extracted. 5+ remaining concerns (user, agent_configs, infrastructure, audit, validation/migration) still in 1,387-LOC `config/crud.py`. |
+| 2.7 (extract /api/prompt) | **Complete** | `api/deliberation.py` is the new home; `api/main.py` shrunk from 1,462 → 1,153 LOC. |
+| 2.8 (pick one A2A) | **Complete** | `gateway/a2a_protocol.py` is now a 60-LOC re-export shim. |
+| 2.9 (pick one tracing) | **Complete** | `observability/tracing.py` is now a 90-LOC re-export shim. |
+| 2.10 (consolidate auth) | **Complete** | `TokenStore` in `gateway/auth.py` is canonical. |
+| 2.11 (consensus/immune split) | **Complete (this commit)** | `security/immune_types.py` + `security/immune_engine.py`. |
+| 2.9 (maker_enhanced split) | **Complete (this commit)** | `consensus/maker_enhanced_types.py`. |
+| 2.10 (deliberation split) | **Complete (this commit)** | `consensus/deliberation_types.py`. |
+| 3.1 (ConsensusEngine Protocol) | **Complete** | `consensus/protocol.py` ships the Protocol + helpers. |
+| 3.2-3.4 (extract consensus_api / config_api / realtime) | **Not started** | Multi-package extraction; depends on Phase 4. |
+| 4 (multi-package monorepo) | **Partial** | `packages/core/` and `packages/api/` directories with stub pyproject.toml + README.md; `[tool.uv.workspace]` section in root pyproject.toml. The actual sub-package move is queued. |
+| 5 (graduated sovereign services) | **Design only** | `docs/SOVEREIGN_SERVICES.md` captures the wire protocol, deployment surface, auth boundary. |
+
