@@ -1,5 +1,17 @@
 # pyphi + pymdp spike — Phase 3C of the OSS roadmap
 
+## Decision (2026-06-04)
+
+**Keep the in-house 3,149-LOC code (Option 1).** Defer the
+pyphi/pymdp migration indefinitely — upstream pyphi has not
+released since 2019 and shows no signs of activity. Revisit only
+if a maintained pyphi-2 or viable pymdp path appears.
+
+A 6-month re-check is scheduled (cron) to re-verify upstream
+status; if nothing has changed by then, the in-house code remains
+the canonical IIT/FEP path per the plan's "what stays in-house"
+section.
+
 ## Purpose
 
 Validate that **pyphi** (https://github.com/wmayner/pyphi,
