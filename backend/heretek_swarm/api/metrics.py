@@ -32,45 +32,11 @@ from heretek_swarm.observability.prometheus_native import (
     export_prometheus,
     read_metric_samples,
     read_metric_value,
-    record_free_energy,
-    record_health_score,
-    record_phi_score,
 )
 
 logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api/metrics", tags=["metrics"])
-
-
-def sync_with_swarm_collector(collector: SwarmMetricsCollector) -> None:
-    """Synchronize Prometheus metrics with the SwarmMetricsCollector.
-
-    Call this periodically or on metrics collection to keep
-    Prometheus metrics in sync with the internal metrics.
-
-    Args:
-        collector: The SwarmMetricsCollector instance
-    """
-    # Collect swarm metrics
-    swarm_data = collector.collect_swarm_metrics()
-    consciousness_data = collector.collect_consciousness_metrics()
-
-    # Update health score (native module-level helper)
-    record_health_score(swarm_data.health_score)
-
-    # Update consciousness metrics
-    for agent_id, phi_score in consciousness_data.agent_phi_scores.items():
-        record_phi_score(agent_id, phi_score)
-
-    for agent_id, fep_score in consciousness_data.agent_fep_scores.items():
-        record_free_energy(agent_id, fep_score)
-
-    # Aggregate phi and free energy for the swarm
-    if consciousness_data.phi_avg > 0:
-        record_phi_score("swarm_avg", consciousness_data.phi_avg)
-
-    if consciousness_data.free_energy_avg > 0:
-        record_free_energy("swarm_avg", consciousness_data.free_energy_avg)
 
 
 @router.get(
@@ -126,13 +92,6 @@ async def get_prometheus_metrics_endpoint() -> Response:
         PlainTextResponse: Metrics in Prometheus text exposition format
     """
     try:
-        # Sync with swarm metrics collector if available
-        try:
-            collector = get_metrics_collector()
-            sync_with_swarm_collector(collector)
-        except Exception as e:
-            logger.warning("Failed to sync with swarm collector", error=str(e))
-
         # Export via the native module-level helper. ``export_prometheus``
         # returns ``(bytes, str)`` — body and content_type in one call.
         metrics_output, content_type = export_prometheus()
