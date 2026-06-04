@@ -285,7 +285,7 @@ Docker Compose defaults are pre-configured in `.env.example` — for local devel
 
 ---
 
-## Technical Debt Overview (M010 Audit)
+## Technical Debt Overview
 
 A comprehensive audit scanned **612 files** across 4 scan roots (backend, frontend, tests, infrastructure). After deduplication of 460 raw findings, **50 canonical findings** were produced: 22 critical, 15 moderate, 13 minor across 6 domains.
 
@@ -321,7 +321,7 @@ All 50 findings carry file:line references. The full findings catalog is at `.gs
 
 ---
 
-## API Audit Summary (M010)
+## API Audit Summary
 
 A three-phase pipeline enumerated **83 frontend API call sites** from 12 source files, live-tested all 83 against the running backend at `localhost:8000`, and cross-referenced against **345 backend routes** from 33 router files.
 
@@ -354,12 +354,12 @@ Full audit artifact: `.gsd/audit/api-audit.json`. Inventory: `.gsd/audit/api-inv
 
 ---
 
-## Architecture Verification (M010)
+## Architecture Verification
 
-S01 produced a canonical architecture map (`.gsd/milestones/M010/M010-RESEARCH.md`, 714 lines, 11 sections) with:
+The architecture was audited with:
 - **23 actor classes** with exact file:line references and parent chains
 - **10 mixins** with dependency analysis and fail-fast guard documentation
-- **27 API routers** with 175+ endpoint handlers
+- **27 API routers** with 175+ endpoint handlers (router count lowered after the Phase 2A.3 opik cutover deleted 5 of 8 `api/observability` routers)
 - **6 Docker Compose containers (7 logical services)** with health check topology
 - **93 React components** across 12 feature domains
 - **36+ file:line references** grounding every claim in real code
@@ -378,4 +378,4 @@ S01 produced a canonical architecture map (`.gsd/milestones/M010/M010-RESEARCH.m
 
 **License:** Apache 2.0
 
-*Last Updated: 2026-05-29 — M010-M029 Audit & Remediation — Phase 1-2 Complete*
+*Last Updated: 2026-05-29 — Phase 1-2 Audit & Remediation Complete; Phase 2A.3 opik cutover (2026-06-04) — see `docs/ARCHITECTURE.md`*

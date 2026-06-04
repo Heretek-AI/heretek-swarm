@@ -1,10 +1,8 @@
 # Heretek Swarm Architecture
 
-> **M010 Audit Alignment:** This document has been verified against the M010 full architecture audit (2026-05-10). All paths, actor counts (23), mixin counts (10), API router counts (27), and service topology references match the canonical M010-RESEARCH.md findings. No stale paths; no structural reorganizations needed.
-
-**Version:** 2.2.0
-**Date:** 2026-06-10
-**Status:** Production-Ready — M001 Complete (mem0 embedded, 7 logical services)
+**Version:** 2.3.0
+**Date:** 2026-06-04
+**Status:** Production-Ready — M001 Complete (mem0 embedded, 7 logical services); Phase 2A.3 opik cutover applied (deleted 5 of 8 `api/observability` routers, 3 observability wrappers, 1 plugin; see "Observability" section below)
 
 ---
 
