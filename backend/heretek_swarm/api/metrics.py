@@ -145,7 +145,8 @@ async def get_metrics_json(authenticated: str = Depends(verify_auth)):
     Phase 2A.3 cutover: the JSON is read directly from the
     prometheus-native module's metric objects (which are the
     canonical store post-Phase-2A.1). The shape is slightly
-    different from the legacy ``SwarmMetricsCollector.to_dict()``
+    different from the legacy :class:`SwarmMetricsCollector`
+    that previously owned this endpoint (deleted in commit 9)
     — this endpoint is for debugging only.
 
     Per-agent metrics (``phi_score``, ``free_energy``) report an

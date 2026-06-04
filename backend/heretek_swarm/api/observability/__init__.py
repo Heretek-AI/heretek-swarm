@@ -1,20 +1,24 @@
 """
-Observability API subpackage - LLM Tracing and Agent Monitoring
+Observability API subpackage.
 
-Provides endpoints for:
-- LLM call traces
-- Tool call traces
-- Agent message traces
-- Real-time streaming via WebSocket
-- Swarm health metrics
-- Consciousness metrics (IIT Phi, FEP)
-- External call logs
-- Message replay & time travel debugging
+Phase 2A.3 cutover: the package used to mount 8 sub-routers backed
+by the deleted ``observability.metrics`` module
+(:class:`SwarmMetricsCollector` / :class:`RealTimeMetricsStream`).
+Six of the eight routers (alerts, consciousness, stream, swarm,
+traces) are deleted in commit 9 because they were 1:1 wrappers
+around the collector. The package now mounts only the two
+production-surviving routers (``events`` for replay, ``external_calls``
+for the call log) plus the shared glue (DB session factory,
+WebSocket connection manager, rate limiter, zero-trust validator,
+and Pydantic models for the replay endpoints).
+
+The ``get_replay_manager()`` helper that used to live here is
+relocated to ``heretek_swarm.gateway.message_replay``.
 """
 
-import asyncio
+from __future__ import annotations
+
 import os
-import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -24,39 +28,24 @@ from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.observability.metrics import (
-    RealTimeMetricsStream,
-    SwarmMetricsCollector,
-)
-from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult, ZeroTrustValidator
+from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger(__name__)
 
 # =============================================================================
-# Module-Level Globals
+# Rate limiting state (used by external_calls.py)
 # =============================================================================
 
-# In-memory trace storage (in production, use database)
-_traces: dict[str, list[Any]] = {}
-
-# Metrics collector and stream instances
-_metrics_collector: SwarmMetricsCollector | None = None
-_metrics_stream: RealTimeMetricsStream | None = None
-_zero_trust: ZeroTrustValidator | None = None
-
-# Rate limiting state
 _rate_limit_state: dict[str, list[datetime]] = {}
 RATE_LIMIT_REQUESTS = 100  # requests per minute
 RATE_LIMIT_WINDOW = 60  # seconds
 
-# External call log database session factory
+# External call log database session factory (used by external_calls.py)
 _external_call_log_session_factory: async_sessionmaker[AsyncSession] | None = None
 _external_call_log_engine: Any = None
 
-
-# =============================================================================
-# Helper Functions
-# =============================================================================
+# Zero trust validator singleton (used by external_calls.py)
+_zero_trust: ZeroTrustValidator | None = None
 
 
 def _get_external_call_log_session_factory() -> async_sessionmaker[AsyncSession]:
@@ -90,22 +79,6 @@ def _get_external_call_log_session_factory() -> async_sessionmaker[AsyncSession]
         )
         logger.info("ExternalCallLog database session factory initialized")
     return _external_call_log_session_factory
-
-
-def get_metrics_collector() -> SwarmMetricsCollector:
-    """Get or create the metrics collector singleton."""
-    global _metrics_collector
-    if _metrics_collector is None:
-        _metrics_collector = SwarmMetricsCollector()
-    return _metrics_collector
-
-
-def get_metrics_stream() -> RealTimeMetricsStream:
-    """Get or create the metrics stream singleton."""
-    global _metrics_stream
-    if _metrics_stream is None:
-        _metrics_stream = RealTimeMetricsStream(get_metrics_collector())
-    return _metrics_stream
 
 
 def get_zero_trust() -> ZeroTrustValidator:
@@ -152,42 +125,12 @@ def validate_input(validator: ZeroTrustValidator, data: Any, context: str) -> No
 
 
 # =============================================================================
-# Helper Classes
+# ConnectionManager (used by external_calls.py for websocket broadcast)
 # =============================================================================
 
 
-class TraceEvent:
-    """A trace event for observability."""
-
-    def __init__(
-        self,
-        event_type: str,
-        agent_id: str,
-        data: dict[str, Any],
-        timestamp: datetime | None = None,
-        duration: float | None = None,
-    ):
-        self.id = f"{event_type}-{agent_id}-{datetime.now(UTC).timestamp()}"
-        self.event_type = event_type  # 'llm_call', 'tool_call', 'agent_message'
-        self.agent_id = agent_id
-        self.data = data
-        self.timestamp = timestamp or datetime.now(UTC)
-        self.duration = duration
-
-    def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary for JSON serialization."""
-        return {
-            "id": self.id,
-            "type": self.event_type,
-            "agent_id": self.agent_id,
-            "timestamp": self.timestamp.isoformat(),
-            "duration": self.duration,
-            "data": self.data,
-        }
-
-
 class ConnectionManager:
-    """Manage WebSocket connections for real-time trace streaming."""
+    """Manage WebSocket connections for real-time observability event broadcast."""
 
     def __init__(self):
         self.active_connections: dict[str, WebSocket] = {}
@@ -203,20 +146,11 @@ class ConnectionManager:
             del self.active_connections[agent_id]
             logger.info("websocket_disconnected", agent_id=agent_id)
 
-    async def broadcast_trace(self, trace: TraceEvent, agent_id: str):
-        """Broadcast trace to all connections for an agent."""
-        if agent_id in self.active_connections:
-            websocket = self.active_connections[agent_id]
-            try:
-                await websocket.send_json(trace.to_dict())
-            except Exception as e:
-                logger.error("websocket_send_failed", agent_id=agent_id, error=str(e))
-
     async def broadcast_observability(self, data: dict[str, Any]):
         """Broadcast observability update to all connections.
 
         Broadcasts to all active WebSocket connections regardless of agent.
-        Used for external call logs, metrics, and other observability events.
+        Used for external call logs and other observability events.
         """
         disconnected: set[WebSocket] = set()
         for agent_id, websocket in self.active_connections.items():
@@ -238,36 +172,7 @@ connection_manager = ConnectionManager()
 
 
 # =============================================================================
-# Replay Manager (shared state for events.py)
-# =============================================================================
-
-_replay_manager: Any | None = None
-
-
-def get_replay_manager() -> Any | None:
-    """Get or create the replay manager."""
-    global _replay_manager
-    if _replay_manager is None:
-        try:
-            from heretek_swarm.gateway.jetstream_manager import get_jetstream_manager
-            from heretek_swarm.gateway.message_replay import get_replay_manager as get_rm
-            from heretek_swarm.state.event_store import get_event_store
-
-            js_manager = get_jetstream_manager()
-            event_store = get_event_store()
-            _replay_manager = get_rm()
-
-            # Setup with dependencies
-            _replay_manager._js_manager = js_manager
-            _replay_manager._event_store = event_store
-
-        except ImportError:
-            return None
-    return _replay_manager
-
-
-# =============================================================================
-# Pydantic Models (shared across submodules)
+# Pydantic Models (shared across submodules, used by events.py)
 # =============================================================================
 
 
@@ -343,22 +248,12 @@ class TimeTravelResponse(BaseModel):
 
 router = APIRouter(prefix="/api/observability", tags=["observability"])
 
-# Import submodule routers and include them.
-# These imports happen at the bottom so submodules can access shared globals
-# from this package via absolute imports.
+# Import submodule routers and include them. The imports happen at the
+# bottom so submodules can access shared globals from this package via
+# absolute imports.
 
-from .alerts import router as _alerts_router
-from .consciousness import router as _consciousness_router
 from .events import router as _events_router
 from .external_calls import router as _external_calls_router
-from .stream import router as _stream_router
-from .swarm import router as _swarm_router
-from .traces import router as _traces_router
 
-router.include_router(_swarm_router)
-router.include_router(_consciousness_router)
-router.include_router(_stream_router)
-router.include_router(_alerts_router)
-router.include_router(_traces_router)
 router.include_router(_external_calls_router)
 router.include_router(_events_router)

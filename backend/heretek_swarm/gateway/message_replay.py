@@ -666,11 +666,30 @@ class MessageReplayManager:
 _replay_manager: MessageReplayManager | None = None
 
 
-def get_replay_manager() -> MessageReplayManager:
-    """Get or create the replay manager singleton."""
+def get_replay_manager() -> MessageReplayManager | None:
+    """Get or create the replay manager singleton.
+
+    Phase 2A.3 cutover: this used to live in
+    ``api/observability/__init__.py``; relocated to ``gateway.message_replay``
+    so the api package stops depending on the deleted SwarmMetricsCollector
+    (it lived in the same __init__.py and forced the import order).
+
+    On first call, the manager is created and (if available) wired up
+    with the JetStream manager and event store. Returns ``None`` if the
+    optional dependencies are missing in the test environment.
+    """
     global _replay_manager
     if _replay_manager is None:
         _replay_manager = MessageReplayManager()
+        try:
+            from heretek_swarm.gateway.jetstream_manager import get_jetstream_manager
+            from heretek_swarm.state.event_store import get_event_store
+
+            _replay_manager._js_manager = get_jetstream_manager()
+            _replay_manager._event_store = get_event_store()
+        except ImportError:
+            # Some test environments don't have these wired up.
+            pass
     return _replay_manager
 
 
