@@ -268,51 +268,40 @@ class AutonomousSwarm:
         logger.info("autonomous_swarm_fully_initialized", event_mesh_type="StubEventMesh")
 
     async def _initialize_channel_registry(self) -> None:
-        try:
-            self.channel_registry = ChannelRegistry()
-            self.group_registry = GroupRegistry(self.channel_registry)
-            logger.info("channel_registry_initialized")
-        except Exception as exc:
-            logger.warning("channel_registry_init_failed", error=str(exc))
-            self.channel_registry = None
-            self.group_registry = None
+        """Wire the channel + group registries.
+
+        Thin delegate to
+        :func:`heretek_swarm.runtime.initializers.channel_registry.initialize_channel_registry`
+        (Phase 2.6 of PLAN.md).
+        """
+        await _init_channel_registry(self)
 
     async def _initialize_memory(self) -> None:
-        try:
-            self._cognee_reader = CogneeMemoryReader()
-            self._cognee_writer = CogneeMemoryWriter()
-            reader_ok = await self._cognee_reader.health()
-            writer_ok = await self._cognee_writer.health()
-            logger.info(
-                "cognee_memory_initialized",
-                reader_ok=reader_ok,
-                writer_ok=writer_ok,
-            )
-        except Exception as exc:
-            logger.warning("cognee_memory_init_failed", error=str(exc))
-            self._cognee_reader = None
-            self._cognee_writer = None
+        """Wire the cognee memory reader + writer.
+
+        Thin delegate to
+        :func:`heretek_swarm.runtime.initializers.memory.initialize_memory`
+        (Phase 2.6 of PLAN.md).
+        """
+        await _init_memory(self)
 
     async def _initialize_rag(self) -> None:
-        try:
-            self.rag = get_rag_retriever()
-            logger.info("cognee_rag_retriever_initialized")
-        except Exception as exc:
-            logger.warning("rag_init_failed", error=str(exc))
-            self.rag = None
+        """Wire the cognee RAG retriever.
+
+        Thin delegate to
+        :func:`heretek_swarm.runtime.initializers.rag.initialize_rag`
+        (Phase 2.6 of PLAN.md).
+        """
+        await _init_rag(self)
 
     async def _initialize_consensus(self) -> None:
-        try:
-            consensus_config = self.config.get("consensus", {})
-            self.consensus = MAKERConsensus(
-                ahead_by_k=consensus_config.get("ahead_by_k", 2),
-                min_votes=consensus_config.get("min_votes", 3),
-                confidence_threshold=consensus_config.get("red_flag_threshold", 0.3),
-            )
-            logger.info("maker_consensus_initialized")
-        except Exception as exc:
-            logger.warning("consensus_init_failed", error=str(exc))
-            self.consensus = None
+        """Wire the MAKERConsensus engine.
+
+        Thin delegate to
+        :func:`heretek_swarm.runtime.initializers.consensus.initialize_consensus`
+        (Phase 2.6 of PLAN.md).
+        """
+        await _init_consensus_engine(self)
 
     async def _initialize_event_mesh(self) -> None:
         try:
