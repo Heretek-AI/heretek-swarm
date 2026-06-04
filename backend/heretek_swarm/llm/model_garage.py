@@ -36,38 +36,37 @@ from heretek_swarm.llm.headroom_compat import (
     unwrap as _headroom_unwrap,
     wrap as _headroom_wrap,
 )
-from heretek_swarm.observability.opik_compat import (
-    OPIK_AVAILABLE as _OPIK_AVAILABLE,
-    OPIK_ENABLED as _OPIK_ENABLED,
-    alert as _opik_alert,
-    log_span as _opik_log_span,
-    timed as _opik_timed,
-    timed_decorator as _opik_timed_decorator,
-    track_metric as _opik_track_metric,
-)
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient, instrumented_httpx_client
+from heretek_swarm.observability.prometheus_native import record_external_call_duration
 
-# Phase 1.3 follow-up: when OPIK_ENABLED is True, opik.track is
-# applied to the 5 LLM provider complete() methods below. The
-# decorator is a no-op when the opik package is missing or
-# OPIK_ENABLED=0; when enabled, opik captures the call as a
-# 'llm' span for the Opik Agent Optimizer + Guardrails
-# integration. The decorator is a no-op stub when opik is
-# unavailable so the class definitions stay valid in every
-# environment.
+# Phase 2A.3 cutover: OPIK_AVAILABLE / OPIK_ENABLED are computed
+# locally (the opik_compat shim is deleted in commit 9). Real
+# opik is optional — the @_opik_track_llm decorator becomes a
+# no-op when the opik package is missing or OPIK_ENABLED=0; when
+# enabled, opik captures the call as a 'llm' span for the Opik
+# Agent Optimizer + Guardrails integration.
 try:
     import opik as _opik  # type: ignore[import-untyped]
 
-    def _opik_track_llm(func):
-        """Apply opik.track with type='llm' when OPIK_ENABLED."""
-        if _OPIK_ENABLED:
-            return _opik.track(name=func.__qualname__, type="llm")(func)
-        return func
+    _OPIK_AVAILABLE = True
 except ImportError:
     _opik = None  # type: ignore[assignment]
+    _OPIK_AVAILABLE = False
 
-    def _opik_track_llm(func):  # type: ignore[no-redef]
-        return func
+import os
+
+_OPIK_ENABLED = _OPIK_AVAILABLE and os.getenv("OPIK_ENABLED", "1").lower() in (
+    "1",
+    "true",
+    "yes",
+)
+
+
+def _opik_track_llm(func):
+    """Apply opik.track with type='llm' when OPIK_ENABLED."""
+    if _OPIK_ENABLED:
+        return _opik.track(name=func.__qualname__, type="llm")(func)
+    return func
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
@@ -390,11 +389,20 @@ class OpenAIProvider(LLMProvider):
             payload = request.to_dict()
             payload["model"] = model
 
-            # Phase 1.4 — headroom token compression. Wraps the
-            # messages list; falls through to a no-op when
-            # headroom is not installed or HEADROOM_ENABLED=0.
-            with _opik_timed("llm_openai_complete", tags={"model": model, "provider": "openai"}):
+            # Phase 2A.3 cutover: inline perf_counter + record_external_call_duration
+            # replaces the deleted opik_compat.timed. Times the headroom
+            # compression step (not the LLM call itself).
+            start = time.perf_counter()
+            try:
                 _compression = _headroom_wrap(payload.get("messages", []))
+            finally:
+                record_external_call_duration(
+                    call_type="llm_openai_complete",
+                    status=200,
+                    duration_seconds=time.perf_counter() - start,
+                    agent_type="openai",
+                    method="POST",
+                )
 
             # If headroom returned a list, replace the
             # messages; if it returned a string, that means
@@ -476,11 +484,20 @@ class OllamaProvider(LLMProvider):
             if request.max_tokens:
                 payload["options"]["num_predict"] = request.max_tokens
 
-            # Phase 1.4 — headroom token compression. Wraps
-            # the messages list; falls through to a no-op when
-            # headroom is not installed or HEADROOM_ENABLED=0.
-            with _opik_timed("llm_ollama_complete", tags={"model": model, "provider": "ollama"}):
+            # Phase 2A.3 cutover: inline perf_counter + record_external_call_duration
+            # replaces the deleted opik_compat.timed. Times the headroom
+            # compression step (not the LLM call itself).
+            start = time.perf_counter()
+            try:
                 _compression = _headroom_wrap(payload.get("messages", []))
+            finally:
+                record_external_call_duration(
+                    call_type="llm_ollama_complete",
+                    status=200,
+                    duration_seconds=time.perf_counter() - start,
+                    agent_type="ollama",
+                    method="POST",
+                )
 
             if isinstance(_compression.data, list):
                 payload["messages"] = _compression.data
@@ -553,12 +570,20 @@ class MiniMaxProvider(LLMProvider):
             if self.config.metadata.get("group_id"):
                 payload["group_id"] = self.config.metadata["group_id"]
 
-            # Phase 1.4 — headroom token compression + Phase 1.3
-            # opik timing. Same pattern as OpenAIProvider /
-            # OllamaProvider. wrap() is a passthrough when the
-            # Rust binding is unavailable or HEADROOM_ENABLED=0.
-            with _opik_timed("llm_minimax_complete", tags={"model": model, "provider": "minimax"}):
+            # Phase 2A.3 cutover: inline perf_counter + record_external_call_duration
+            # replaces the deleted opik_compat.timed. Times the headroom
+            # compression step (not the LLM call itself).
+            start = time.perf_counter()
+            try:
                 _compression = _headroom_wrap(payload.get("messages", []))
+            finally:
+                record_external_call_duration(
+                    call_type="llm_minimax_complete",
+                    status=200,
+                    duration_seconds=time.perf_counter() - start,
+                    agent_type="minimax",
+                    method="POST",
+                )
             if isinstance(_compression.data, list):
                 payload["messages"] = _compression.data
 
@@ -667,13 +692,20 @@ class AnthropicProvider(LLMProvider):
             if system_prompt:
                 payload["system"] = system_prompt
 
-            # Phase 1.4 — headroom token compression + Phase 1.3
-            # opik timing. Anthropic splits system prompt from
-            # the messages list, so we wrap the messages list
-            # only. wrap() is a passthrough when the Rust binding
-            # is unavailable or HEADROOM_ENABLED=0.
-            with _opik_timed("llm_anthropic_complete", tags={"model": model, "provider": "anthropic"}):
+            # Phase 2A.3 cutover: inline perf_counter + record_external_call_duration
+            # replaces the deleted opik_compat.timed. Times the headroom
+            # compression step (not the LLM call itself).
+            start = time.perf_counter()
+            try:
                 _compression = _headroom_wrap(payload.get("messages", []))
+            finally:
+                record_external_call_duration(
+                    call_type="llm_anthropic_complete",
+                    status=200,
+                    duration_seconds=time.perf_counter() - start,
+                    agent_type="anthropic",
+                    method="POST",
+                )
             if isinstance(_compression.data, list):
                 payload["messages"] = _compression.data
 
@@ -771,13 +803,20 @@ class OpenAICompatibleProvider(LLMProvider):
             payload = request.to_dict()
             payload["model"] = model
 
-            # Phase 1.4 — headroom token compression + Phase 1.3
-            # opik timing. Same pattern as OpenAIProvider /
-            # OllamaProvider / MiniMaxProvider / AnthropicProvider.
-            # wrap() is a passthrough when the Rust binding is
-            # unavailable or HEADROOM_ENABLED=0.
-            with _opik_timed("llm_openai_compatible_complete", tags={"model": model, "provider": "openai_compatible"}):
+            # Phase 2A.3 cutover: inline perf_counter + record_external_call_duration
+            # replaces the deleted opik_compat.timed. Times the headroom
+            # compression step (not the LLM call itself).
+            start = time.perf_counter()
+            try:
                 _compression = _headroom_wrap(payload.get("messages", []))
+            finally:
+                record_external_call_duration(
+                    call_type="llm_openai_compatible_complete",
+                    status=200,
+                    duration_seconds=time.perf_counter() - start,
+                    agent_type="openai_compatible",
+                    method="POST",
+                )
             if isinstance(_compression.data, list):
                 payload["messages"] = _compression.data
 
