@@ -22,7 +22,6 @@ import ssl
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
 from pathlib import Path
 from typing import Any
 
@@ -36,6 +35,7 @@ from heretek_swarm.gateway.nats_connection import (
     build_connect_kwargs as _build_connect_kwargs,
 )
 from heretek_swarm.gateway.nats_tls import build_mtls_ssl_context
+from heretek_swarm.gateway.nats_types import ConnectionState, NATSMessage, Subscription
 from heretek_swarm.infrastructure.nats.ca import CertificateAuthority
 
 logger = structlog.get_logger(__name__)
@@ -49,38 +49,6 @@ try:
 except ImportError:
     NATS_AVAILABLE = False
     NatsError = Exception
-
-
-class ConnectionState(Enum):
-    """NATS connection states."""
-
-    DISCONNECTED = "disconnected"
-    CONNECTING = "connecting"
-    CONNECTED = "connected"
-    RECONNECTING = "reconnecting"
-    CLOSING = "closing"
-    CLOSED = "closed"
-
-
-@dataclass
-class Subscription:
-    """NATS subscription wrapper."""
-
-    subject: str
-    callback: Callable[["NATSEventMesh", str, dict[str, Any]], None]
-    sid: str
-    active: bool = True
-
-
-@dataclass
-class NATSMessage:
-    """NATS message wrapper."""
-
-    subject: str
-    data: dict[str, Any]
-    reply: str | None = None
-    sid: str | None = None
-    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class NATSEventMesh:
