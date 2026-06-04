@@ -29,6 +29,12 @@ from typing import Any
 import structlog
 
 from heretek_swarm.gateway.nats_fallback import InMemoryFallback, _InMemoryFallback
+from heretek_swarm.gateway.nats_connection import (
+    connect_with_retry as _connect_with_retry,
+    log_connection_success as _log_connection_success,
+    extract_peer_cert_subject as _extract_peer_cert_subject,
+    build_connect_kwargs as _build_connect_kwargs,
+)
 from heretek_swarm.gateway.nats_tls import build_mtls_ssl_context
 from heretek_swarm.infrastructure.nats.ca import CertificateAuthority
 
@@ -282,72 +288,61 @@ class NATSEventMesh:
             return False
 
     async def _connect_to_server(self) -> Any | None:
-        """Connect to a NATS server with retry and optional mTLS."""
-        last_error = None
+        """Connect to a NATS server with retry and optional mTLS.
 
-        for server in self.servers:
-            for attempt in range(self.max_reconnect_attempts):
-                try:
-                    server_display = server
-                    logger.debug("Connecting to %s (attempt %d)", server, attempt + 1)
-
-                    kwargs = self._build_connect_kwargs()
-                    if self.tls_enabled:
-                        kwargs["tls"] = self._build_ssl_context()
-                        if server.startswith("nats://"):
-                            server = server.replace("nats://", "tls://", 1)
-                            server_display = server
-                            logger.debug("mTLS enabled — using tls:// URL", server=server)
-
-                    nc = await nats.connect(server, **kwargs)
-                    self._log_connection_success(nc, server_display)
-                    return nc
-
-                except Exception as e:
-                    last_error = e
-                    self._log_connection_failure(server_display, e, attempt)
-                    await asyncio.sleep(self.reconnect_time_wait)
-
-        raise last_error or Exception("No servers available")
+        Thin delegate to
+        :func:`heretek_swarm.gateway.nats_connection.connect_with_retry`
+        (Phase 2.5 of PLAN.md). Certs are still built locally
+        via the mTLS module.
+        """
+        tls_ctx = self._build_ssl_context() if self.tls_enabled else None
+        return await _connect_with_retry(
+            servers=self.servers,
+            max_attempts=self.max_reconnect_attempts,
+            reconnect_time_wait=self.reconnect_time_wait,
+            build_kwargs=lambda: self._build_connect_kwargs(),
+            tls_context=tls_ctx,
+        )
 
     def _build_connect_kwargs(self) -> dict[str, Any]:
-        """Build kwargs dict for nats.connect()."""
-        return {
-            "name": self.client_name,
-            "reconnect_time_wait": self.reconnect_time_wait,
-            "ping_interval": self.ping_interval,
-            "max_outstanding_pings": self.max_outstanding_pings,
-            "max_reconnect_attempts": 1,
-        }
+        """Build kwargs dict for nats.connect().
+
+        Thin delegate to
+        :func:`heretek_swarm.gateway.nats_connection.build_connect_kwargs`
+        (Phase 2.5 of PLAN.md).
+        """
+        return _build_connect_kwargs(
+            client_name=self.client_name,
+            reconnect_time_wait=self.reconnect_time_wait,
+            ping_interval=self.ping_interval,
+            max_outstanding_pings=self.max_outstanding_pings,
+        )
 
     def _log_connection_success(self, nc: Any, server_display: str) -> None:
-        """Log successful connection with optional TLS peer info."""
-        if self.tls_enabled:
-            peer_cert_subject = self._extract_peer_cert_subject(nc)
-            logger.info(
-                "nats_tls_connection_established",
-                server=server_display,
-                peer_cert_subject=peer_cert_subject,
-            )
-        else:
-            logger.info("Connected to %s", server_display)
+        """Log successful connection with optional TLS peer info.
+
+        Thin delegate to
+        :func:`heretek_swarm.gateway.nats_connection.log_connection_success`
+        (Phase 2.5 of PLAN.md).
+        """
+        _log_connection_success(
+            nc=nc,
+            server_display=server_display,
+            tls_enabled=self.tls_enabled,
+            peer_cert_subject=(
+                self._extract_peer_cert_subject(nc) if self.tls_enabled else None
+            ),
+        )
 
     @staticmethod
     def _extract_peer_cert_subject(nc: Any) -> str:
-        """Extract peer certificate subject from NATS connection."""
-        try:
-            transport = getattr(nc, "_io_reader", None) or getattr(nc, "_transport", None)
-            if transport is not None:
-                sock = getattr(transport, "get_extra_info", None)
-                if sock is not None:
-                    peer_cert = sock("peercert")
-                    if peer_cert is not None:
-                        subject_attrs = peer_cert.get("subject", [])
-                        cn = next((v for t, v in subject_attrs if t == "commonName"), "unknown")
-                        return cn
-        except Exception:
-            logger.debug("Could not extract peer certificate subject")
-        return "unknown"
+        """Extract peer certificate subject from NATS connection.
+
+        Thin delegate to
+        :func:`heretek_swarm.gateway.nats_connection.extract_peer_cert_subject`
+        (Phase 2.5 of PLAN.md).
+        """
+        return _extract_peer_cert_subject(nc)
 
     def _log_connection_failure(self, server: str, error: Exception, attempt: int) -> None:
         """Log connection failure with optional TLS context."""
