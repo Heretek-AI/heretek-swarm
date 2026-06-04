@@ -54,10 +54,6 @@ from heretek_swarm.config_api import (  # noqa: F401
     AVAILABLE_PROVIDERS,
     AGENT_TIERS,
 )
-from heretek_swarm.observability.opik_compat import (  # noqa: F401
-    OPIK_AVAILABLE,
-    OPIK_ENABLED,
-)
 from heretek_swarm.security.rate_limiter import (  # noqa: F401
     limiter,
     install_rate_limiter,
@@ -78,8 +74,6 @@ __all__ = [
     "wizard_router",
     "AVAILABLE_PROVIDERS",
     "AGENT_TIERS",
-    "OPIK_AVAILABLE",
-    "OPIK_ENABLED",
     "limiter",
     "install_rate_limiter",
 ]
