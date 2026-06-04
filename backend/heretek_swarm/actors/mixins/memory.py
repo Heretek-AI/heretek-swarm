@@ -68,9 +68,16 @@ class MemoryMixin:
             item_id: Unique identifier for the item
             item_type: Type of item (e.g., "code", "decision")
             access_type: Type of access ("read" or "write")
+
+        Phase 1.1 follow-up: when the legacy ``access_analyzer``
+        is not wired, this is a no-op (the canonical ``MemoryStore``
+        is the primary write path now). New code should write
+        directly to the store via ``_get_memory_store()`` and
+        reserve access-pattern tracking for the AccessPatternAnalyzer
+        only when the host actor opted in explicitly.
         """
         if not self.access_analyzer:
-            raise TypeError("_track_memory_access requires access_analyzer")
+            return
 
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
@@ -124,9 +131,17 @@ class MemoryMixin:
 
         Returns:
             List of item IDs predicted to be relevant
+
+        Phase 1.1 follow-up: when the legacy ``access_analyzer``
+        is not wired, this returns an empty list. The canonical
+        :class:`MemoryStore` exposes ``search()`` for relevance;
+        callers that need prefetch semantics should call
+        ``_get_memory_store().search()`` directly with a
+        per-agent query. The legacy analyzer is reserved for
+        host actors that opted in explicitly.
         """
         if not self.access_analyzer:
-            raise TypeError("_prefetch_relevant requires access_analyzer")
+            return []
 
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
