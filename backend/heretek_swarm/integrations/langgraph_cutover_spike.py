@@ -92,7 +92,6 @@ from heretek_swarm.orchestration.langgraph_workflow import (
     WorkflowState,
 )
 
-
 # ---------------------------------------------------------------------------
 # Spike entry point
 # ---------------------------------------------------------------------------
