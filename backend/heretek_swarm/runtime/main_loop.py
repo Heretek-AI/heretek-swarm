@@ -304,87 +304,36 @@ class AutonomousSwarm:
         await _init_consensus_engine(self)
 
     async def _initialize_event_mesh(self) -> None:
-        try:
-            servers = self.config.get("nats_servers")
-            if not servers:
-                nats_url = os.getenv("HERETEK_NATS_URL")
-                if not nats_url:
-                    raise RuntimeError(
-                        "HERETEK_NATS_URL is required. Set it to nats://host:port "
-                        "or use docker compose."
-                    )
-                servers = [s.strip() for s in nats_url.split(",")]
-            self.event_mesh = NATSEventMeshWithJetStream(servers=servers, fallback=True)
-            await self.event_mesh.connect()
-            logger.info("event_mesh_connected")
-        except Exception as exc:
-            logger.warning("event_mesh_init_failed", error=str(exc))
-            self.event_mesh = None
+        """Thin delegate to :func:`heretek_swarm.runtime.initializers.event_mesh.initialize_event_mesh`."""
+        from heretek_swarm.runtime.initializers.event_mesh import initialize_event_mesh
+        await initialize_event_mesh(self)
 
     async def _initialize_jetstream(self) -> None:
-        if self.event_mesh is None:
-            logger.warning("jetstream_skipped", message="No event mesh available")
-            return
-        try:
-            ok = await self.event_mesh.initialize_jetstream(create_default_streams=True)
-            if ok:
-                logger.info("jetstream_streams_initialized")
-            else:
-                logger.warning("jetstream_initialization_failed", message="Continuing without durable streams")
-        except Exception as exc:
-            logger.warning("jetstream_init_failed", error=str(exc))
+        """Thin delegate to :func:`heretek_swarm.runtime.initializers.jetstream.initialize_jetstream`."""
+        from heretek_swarm.runtime.initializers.jetstream import initialize_jetstream
+        await initialize_jetstream(self)
 
     async def _initialize_mcp_tools(self) -> None:
-        try:
-            self.mcp_tools = CoreMCPTools(
-                cognee_reader=self._cognee_reader,
-                cognee_writer=self._cognee_writer,
-                rag_retriever=self.rag,
-                consensus_engine=self.consensus,
-                event_mesh=self.event_mesh,
-            )
-            from heretek_swarm.mcp.bridge import sync_mcp_registries
-            bridged = sync_mcp_registries(self.mcp_tools)
-            logger.info(
-                "mcp_tools_initialized",
-                tool_count=len(self.mcp_tools.get_registry().list_tools()),
-                bridged_count=bridged,
-            )
-        except Exception as exc:
-            logger.warning("mcp_tools_init_failed", error=str(exc))
-            self.mcp_tools = None
+        """Thin delegate to :func:`heretek_swarm.runtime.initializers.mcp_tools.initialize_mcp_tools`."""
+        from heretek_swarm.runtime.initializers.mcp_tools import initialize_mcp_tools
+        await initialize_mcp_tools(self)
 
     async def _initialize_supervisor(self) -> None:
-        try:
-            self.supervisor = ActorSupervisor(
-                health_check_interval=self._health_check_interval,
-                auto_restart=True, max_restarts=5,
-            )
-            logger.info("actor_supervisor_initialized")
-        except Exception as exc:
-            logger.warning("supervisor_init_failed", error=str(exc))
-            self.supervisor = None
+        """Thin delegate to :func:`heretek_swarm.runtime.initializers.supervisor.initialize_supervisor`."""
+        from heretek_swarm.runtime.initializers.supervisor import initialize_supervisor
+        await initialize_supervisor(self)
 
     async def _initialize_model_garage(self) -> None:
-        try:
-            self.model_garage = ModelGarage()
-            await self.model_garage.initialize()
-            set_global_model_garage(self.model_garage)
-            logger.info("model_garage_initialized")
-        except Exception as exc:
-            logger.warning("model_garage_init_failed", error=str(exc))
-            self.model_garage = None
+        """Thin delegate to :func:`heretek_swarm.runtime.initializers.model_garage.initialize_model_garage`."""
+        from heretek_swarm.runtime.initializers.model_garage import initialize_model_garage
+        await initialize_model_garage(self)
 
     async def _initialize_election_manager(self) -> None:
-        try:
-            self._election_manager = ElectionManager()
-            logger.info(
-                "election_manager_initialized",
-                governance_agents=sorted(self._election_manager._rafts.keys()),
-            )
-        except Exception as exc:
-            logger.warning("election_manager_init_failed", error=str(exc))
-            self._election_manager = None
+        """Thin delegate to :func:`heretek_swarm.runtime.initializers.election_manager.initialize_election_manager`."""
+        from heretek_swarm.runtime.initializers.election_manager import (
+            initialize_election_manager,
+        )
+        await initialize_election_manager(self)
 
     def _rewire_orchestrator_refs(self) -> None:
         """Post-hoc wiring of orchestrator dependencies.
