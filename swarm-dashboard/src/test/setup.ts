@@ -42,3 +42,20 @@ if (typeof globalThis.localStorage === 'undefined') {
     writable: true,
   });
 }
+
+// Polyfill ResizeObserver for jsdom — cmdk uses it for the popper-
+// position calculations. Without it, every test that mounts a
+// CommandPalette throws "ReferenceError: ResizeObserver is not defined".
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  globalThis.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as unknown as typeof ResizeObserver;
+}
+
+// Polyfill scrollIntoView — cmdk's Command.List uses it to keep the
+// highlighted item in view. jsdom doesn't implement it.
+if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = function () {};
+}

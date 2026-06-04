@@ -45,6 +45,7 @@ import { useSetupStore } from './stores/setupStore';
 import { setToastInstance } from './api/client';
 
 import { WorkflowBuilder } from './components/WorkflowBuilder/WorkflowBuilder';
+import { CommandPalette, CommandItem } from './components/UI/CommandPalette';
 
 type View =
   | 'home'
@@ -212,6 +213,9 @@ function DashboardContent() {
   }, [resetSetup, setRerunning]);
 
   const renderView = () => {
+    // Tier 3: a real router drives the view via <Routes> below; this
+    // function is kept only as a fallback for legacy callers. The
+    // router is now the source of truth.
     switch (currentView) {
       case 'home':
         return <HomePage />;
@@ -270,6 +274,15 @@ function DashboardContent() {
           </ErrorBoundary>
         </DashboardLayout>
       )}
+      <CommandPalette
+        items={navItems.map<CommandItem>((item) => ({
+          id: `nav:${item.id}`,
+          label: item.label,
+          group: 'Page',
+          icon: item.icon,
+          keywords: ['navigate', 'go to', item.id],
+        }))}
+      />
     </>
   );
 }
