@@ -451,6 +451,15 @@ class OllamaProvider(LLMProvider):
             if request.max_tokens:
                 payload["options"]["num_predict"] = request.max_tokens
 
+            # Phase 1.4 — headroom token compression. Wraps
+            # the messages list; falls through to a no-op when
+            # headroom is not installed or HEADROOM_ENABLED=0.
+            with _opik_timed("llm_ollama_complete", tags={"model": model, "provider": "ollama"}):
+                _compression = _headroom_wrap(payload.get("messages", []))
+
+            if isinstance(_compression.data, list):
+                payload["messages"] = _compression.data
+
             try:
                 response = await client.post("/api/chat", json=payload)
                 response.raise_for_status()
