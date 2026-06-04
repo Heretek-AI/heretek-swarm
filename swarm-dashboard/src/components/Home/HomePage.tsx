@@ -11,6 +11,7 @@ import { LoadingSpinner } from '../UI/LoadingSpinner';
 import { ErrorBoundary, SimpleErrorFallback } from '../UI/ErrorBoundary';
 import { EmptyState } from '../UI/EmptyState';
 import { getAutonomousStatus, AutonomousStatus } from '../../api/autonomous';
+import { getHistorianEvents } from '../../api/events';
 
 // API URL configuration
 const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
@@ -159,50 +160,43 @@ export function HomePage() {
     }
   }, []);
 
-  // Generate mock recent activity based on data
-  const generateRecentActivity = useCallback((health: SystemHealth | null, agents: AgentSummary | null): RecentActivity[] => {
-    const activities: RecentActivity[] = [];
-    
-    if (health) {
-      activities.push({
-        id: 'health-1',
-        type: 'agent_spawn',
-        description: 'System health check completed',
-        timestamp: new Date().toISOString(),
-        status: health.gateway?.status === 'healthy' ? 'success' : 'warning',
-      });
+  // Fetch recent activity from the historian event store.
+  // Tier 1.3: replaces the hard-coded placeholder feed with real
+  // domain events. The api returns a structured event for every
+  // agent spawn, message, consensus, etc.; we project the raw
+  // `HistorianEvent` shape into the RecentActivity display type.
+  const fetchRecentActivity = useCallback(async (): Promise<RecentActivity[]> => {
+    try {
+      const response = await getHistorianEvents({ limit: 20 });
+      return response.events.map((event) => ({
+        id: event.event_id,
+        type: projectEventType(event.type),
+        description: `${event.type} · ${event.agent_id || 'system'}`,
+        timestamp: event.timestamp,
+        status: event.type.includes('error') || event.type.includes('death') || event.type.includes('fail')
+          ? 'error'
+          : event.type.includes('warn')
+            ? 'warning'
+            : 'success',
+      }));
+    } catch {
+      return [];
     }
+  }, []);
 
-    if (agents && agents.active > 0) {
-      activities.push({
-        id: 'agent-1',
-        type: 'agent_spawn',
-        description: `${agents.active} agents currently active`,
-        timestamp: new Date(Date.now() - 60000).toISOString(),
-        status: 'success',
-      });
-    }
-
-    if (agents && agents.error > 0) {
-      activities.push({
-        id: 'agent-error-1',
-        type: 'message',
-        description: `${agents.error} agent(s) reported errors`,
-        timestamp: new Date(Date.now() - 120000).toISOString(),
-        status: 'error',
-      });
-    }
-
-    // Add some placeholder activities
-    activities.push({
-      id: 'memory-1',
-      type: 'memory',
-      description: 'Memory consolidation completed',
-      timestamp: new Date(Date.now() - 300000).toISOString(),
-      status: 'success',
-    });
-
-    return activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 10);
+  // Build a single "system health check completed" entry from
+  // the live /api/health response — this is the only synthetic
+  // activity the page synthesizes, and it's grounded in real data
+  // (a fresh timestamp + the actual health payload status).
+  const buildHealthActivity = useCallback((health: SystemHealth | null): RecentActivity | null => {
+    if (!health) return null;
+    return {
+      id: `health-${Date.now()}`,
+      type: 'agent_spawn',
+      description: 'System health check completed',
+      timestamp: new Date().toISOString(),
+      status: health.gateway?.status === 'healthy' ? 'success' : 'warning',
+    };
   }, []);
 
   // Fetch all data
@@ -211,19 +205,23 @@ export function HomePage() {
     setError(null);
 
     try {
-      const [health, agents, memory, consciousness, autonomousStatus] = await Promise.all([
+      const [health, agents, memory, consciousness, autonomousStatus, recentActivityRaw] = await Promise.all([
         fetchHealth(),
         fetchAgents(),
         fetchMemory(),
         fetchConsciousness(),
         fetchAutonomousStatus(),
+        fetchRecentActivity(),
       ]);
+
+      const healthActivity = buildHealthActivity(health);
+      const activity = (healthActivity ? [healthActivity] : []).concat(recentActivityRaw).slice(0, 10);
 
       setData({
         health,
         agents,
         memory,
-        recentActivity: generateRecentActivity(health, agents),
+        recentActivity: activity,
         consciousnessMetrics: consciousness,
         autonomousStatus,
       });
@@ -233,7 +231,7 @@ export function HomePage() {
     } finally {
       setLoading(false);
     }
-  }, [fetchHealth, fetchAgents, fetchMemory, fetchConsciousness, fetchAutonomousStatus, generateRecentActivity]);
+  }, [fetchHealth, fetchAgents, fetchMemory, fetchConsciousness, fetchAutonomousStatus, fetchRecentActivity, buildHealthActivity]);
 
   // Initial fetch and refresh interval
   useEffect(() => {
@@ -547,3 +545,14 @@ export function HomePage() {
 }
 
 export default HomePage;
+
+// ── Helpers (module-scope so they don't recreate per render) ────────────────
+
+/** Map a historian event type into the RecentActivity display type. */
+function projectEventType(eventType: string): RecentActivity['type'] {
+  if (eventType === 'agent_spawn') return 'agent_spawn';
+  if (eventType === 'agent_death') return 'agent_terminate';
+  if (eventType === 'deliberation' || eventType === 'consensus') return 'consensus';
+  if (eventType.includes('memory')) return 'memory';
+  return 'message';
+}

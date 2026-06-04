@@ -58,6 +58,20 @@ function eventTypeBadge(eventType: string): string {
   }
 }
 
+/** Map a historian event type to a log level for the terminal view. */
+function inferLogLevel(eventType: string): LogEntry['level'] {
+  if (eventType.includes('error') || eventType.includes('death') || eventType.includes('fail')) {
+    return 'error';
+  }
+  if (eventType.includes('warn')) {
+    return 'warning';
+  }
+  if (eventType.includes('debug') || eventType.includes('heartbeat') || eventType.includes('pulse')) {
+    return 'debug';
+  }
+  return 'info';
+}
+
 export function LogsPage() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [filterLevel, setFilterLevel] = useState<string>('all');
@@ -75,6 +89,20 @@ export function LogsPage() {
     getHistorianEvents({ limit: 50 }).then((response) => {
       setHistorianEvents(response.events);
       setHistorianMode(response.mode);
+      // Tier 1.2: seed the terminal with mapped historian events when
+      // the WebSocket channel is empty. The api doesn't push
+      // `log_entry` messages on `ws/logs`, so without this the
+      // terminal shows the empty state forever.
+      setLogs((prev) => {
+        if (prev.length > 0) return prev;
+        return response.events.map((event) => ({
+          id: event.event_id,
+          timestamp: event.timestamp,
+          level: inferLogLevel(event.type),
+          source: event.agent_id || 'system',
+          message: `${event.type}: ${JSON.stringify(event.payload).slice(0, 200)}`,
+        }));
+      });
     }).catch(() => {
       setHistorianMode('error');
     });

@@ -54,8 +54,9 @@ export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
   const toast = useToast();
 
   const handleSaveApiKey = useCallback(() => {
+    localStorage.setItem('api_key', apiKey);
     toast.success('API Key Saved', 'Your API key is available for this session');
-  }, [toast]);
+  }, [apiKey, toast]);
 
   const handleSaveApiUrl = useCallback(() => {
     const validatedUrl = _safeUrl(apiUrl);
