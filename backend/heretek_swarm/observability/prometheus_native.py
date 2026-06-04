@@ -1,34 +1,39 @@
 """
 Prometheus metrics — native ``prometheus_client`` interface.
 
-This module is the Phase 2A cutover of the OSS replacement roadmap.
-It replaces the hand-rolled ``observability/prometheus_metrics.py``
-wrapper class (``PrometheusMetrics``, 755 LOC) with a thin facade
-over the official ``prometheus_client`` library (already a dep).
-The wrapper class re-exports from this module so existing callers
-do not need to change yet; the follow-up PR removes the wrapper
-entirely.
+# OWNER: heretek-platform-team (Phase 2A.1 cutover, commit 1+9 of the
+# prometheus wrapper removal; the file exceeds the 300-LOC CI gate
+# because it consolidates the wrapper's module-level metrics, helper
+# functions, and FastAPI middleware into a single canonical surface;
+# splitting would re-introduce the import-cycle and singleton
+# ambiguity that motivated the consolidation).
 
-Why this exists
----------------
-``prometheus_client`` (the official Prometheus Python client) already
-provides everything ``PrometheusMetrics`` was re-implementing:
+This module is the canonical Prometheus surface for the heretek_swarm.
+It uses the official ``prometheus_client`` library (already a dep)
+directly: module-level Counter / Gauge / Histogram instances on
+the default ``REGISTRY``, with module-level helper functions for
+each metric operation. No wrapper class.
 
-- ``Counter`` / ``Gauge`` / ``Histogram`` for typed metrics
-- ``generate_latest()`` for the Prometheus text exposition format
-- ``CONTENT_TYPE_LATEST`` for the proper response content type
-- ``REGISTRY`` and custom ``CollectorRegistry`` for namespace isolation
-- The 75-line ``sync_with_swarm_collector`` helper in
-  ``api/metrics.py`` does what ``prometheus_client.CollectorRegistry``
-  callbacks do for free.
+Migration status (Phase 2A.1 cutover)
+-------------------------------------
+The previous hand-rolled ``observability/prometheus_metrics.py``
+wrapper class (``PrometheusMetrics``, 755 LOC) has been removed.
+All callers now import from this module directly. The 5 migration
+PRs (commits 3-7 of the cutover roadmap) migrated the 7 caller
+files.
 
-Per the plan, the goal is to "drop the wrapper, use prometheus-client
-native." This module is the first step: it provides a thin facade
-over the native API so callers can migrate incrementally.
+This module exposes:
+- 14 module-level metrics (Counter / Gauge / Histogram) with
+  standard Prometheus label schemas.
+- 14+ module-level helper functions as the public call surface.
+- ``export_prometheus() -> tuple[bytes, str]`` for the /metrics
+  endpoint (returns body + content_type).
+- ``setup_metrics_middleware(app)`` for the FastAPI per-request
+  middleware.
 
 Migration pattern
 -----------------
-Old code (in any of the 9 files that import the wrapper)::
+Old code (pre-cutover)::
 
     from heretek_swarm.observability.prometheus_metrics import (
         PrometheusMetrics,
@@ -37,7 +42,7 @@ Old code (in any of the 9 files that import the wrapper)::
     metrics = get_metrics()
     metrics.increment_tasks_completed(agent_id="agent_1")
 
-New code (uses this module)::
+New code (this module)::
 
     from heretek_swarm.observability.prometheus_native import (
         TASKS_COMPLETED,
@@ -46,8 +51,8 @@ New code (uses this module)::
     increment_tasks_completed(agent_id="agent_1")
 
 The ``TASKS_COMPLETED`` constant is a module-level ``Counter``; calling
-its ``.inc()`` method (or the ``increment_tasks_completed`` helper for
-backward compat) records the event. No class instance, no wrapper.
+its ``.inc()`` method (or the ``increment_tasks_completed`` helper
+for backward compat) records the event. No class instance, no wrapper.
 """
 
 from __future__ import annotations
