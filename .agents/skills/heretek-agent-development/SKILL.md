@@ -33,16 +33,94 @@ actors/
 ├── historian/        # Memory/history
 ├── metis/            # Strategic thinking
 ├── nexus/            # Connection hub
-├── perceiver/        # Perception/analysis
+├── perceiver/        # Perception/analysis (1,592 LOC)
 ├── perceiver_plus/   # Enhanced perception
 ├── prism/            # Perspective synthesis
 ├── sentinel/         # Security monitoring
 ├── sentinel_prime/   # Enhanced security
-├── alpha/            # Triad member
-├── beta/             # Triad member
-├── charlie/          # Triad member
+├── triad/            # alpha + beta + charlie (Phase 2.5 consolidation)
 └── steward/          # Consensus facilitator
 ```
+
+### Mixins (10)
+- **`AuditMixin`** — audit trail
+- **`DeliberationMixin`** — multi-agent reasoning
+- **`HealthReportingMixin`** — health + liveness probes
+- **`LearningMixin`** — pattern learning (Phase 1.1)
+- **`MemoryMixin`** — memory access (see below)
+- **`ValidationMixin`** — IMMUTABLE_RULES validation
+- **`ConsensusMixin`** — triad voting
+- **`ImmuneMixin`** — anomaly response
+- **`TribunalMixin`** — appeals / court
+- **`NotificationMixin`** — agent event broadcast
+
+The `MemoryMixin` (Phase 1.1 follow-up) tolerates a missing
+`access_analyzer`: its `_track_memory_access` and
+`_prefetch_relevant` are no-ops when neither
+`self.memory_store` nor `self.access_analyzer` is wired. The
+canonical write path is now the `MemoryStore` Protocol — new
+agents should not need to touch `access_analyzer` at all.
+
+### Actor Composition Pattern
+
+The `AgentActor` base class is composed via the mixin MRO. The
+constructor signature is 18 kwargs; any change to it ripples
+through 44+ call sites. The mixin composition is the most
+load-bearing seam in the codebase — keep the public contract
+(`agent_id`, `capabilities`, `topics`, `message_count`,
+`error_count`, `last_activity`) stable.
+
+## Runtime Initializers (Phase 2.6)
+
+The 11 `_initialize_*` methods in `runtime/main_loop.py` were
+decomposed into a package of focused free functions. The
+main_loop method is a 2-line thin delegate to one of these:
+
+```
+backend/heretek_swarm/runtime/initializers/
+├── channel_registry.py  # Channel + Group registries
+├── consensus.py         # MAKERConsensus engine
+├── election_manager.py  # Raft-based leadership
+├── event_mesh.py        # NATS event mesh connection
+├── jetstream.py         # JetStream default-streams
+├── mcp_tools.py         # CoreMCPTools + registry bridge
+├── memory.py            # cognee reader + writer
+├── model_garage.py      # ModelGarage + global install
+├── rag.py               # RAG retriever
+└── supervisor.py        # ActorSupervisor
+```
+
+```python
+from heretek_swarm.runtime.initializers.event_mesh import initialize_event_mesh
+
+await initialize_event_mesh(swarm)  # free function
+```
+
+The full constructor-injection refactor (touching every
+orchestrator) is queued. The 5 inline methods left in
+main_loop.py (no_infra fallback, OTel auto-enable,
+_spawn_all_actors, _create_per_agent_streams,
+_setup_channel_subscriptions) are tightly coupled to the
+swarm instance and don't translate cleanly to free functions.
+
+### Perceiver Extraction (Phase 2.3 + 2.7)
+
+The 1,607-LOC `perceiver/agent.py` was ~70% content extraction,
+~30% actor behavior. Phase 2.3+2.7 extracted the pure value-object
+surface to a package:
+
+```
+backend/heretek_swarm/actors/perceiver/extraction/
+├── __init__.py    # 474 LOC — text/image/audio/video helpers
+├── audio.py       # 34 LOC — re-exports audio helpers
+├── image.py       # 64 LOC — re-exports image helpers
+├── video.py       # 34 LOC — re-exports video helpers
+└── sensor.py      # 60 LOC — extract_sensor_features (Phase 2.7)
+```
+
+The agent's `_extract_*_features` methods now delegate here.
+The LLM-driven paths (`_try_describe_image_llm` etc.) stay in
+the agent because they depend on `self.swarms_agent.llm`.
 
 ## Creating a New Agent
 

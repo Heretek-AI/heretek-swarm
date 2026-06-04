@@ -2,8 +2,9 @@
 name: heretek-state-management
 description: >-
   State management for Heretek Swarm. Use when working with PostgreSQL, Redis,
-  or Qdrant. Covers database operations, caching strategies, and vector search
-  patterns.
+  or Qdrant. Covers database operations, caching strategies, vector search
+  patterns, and the consensus engine surface (ConsensusEngine Protocol,
+  maker_enhanced_types, deliberation_types).
 ---
 
 # Heretek Swarm State Management
@@ -21,6 +22,88 @@ Application → Redis (cache) → PostgreSQL (primary)
                 ↓
             Qdrant (vectors)
 ```
+
+## Consensus Engine Surface (Phase 3.1 + 2.9 + 2.10)
+
+The `consensus/` package hosts 4 algorithms + 1 immune engine +
+the canonical Protocol. After Phase 2.9-2.10 the value objects
+were extracted to types modules:
+
+```
+backend/heretek_swarm/consensus/
+├── __init__.py              # 80+ re-exports (preserve shape)
+├── protocol.py              # ConsensusEngine Protocol (Phase 3.1)
+├── maker.py                 # MAKERConsensus (base, 552 LOC)
+├── maker_enhanced.py        # EnhancedMAKERConsensus (1,228 LOC; was 1,496)
+├── maker_enhanced_types.py  # 7 data classes (ReasoningChain, DecisionProvenance, …)
+├── deliberation.py          # DeliberationEngine (1,081 LOC; was 1,487)
+├── deliberation_types.py    # 13 data classes (Position, Argument, Evidence, …)
+├── swarm_deliberation.py    # SwarmDeliberationEngine
+├── immune.py                # 42-LOC re-export shim → security/immune.py
+├── raft_election.py         # Raft-based leader election
+├── tribunal.py              # Appeals/court system
+├── deliberation_mesh.py     # HXA debate mesh over NATS
+├── expertise.py             # AgentExpertiseProfiler
+└── election_manager.py      # ElectionManager (wired to runtime/initializers/)
+```
+
+### ConsensusEngine Protocol
+
+The canonical contract every consensus backend satisfies:
+
+```python
+from heretek_swarm.consensus.protocol import (
+    ConsensusEngine,
+    compute_consensus_for,
+    is_consensus_engine,
+)
+
+# The 4 implementations all pre-date the Protocol but already
+# expose `compute_consensus`:
+#   - MAKERConsensus.compute_consensus
+#   - EnhancedMAKERConsensus.compute_consensus
+#   - SwarmDeliberationEngine.compute_consensus
+#   - DeliberationEngine.compute_consensus (via api/deliberation)
+
+result = compute_consensus_for(engine, consensus_id)
+
+# Conformance check (decorator / guard):
+if not is_consensus_engine(obj):
+    raise TypeError(f"{obj!r} is not a ConsensusEngine")
+```
+
+### God-class exit status (Phase 2)
+
+Per the audit's exit criterion ("largest file < 1,000 LOC"), the
+largest file remaining >1,000 LOC is `runtime/main_loop.py` at
+1,740 LOC. The remaining consensus files are:
+- `consensus/maker_enhanced.py` 1,228 LOC (was 1,496)
+- `consensus/deliberation.py` 1,081 LOC (was 1,487)
+- `consensus/immune.py` 42 LOC (was 1,462; relocated to `security/`)
+
+`consensus/maker_enhanced_types.py` (312 LOC) and
+`consensus/deliberation_types.py` (462 LOC) are the new homes for
+the value-object surfaces.
+
+### Backwards-Compat Re-exports
+
+`consensus/__init__.py` re-exports 80+ symbols. The 7 data classes
+that used to live in `maker_enhanced.py` and the 13 data classes
+that used to live in `deliberation.py` are still re-exported at
+their old import paths. New code can import from the `*_types`
+modules directly when only the value objects are needed.
+
+### The MAKER + Enhanced MAKER Split
+
+`MAKERConsensus` (in `maker.py`) is the base first-to-ahead-by-k
+algorithm. `EnhancedMAKERConsensus` (in `maker_enhanced.py`)
+extends it with:
+- Reasoning chains (with circular-reasoning detection)
+- Cross-validation
+- Decision provenance tracking
+- Rollback capability
+- NATS emission (the NATS publisher is a side-effect, the algorithm
+  itself is pure)
 
 ## PostgreSQL
 

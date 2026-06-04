@@ -13,16 +13,132 @@ description: >-
 ### Components
 - **Logging**: Structured logs with structlog
 - **Metrics**: Prometheus + Grafana
-- **Tracing**: OpenTelemetry
+- **Tracing**: OpenTelemetry (infrastructure/otel/) + Opik (Phase 1.3)
 - **Health Checks**: Custom health endpoints
-- **Alerting**: Prometheus Alertmanager
+- **Alerting**: Prometheus Alertmanager + Opik Guardrails
+- **Token Compression**: headroom_compat (Phase 1.4)
 
 ### Data Flow
 ```
 Application → Logs → Log Aggregator → Search/Analysis
             → Metrics → Prometheus → Grafana
-            → Traces → Jaeger/Tempo → Analysis
+            → Traces → Jaeger/Tempo + Opik → Analysis
+            → LLM spans → opik_compat.timed() + @opik.track
 ```
+
+## Opik Integration (Phase 1.3 + 1.3-followups)
+
+The audit (§3.1) recommended opik as the LLM/agent observability
+backend (preferred over langfuse). Phase 1.3 introduced the
+`opik_compat` shim; subsequent follow-ups wired call-site
+integrations.
+
+```python
+from heretek_swarm.observability.opik_compat import (
+    OPIK_AVAILABLE,
+    OPIK_ENABLED,
+    timed,
+    timed_decorator,
+    alert,
+    track_metric,
+    log_span,
+)
+
+# OPIK_AVAILABLE / OPIK_ENABLED are the public flags callers
+# should check before adding opik decorators manually.
+
+# 1. As a context manager
+with timed("cognee_writer.add", tags={"tier": "episodic"}):
+    await writer.add(...)
+
+# 2. As a decorator
+@timed_decorator("cognee_writer.add")
+async def add(...):
+    ...
+
+# 3. Metric increment
+track_metric("agent_invocation", value=1.0, tags={"agent": "explorer"})
+
+# 4. Alert
+alert("rate_limit_exceeded", severity="warning", message="...", tags={...})
+```
+
+### @opik.track on LLM providers (Phase 1.3 follow-up #2)
+
+All 5 LLM provider `complete()` methods in `llm/model_garage.py`
+now have `@_opik_track_llm` (gated by `OPIK_ENABLED`). When opik
+is enabled, calls are captured as 'llm' spans for the Opik Agent
+Optimizer + Guardrails integration. The decorator is a no-op
+stub when opik is not installed:
+
+```python
+# llm/model_garage.py
+class OpenAIProvider(LLMProvider):
+    @_opik_track_llm
+    async def complete(self, request):
+        # When OPIK_ENABLED, opik captures this as a 'llm' span
+        ...
+```
+
+`OPIK_ENABLED` defaults to `1` (enabled) when the opik package
+is importable. Set `OPIK_ENABLED=0` to bypass in dev/CI.
+
+### Architecture (Phase 2.9)
+
+The audit (§1.6) flagged two parallel tracing systems
+(`observability/tracing.py` 474 LOC and
+`infrastructure/otel/tracing.py` 1,080 LOC). Phase 2.9
+consolidated them:
+- `infrastructure/otel/tracing.py` is canonical (it has the
+  `InstrumentedAsyncClient` that 4 LLM / embedding providers
+  depend on).
+- `observability/tracing.py` is now a 90-LOC re-export shim
+  with a `.. deprecated::` note pointing to the new location.
+- `infrastructure/otel/middleware.py` hosts the
+  `TelemetryMiddleware` (moved out of `observability/tracing.py`).
+
+```python
+# New canonical imports
+from heretek_swarm.infrastructure.otel.tracing import (
+    TracingConfig, init_tracing, InstrumentedAsyncClient
+)
+from heretek_swarm.infrastructure.otel.middleware import (
+    TelemetryMiddleware, setup_telemetry_middleware
+)
+
+# Legacy re-exports (still work)
+from heretek_swarm.observability.tracing import (
+    initialize_tracing, setup_telemetry_middleware  # → same class
+)
+```
+
+## headroom_compat (Phase 1.4)
+
+Token compression for LLM prompt paths. Optional Rust+PyO3
+binding; when unavailable, the shim returns the input unchanged
+with `savings_ratio=0.0` and `strategy="passthrough"`.
+
+```python
+from heretek_swarm.llm.headroom_compat import (
+    HEADROOM_AVAILABLE,
+    HEADROOM_ENABLED,
+    wrap,
+    unwrap,
+)
+
+# 1. Wrap messages before the LLM call
+compression = wrap(messages)
+if isinstance(compression.data, list):
+    messages = compression.data
+
+# 2. Unwrap the response (preserves original text)
+result = unwrap(completion)
+```
+
+`HEADROOM_ENABLED` defaults to `1`. Set `HEADROOM_ENABLED=0` to
+bypass in dev/CI. The 5 LLM provider `complete()` methods in
+`llm/model_garage.py` already wire `headroom.wrap()` + `opik.timed()`
+around the LLM call (Phase 1.4 + 1.4 follow-up).
 
 ## Structured Logging
 

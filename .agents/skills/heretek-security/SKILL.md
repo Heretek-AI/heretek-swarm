@@ -23,8 +23,101 @@ description: >-
 4. **Input Validation** - Sanitize all inputs
 5. **Audit Trails** - Log all operations
 6. **Secrets Management** - SOPS encryption
+7. **Rate Limiting** - slowapi (Phase 1.5)
+8. **Immune Response** - anomaly detection (security/immune)
+
+### Security Package Layout (Phase 0.5 + 1.5 + 2.5 + 2.10)
+
+```
+backend/heretek_swarm/security/
+├── auth.py             # TokenStore (Phase 2.10 — single source of truth)
+├── rate_limiter.py     # slowapi wrapper (Phase 1.5 — canonical entry)
+├── immune.py           # 58-LOC re-export shim → immune_types + immune_engine
+├── immune_types.py     # 4 enums + 6 dataclasses (Phase 2.11)
+├── immune_engine.py    # ImmuneResponseBuilding + ImmuneResponseEngine
+├── behavioral_baseline.py
+├── zero_trust.py
+├── api_keys.py
+├── jwt.py
+└── sops_secrets.py
+```
 
 ## Authentication
+
+### TokenStore (Phase 2.10 — canonical)
+
+The audit (§1.7) flagged that three different `*AuthManager`
+classes (`gateway.auth.verify_auth`, `api.consensus.ConsensusAuthManager`,
+`api.websockets.WebSocketAuthManager`) issued and validated tokens
+with subtle semantic drift. Phase 2.10 consolidated them.
+
+```python
+from heretek_swarm.gateway.auth import TokenStore, default_token_store
+
+# Process-wide canonical store
+store: TokenStore = default_token_store
+
+# Generate / validate / revoke
+token = store.generate_token(user_id="user-1", roles=["admin"])
+is_valid = store.validate_token(token)
+store.revoke_token(token)
+store.check_permission(token, "agent.terminate")
+```
+
+`ConsensusAuthManager` and `WebSocketAuthManager` are now thin
+shims that delegate to the canonical `TokenStore`. A token issued
+by the consensus auth manager is visible to the WebSocket auth
+manager (and vice versa) — that is the intended behavior (single
+source of trust for the whole process).
+
+### Rate Limiting (Phase 1.5)
+
+The audit (§3.1) flagged the hand-rolled `RateLimiter` in
+`security/ddos_protection.py` as a reimplementation of slowapi. The
+canonical entry is now `security/rate_limiter.py`:
+
+```python
+from heretek_swarm.security.rate_limiter import limiter, install_rate_limiter
+
+# limiter is a slowapi.Limiter (MovingWindow strategy)
+# install_rate_limiter(app) wires it into the FastAPI app
+
+from fastapi import FastAPI
+app = FastAPI()
+install_rate_limiter(app)
+
+# Per-route limits
+@app.get("/api/something")
+@limiter.limit("100/minute")
+async def something(request: Request):
+    ...
+```
+
+The legacy `InMemoryRateLimiter` + `RateLimitMiddleware` in
+`api/rate_limiting.py` are kept for backwards compat; the
+`security/ddos_protection.RateLimiter` stays for DDoS-pattern
+detection (sliding window, geo-anomaly, mitigation) which slowapi
+does not provide.
+
+### Immune Response Engine (Phase 2.11)
+
+The immune-response engine was misfiled under `consensus/immune.py`
+(it's anomaly detection, not a consensus algorithm). Phase 2.11
+moved it to `security/`:
+
+```python
+from heretek_swarm.security.immune import (
+    ImmuneResponseBuilding,      # the immune-system analogy
+    ImmuneResponseEngine,         # Sentinel's anomaly learning
+    ImmunePattern,                # antigen
+    NovelPatternPreservation,     # antibody for human review
+)
+
+# Old import path is preserved as a 42-LOC re-export shim:
+from heretek_swarm.consensus.immune import ImmuneResponseBuilding  # still works
+```
+
+## Authentication (legacy)
 
 ### API Keys
 ```python

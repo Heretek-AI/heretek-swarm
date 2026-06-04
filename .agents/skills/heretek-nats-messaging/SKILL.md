@@ -26,6 +26,64 @@ Agent A → NATS → Agent B
 - **JetStream** - Persistent messaging
 - **Subjects** - Message routing
 
+## Three-Tier Messaging Fallback
+
+The swarm has a **three-tier fallback** for transport (NATS →
+Direct Registry → Queue). The gateway layer implements this with
+the `InMemoryFallback` class; if NATS is unavailable, the swarm
+runs in fallback mode and the supervisor dispatches messages
+in-process.
+
+```python
+from heretek_swarm.gateway.nats_fallback import InMemoryFallback
+
+fallback = InMemoryFallback()  # in-process pub/sub
+# Used by NATSEventMesh when NATS is unreachable
+```
+
+## Gateway Module Layout (Phase 2.5)
+
+The `gateway/` package was decomposed from a single 1,888-LOC
+`nats_event_mesh.py` into focused modules:
+
+```
+backend/heretek_swarm/gateway/
+├── nats_event_mesh.py     # 1,370 LOC — main event mesh + JetStream (Phase 2.5 partial)
+├── nats_connection.py     # 174 LOC — connect_with_retry, build_connect_kwargs
+├── nats_fallback.py       # 136 LOC — InMemoryFallback (in-process pub/sub)
+├── nats_tls.py            # 160 LOC — build_mtls_ssl_context
+├── nats_types.py          #  61 LOC — ConnectionState, Subscription, NATSMessage
+└── nats_actor_bridge.py   # 389 LOC — NATStoActorBridge (actor ↔ NATS glue)
+```
+
+### Backwards-Compat Re-exports
+
+The 1,370-LOC `nats_event_mesh.py` still re-exports `NATStoActorBridge`,
+`ActorBridgeConfig`, `get_nats_bridge`, `init_nats_bridge`, and
+`shutdown_nats_bridge` at the module namespace. New code can import
+either way:
+- `from heretek_swarm.gateway.nats_event_mesh import NATStoActorBridge` (legacy)
+- `from heretek_swarm.gateway.nats_actor_bridge import NATStoActorBridge` (new)
+
+The other 4 modules (`nats_connection`, `nats_fallback`, `nats_tls`,
+`nats_types`) are imported by name.
+
+### When to use which module
+
+- **`nats_event_mesh.NATSEventMesh`** — high-level event mesh with
+  pub/sub + request/reply + JetStream. The canonical entry point.
+- **`nats_event_mesh.NATSEventMeshWithJetStream`** — subclass that
+  enables JetStream streams + durable consumers.
+- **`nats_event_mesh.NATStoActorBridge`** — bridges NATS subjects to
+  the actor message protocol. Use this when you want agents to
+  communicate via NATS but want the actor message format preserved.
+- **`nats_fallback.InMemoryFallback`** — for tests, dev, and the
+  transport-fallback path.
+- **`nats_connection`** — low-level connection logic. Most code
+  doesn't need this directly.
+- **`nats_tls`** — mTLS context builder. The swarm's three-tier
+  fallback relies on mTLS at the NATS edge.
+
 ## Connection Setup
 
 ### Basic Connection
@@ -456,3 +514,13 @@ nats sub test
 8. Implement message deduplication
 9. Log all message operations
 10. Have fallback mechanisms
+11. **Use the focused gateway modules** — `nats_event_mesh.py` re-exports
+    the bridge for backwards compat, but new code should import from
+    `nats_actor_bridge` directly. Low-level connection / mTLS work
+    belongs in `nats_connection` / `nats_tls`; test/dev work belongs in
+    `nats_fallback`.
+12. **Trust the three-tier fallback** — don't write your own retry /
+    queue logic. `InMemoryFallback` is what runs when NATS is down.
+13. **Preserve the public bridge surface** — if you add a new bridge
+    helper, expose it via `nats_actor_bridge.py` AND add a
+    backwards-compat re-export in `nats_event_mesh.py`.

@@ -15,18 +15,70 @@ The memory system is built on **Cognee** (knowledge graph + vector memory engine
 ### Core Components
 ```
 backend/heretek_swarm/memory/
-├── __init__.py           # Package exports (23 symbols)
+├── __init__.py           # Package exports (re-exports MemoryStore + Mem0Backend)
 ├── access_patterns.py    # Tier classification, pattern analysis
 ├── cognee_reader.py      # Read-only Cognee client
 ├── cognee_writer.py      # Write-path Cognee client
 ├── eliza_memory.py       # Importance-decay memory manager
-└── prefetcher.py         # LRU/LFU caches, pre-fetch scheduling
+├── mem0_backend.py       # Mem0 (mem0ai) backend wrapper (Phase 1.1)
+├── prefetcher.py         # LRU/LFU caches, pre-fetch scheduling
+└── store.py              # MemoryStore Protocol + adapters + get_default_store()
 ```
 
 ### No Legacy Code
 The following have been **deleted** and must not be reintroduced:
 - `base.py`, `persistent.py`, `tiering.py`, `versioned.py`, `compression.py`, `migration_strategies.py`
 - Legacy classes: `DualTierMemory`, `PersistentMemory`, `TieringManager`, `VersionedMemory`, `CompressionManager`
+
+## The MemoryStore Protocol (Phase 1.1 — canonical interface)
+
+New code should use the **`MemoryStore` Protocol** as the canonical interface
+to all memory backends. The `CogneeMemoryReader` / `CogneeMemoryWriter` /
+`Mem0Backend` classes still exist and are adapted to the protocol by
+`_CogneeAdapter` and `_Mem0Adapter`; a `_NullMemoryStore` is the in-memory
+fallback that keeps the swarm bootable in dev.
+
+```python
+from heretek_swarm.memory import MemoryStore, MemoryType, get_default_store
+
+store: MemoryStore = get_default_store()  # resolved from env
+
+# 5-stage pipeline
+await store.add(entry)                              # write
+entry = await store.read(memory_id)                 # read
+hits = await store.search("query", top_k=10)        # search
+health = await store.health()                       # backend health
+await store.close()                                 # cleanup
+```
+
+### MemoryType enum
+The canonical tier abstraction is `MemoryType` (StrEnum):
+- `EPISODIC` — events and experiences
+- `SEMANTIC` — knowledge and facts
+- `PROCEDURAL` — skills and procedures
+- `WORKING` — short-term context
+
+```python
+from heretek_swarm.memory import MemoryType
+
+# Maps to cognee dataset name (e.g. 'episodic-agent-1')
+dataset = MemoryType.EPISODIC.to_dataset("agent-1")
+```
+
+### Resolver
+
+`get_default_store()` returns:
+- `_CogneeAdapter` when `COGNEE_ENABLED=1` (default)
+- `_Mem0Adapter` when `MEM0_ENABLED=1` (and `COGNEE_ENABLED!=1`)
+- `_NullMemoryStore` (in-memory) when neither is enabled
+
+`reset_default_store()` clears the cache (useful in tests).
+
+### Adapter pattern
+
+`_CogneeAdapter` wraps `CogneeMemoryWriter`; `_Mem0Adapter` wraps
+`Mem0Backend`. Both delegate to the existing API surface; new code should
+program against the Protocol, not the wrapper directly.
 
 ## Cognee API
 
@@ -215,6 +267,37 @@ forgotten = await manager.forget(
 - **Procedural** - Skills and procedures
 - **Emotional** - Emotional associations
 
+## Mem0 Backend (Phase 1.1)
+
+`mem0_backend.py` is a wrapper around the `mem0ai` package. It's an
+alternative to the cognee adapter; choose one or the other per
+environment via env vars (cognee is the default).
+
+```python
+from heretek_swarm.memory import Mem0Backend, MEM0_AVAILABLE
+
+if MEM0_AVAILABLE:
+    backend = Mem0Backend()
+    backend.configure(
+        qdrant_url="http://qdrant:6333",
+        collection_name="heretek_memories",
+    )
+    # Method surface matches CogneeMemoryWriter where possible
+    memory_id = backend.add(
+        content="observation",
+        agent_id="explorer",
+        metadata={"importance": 0.8, "tags": ["observation"]},
+    )
+    results = backend.search("observation", top_k=5)
+    backend.delete_memory(memory_id)
+```
+
+`mem0ai` is optional; the module imports it lazily. When `mem0ai` is
+unavailable, `MEM0_AVAILABLE` is `False` and `Mem0Backend` is a stub
+that 503s on every method. Use `_get_memory_store()` (or
+`get_default_store()`) to get the canonical store regardless of which
+backend is wired.
+
 ## Testing Memory Operations
 
 ### Unit Tests
@@ -346,6 +429,18 @@ results = await reader.search_batch(queries, limit=10)
 4. **Importance decay** - Memories fade over time unless reinforced
 5. **Cache invalidation** - Manual invalidation may be needed
 6. **Batch limits** - Respect Cognee API rate limits
+7. **Prefer the Protocol** - New code should call `get_default_store()` and use the
+   `MemoryStore` Protocol methods, not the legacy `CogneeMemoryReader` /
+   `CogneeMemoryWriter` directly. The adapters wrap those classes; the Protocol
+   is the migration target.
+8. **MemoryMixin no-op when no analyzer** - `MemoryMixin._track_memory_access`
+   and `MemoryMixin._prefetch_relevant` are no-ops when neither
+   `self.memory_store` nor `self.access_analyzer` is set (the canonical
+   `MemoryStore` is the primary memory path). The mixin has a
+   `_get_memory_store()` method that returns the canonical store, preferring
+   `self.memory_store` if set, falling back to `get_default_store()`. The
+   legacy `self.access_analyzer` path is preserved for the few opt-in actors
+   (arbiter, examiner, metis, empath, historian).
 
 ## Best Practices
 
@@ -356,3 +451,9 @@ results = await reader.search_batch(queries, limit=10)
 5. Use negative assertions to prevent legacy code creep
 6. Test both read and write paths
 7. Document memory schemas
+8. **Use the `MemoryStore` Protocol** for new code — it's the
+   backend-agnostic interface; `Cognee` is just one of the 3 implementations
+   (cognee / mem0 / null).
+9. **Map MemoryType to cognee dataset name** via `MemoryType.to_dataset(identifier)`
+   so the cognee 5-stage pipeline (add → cognify → search → improve) can route
+   by tier uniformly.

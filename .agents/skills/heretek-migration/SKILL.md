@@ -25,6 +25,83 @@ description: >-
 - Message broker changes
 - Storage system changes
 
+### Multi-Package Monorepo Migration (Phase 4)
+
+The audit's Phase 4 (graduated to a 2-package monorepo with stable
+boundaries) is structurally prepared. The split is a multi-week
+effort; the foundation is in place.
+
+```
+backend/                  # current single-package layout
+packages/                 # multi-package monorepo target
+├── core/
+│   ├── pyproject.toml    # name=heretek-swarm-core
+│   ├── README.md         # which sub-packages move here
+│   └── src/heretek_swarm_core/__init__.py  # re-export shim
+└── api/
+    ├── pyproject.toml    # name=heretek-swarm-api
+    ├── README.md
+    └── src/heretek_swarm_api/__init__.py   # re-export shim
+```
+
+`pyproject.toml` has `[tool.uv.workspace]` with `members = []`
+for now; activating the split becomes `members = ['packages/core',
+'packages/api']`.
+
+The re-export shims are the bridge: when new code does `from
+heretek_swarm_core import AgentActor`, it resolves to the
+re-export, which pulls in the legacy class. The actual file
+moves happen in follow-up PRs.
+
+### Sovereign Services Migration (Phase 5)
+
+The audit's Phase 5 (graduated sovereign services — only pursue
+if 24/7 autonomy pressure demands it) has its deployment surface
+in place. The 4 services are:
+
+- **5.1 consensus_svc** — `consensus` in a standalone gRPC service
+- **5.2 memory_svc** — `memory` in a dedicated service (cognee + mem0)
+- **5.3 realtime_svc** — `realtime` (WebSocket) as a sidecar
+- **5.4 observability_svc** — `observability` as a sidecar
+
+Deployment is opt-in via the docker-compose `sovereign` profile:
+
+```bash
+# Activate the consensus_svc sidecar
+docker compose --profile sovereign up
+```
+
+The api process picks up the gRPC URLs via the 4 env vars
+(`HERETEK_CONSENSUS_GRPC_URL`, `HERETEK_MEMORY_GRPC_URL`,
+`HERETEK_REALTIME_GRPC_URL`, `HERETEK_OBSERVABILITY_GRPC_URL`).
+`_init_sovereign_services()` in the api lifespan resolves
+the 4 gRPC clients at startup; when env vars are unset, the
+api falls back to the in-process stubs.
+
+See `docs/SOVEREIGN_SERVICES.md` for the design doc with
+exit criteria, wire protocol, and auth boundary for each
+service.
+
+### DB Provider Re-seed (Phase 3.15)
+
+The audit's `Stale DB-registered LLM/embedding providers`
+carried forward (the `/api/config/{llm,embedding}/providers`
+endpoints return a stale `openai-default` entry from a prior
+DB seed). The runtime env config is correct; the DB row is
+leftover. The re-seed script removes any DB-registered LLM /
+embedding provider whose `is_default=True` AND whose model
+name is no longer in the live environment.
+
+```bash
+# Local dev (uses .env)
+python scripts/reseed_db_providers.py
+
+# Docker compose (one-shot exec)
+docker compose exec api python scripts/reseed_db_providers.py
+```
+
+The script is idempotent and safe to run multiple times.
+
 ## Database Migrations
 
 ### Alembic Setup

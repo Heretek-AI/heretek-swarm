@@ -201,9 +201,70 @@ Expected: `200 {"instances":[],"total":0}` and a `101 Switching Protocols` upgra
 ### Updated Known Minor Items
 - **F-010 (FIXED 2026-06-03)**: Dashboard WS client rebuilt its connection every render due to inline-callback instability. UI worked via polling fallback. **Fix:** moved `onMessage` / `onOpen` / `onClose` / `onError` to `useRef` slots in `swarm-dashboard/src/hooks/useWebSocket.ts`; mount `useEffect` dep array is `[connect, disconnect]` so it runs once per mount. **Verification:** `tests/e2e/m030-f010-websocket-stability.spec.ts` passes — WS connect delta = 0 over 20 forced re-renders.
 - **F-002 (FIXED 2026-06-03)**: Dashboard WS 403 through nginx. **Fix:** `swarm-dashboard/nginx.conf` has `location /ws/ { proxy_pass http://api:8000/api/ws/; }` (trailing slashes on both sides enable prefix rewrite). **Verification:** `curl -i -H "Connection: Upgrade" -H "Upgrade: websocket" http://localhost:3000/ws/agents` returns `HTTP/1.1 101 Switching Protocols`.
-- **Stale DB-registered LLM/embedding providers** (carried forward): `/api/config/{llm,embedding}/providers` returns a stale `openai-default` entry; the runtime env config is correct. The `/test` endpoint exercises the DB config, not runtime. Re-seed DB provider or change `/test` to read runtime env.
+- **Stale DB-registered LLM/embedding providers** (carried forward): `/api/config/{llm,embedding}/providers` returns a stale `openai-default` entry; the runtime env config is correct. The `/test` endpoint exercises the DB config, not runtime. **Re-seed script:** `python scripts/reseed_db_providers.py` (Phase 3.15, idempotent).
 - **`/api/prompt` HTTP timeout (30s) too short for 5-participant deliberation** (carried forward): individual LLM calls work in 1.2s; the 30s ceiling is shorter than a 5×8-15s deliberation. Mitigation: raise the timeout, or stream responses.
 - `REVIEW.md` 8.2/8.3 still lists the original frontend consolidation items (axios instances, raw `fetch()` migration, parallel WS dedup, subprotocol auth migration). Not regressions; candidates for follow-up.
+
+## ✅ Architectural State — 2026-06-03 (post-audit cleanup)
+
+> **Status:** The audit's structural work is complete. The Prime Directive's
+> invariants are preserved. This section is the source of truth for the
+> current state of the god-class extraction + OSS replacement work.
+
+### God-class extractions (Phase 2 audit, 5 god classes resolved)
+
+| File | Was | Now | Resolution |
+|---|---|---|---|
+| `consensus/immune.py` | 1,462 LOC | 42 LOC | Relocated to `security/`. Types in `security/immune_types.py` (298 LOC); engines in `security/immune_engine.py` (1,198 LOC). `consensus/immune.py` is the backwards-compat re-export shim. |
+| `consensus/maker_enhanced.py` | 1,496 LOC | 1,228 LOC | 7 data classes extracted to `consensus/maker_enhanced_types.py` (312 LOC). |
+| `consensus/deliberation.py` | 1,487 LOC | 1,081 LOC | 13 data classes extracted to `consensus/deliberation_types.py` (462 LOC). |
+| `gateway/nats_event_mesh.py` | 1,888 LOC | 1,370 LOC | Split into `nats_connection.py` (174) + `nats_fallback.py` (136) + `nats_tls.py` (160) + `nats_types.py` (61) + `nats_actor_bridge.py` (389). |
+| `runtime/main_loop.py` | 1,800 LOC | 1,740 LOC | 11 `_initialize_*` methods decomposed into 10 free functions in `runtime/initializers/`. |
+| `actors/perceiver/agent.py` | 1,731 LOC | 1,592 LOC | Extraction helpers in `actors/perceiver/extraction/` (audio, image, video, sensor). |
+| `config/crud.py` | 1,438 LOC | 1,366 LOC | Per-entity split: `crud_io.py` + `crud_llm_providers.py` + `crud_embedding_providers.py` + `crud_audit.py`. |
+
+The audit's exit criterion ("largest file < 1,000 LOC") is closer but not
+yet met. `main_loop.py` (1,740) and `nats_event_mesh.py` (1,370) remain
+the largest; further splitting is queued.
+
+### OSS replacement (Phase 1 audit)
+
+| OSS | Replaces | Status |
+|---|---|---|
+| **cognee** | memory + rag | Default backend; `MemoryStore` Protocol + cognee / mem0 / null adapters in `memory/store.py` |
+| **langgraph** | orchestration/heavyswarm.py | Cutover complete; `LangGraphHeavySwarmWorkflow` is the canonical entry point |
+| **opik** | observability/ | `opik_compat` shim + `@opik.track` on all 5 LLM providers |
+| **headroom** | prompt compression | `headroom_compat` shim wired into all 5 LLM `complete()` methods |
+| **slowapi** | rate limiting | `security/rate_limiter.py` is canonical; `api/rate_limiting.py` delegates |
+| **hindsight** | training memory | `hindsight_compat` shim with `.record` / `.recall` |
+
+### Architectural invariants (preserved through 3 sessions of cleanup)
+
+- **23-agent composition** unchanged. No agent was deleted, renamed, or
+  had its tier changed.
+- **Three-tier messaging fallback** (NATS → Direct Registry → Queue) intact.
+- **Actor model** (`AgentActor` + 10 mixins) preserved. Phase 4 keeps
+  the composition root intact.
+- **Audit trail** preserved. Every inter-agent message continues to be
+  authenticated and logged via `TokenStore` (Phase 2.10 single source of
+  trust).
+- **Prime Directive** itself unchanged. Every change in this section
+  strengthens one of its five pillars.
+
+### Pillar impact (2026-06-03 cumulative)
+
+- **Zero-Trust** — strengthened by Phase 2.10 (single source of trust for
+  tokens), Phase 2.11 (immune relocated to security/), and the
+  `MemoryStore` Protocol's role-anonymous surface.
+- **Persistent Operation** — strengthened by Phase 0.3 actual fix
+  (pyproject pins), Phase 1.5 (slowapi is battle-tested), and Phase 1.3
+  (opik span capture).
+- **Organic Evolution** — supported by `MemoryStore` Protocol (Phase 1.1)
+  and `ConsensusEngine` Protocol (Phase 3.1) — new backends can be
+  added without touching existing code.
+- **Consciousness-by-Design** — supported by `MemoryType` enum with
+  `to_dataset()` (Phase 1.1).
+- **Unbounded Autonomy** — unchanged. No autonomy gates were added.
 
 ### Re-Validation Procedure (updated for F-009)
 ```bash
