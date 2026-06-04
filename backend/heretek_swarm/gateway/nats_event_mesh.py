@@ -29,6 +29,7 @@ from typing import Any
 import structlog
 
 from heretek_swarm.gateway.nats_fallback import InMemoryFallback, _InMemoryFallback
+from heretek_swarm.gateway.nats_tls import build_mtls_ssl_context
 from heretek_swarm.infrastructure.nats.ca import CertificateAuthority
 
 logger = structlog.get_logger(__name__)
@@ -357,88 +358,19 @@ class NATSEventMesh:
     def _build_ssl_context(self) -> ssl.SSLContext:
         """Build an SSL context for mTLS.
 
-        Reads certs from secrets/certs.yaml via CertificateAuthority when
-        tls_ca_file/tls_cert_file/tls_key_file are not explicitly provided.
+        Thin delegate to
+        :func:`heretek_swarm.gateway.nats_tls.build_mtls_ssl_context`
+        (Phase 2.5 of PLAN.md). Certs come from
+        secrets/certs.yaml via CertificateAuthority when
+        tls_ca_file/tls_cert_file/tls_key_file are not
+        explicitly provided.
         """
-        import tempfile
-
-        ca_cert_str: str
-        cert_str: str
-        key_str: str
-
-        if self.tls_ca_file and self.tls_cert_file and self.tls_key_file:
-            # Use explicitly-provided paths
-            ca_cert_str = Path(self.tls_ca_file).read_text(encoding="utf-8")
-            cert_str = Path(self.tls_cert_file).read_text(encoding="utf-8")
-            key_str = Path(self.tls_key_file).read_text(encoding="utf-8")
-        else:
-            # Load from secrets/certs.yaml via CertificateAuthority
-            ca = CertificateAuthority()
-            agent_id = self.client_name
-            agent_result = ca.issue_agent_cert(agent_id)
-            ca_cert_str = ca.ca_cert_pem
-            cert_str = agent_result["cert"]
-            key_str = agent_result["key"]
-
-        # Write PEM data to temp files
-        ca_cert_fd, ca_cert_path = tempfile.mkstemp(
-            suffix=".pem", prefix="heretek_mesh_ca_"
+        return build_mtls_ssl_context(
+            tls_ca_file=self.tls_ca_file,
+            tls_cert_file=self.tls_cert_file,
+            tls_key_file=self.tls_key_file,
+            client_name=self.client_name,
         )
-        with os.fdopen(ca_cert_fd, "w") as f:
-            f.write(ca_cert_str)
-        self._temp_cert_files.append(ca_cert_path)
-
-        cert_fd, cert_path = tempfile.mkstemp(
-            suffix=".pem", prefix="heretek_mesh_cert_"
-        )
-        with os.fdopen(cert_fd, "w") as f:
-            f.write(cert_str)
-        self._temp_cert_files.append(cert_path)
-
-        key_fd, key_path = tempfile.mkstemp(
-            suffix=".pem", prefix="heretek_mesh_key_"
-        )
-        with os.fdopen(key_fd, "w") as f:
-            f.write(key_str)
-        self._temp_cert_files.append(key_path)
-
-        import os
-
-        skip_verify = os.getenv("HERETEK_TLS_SKIP_HOSTNAME_VERIFY", "").lower() in (
-            "1",
-            "true",
-            "yes",
-        )
-        # uvloop nats-py: verify_flags (PARTIAL_CHAIN) doesn't propagate, so
-        # self-signed CAs fail. Dev: unverified_context. Prod: TLS_CLIENT.
-        env = os.getenv("ENVIRONMENT", "development")
-        if env == "development":
-            ssl_ctx: ssl.SSLContext = ssl._create_unverified_context()
-        else:
-            ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-            ssl_ctx.verify_mode = ssl.CERT_REQUIRED
-            ssl_ctx.load_verify_locations(cafile=ca_cert_path)
-        ssl_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)
-        ssl_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
-        ssl_ctx.check_hostname = not skip_verify
-
-        logger.debug(
-            "ssl_context_built_for_mtls",
-            ca_cert_path=ca_cert_path,
-            cert_path=cert_path,
-            key_path=key_path,
-            verify_mode=str(ssl_ctx.verify_mode),
-        )
-        # Log warning so operator can see the verify_mode at startup
-        if ssl_ctx.verify_mode == ssl.CERT_NONE:
-            logger.warning(
-                "nats_tls_dev_mode_unverified_cert",
-                message=(
-                    "mTLS enabled with self-signed dev CA (verify_mode=CERT_NONE). "
-                    "Production must use a real CA and cannot use _create_unverified_context."
-                ),
-            )
-        return ssl_ctx
 
     async def _enable_fallback(self) -> bool:
         """Enable in-memory fallback mesh."""
