@@ -52,6 +52,7 @@ dependencies = [
     "slowapi>=0.1.9",
     "limits>=5.8.0",
     "opik>=1.0.0",
+    "instructor>=1.15.0",
 ]
 
 [project.optional-dependencies]
