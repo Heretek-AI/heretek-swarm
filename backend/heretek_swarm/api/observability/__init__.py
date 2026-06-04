@@ -81,13 +81,11 @@ def _get_external_call_log_session_factory() -> async_sessionmaker[AsyncSession]
         )
         # Lazy-attach DB timing listener — zero cost until this factory is first used
         from heretek_swarm.observability.db_timing import attach_db_timing
-        from heretek_swarm.observability.prometheus_metrics import (
-            heretek_swarm_db_query_duration_seconds,
-        )
+        from heretek_swarm.observability.prometheus_native import DB_QUERY_DURATION
 
         attach_db_timing(
             _external_call_log_engine,
-            histogram=heretek_swarm_db_query_duration_seconds,
+            histogram=DB_QUERY_DURATION,
             histogram_labels={"db_name": "external_call_log"},
         )
         logger.info("ExternalCallLog database session factory initialized")
