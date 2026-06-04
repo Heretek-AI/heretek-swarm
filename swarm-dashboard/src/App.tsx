@@ -40,26 +40,17 @@ import { SetupWizard } from './components/Setup';
 import { useSetupStore } from './stores/setupStore';
 import { setToastInstance } from './api/client';
 
-// Legacy components (keep for compatibility)
-import { Dashboard } from './components/Dashboard/Dashboard';
-import { CollectiveCanvas } from './components/Canvas/Canvas';
 import { WorkflowBuilder } from './components/WorkflowBuilder/WorkflowBuilder';
-import { Observability } from './components/Observability/Observability';
-import { ChatInterface } from './components/Chat/ChatInterface';
 
-type View = 
-  | 'home' 
-  | 'agents' 
-  | 'consciousness' 
+type View =
+  | 'home'
+  | 'agents'
+  | 'consciousness'
   | 'deliberation'
   | 'autonomous'
-  | 'workflows' 
-  | 'logs' 
-  | 'settings'
-  | 'legacy-dashboard'
-  | 'legacy-canvas'
-  | 'legacy-observability'
-  | 'legacy-chat';
+  | 'workflows'
+  | 'logs'
+  | 'settings';
 
 const navItems: NavItem[] = [
   { id: 'home', label: 'Home', icon: '🏠' },
@@ -68,8 +59,6 @@ const navItems: NavItem[] = [
   { id: 'deliberation', label: 'Deliberation', icon: '🗳️' },
   { id: 'autonomous', label: 'Autonomous', icon: '🔄' },
   { id: 'workflows', label: 'Workflows', icon: '🔀' },
-  { id: 'legacy-canvas', label: 'Canvas', icon: '🎨' },
-  { id: 'legacy-chat', label: 'Chat', icon: '💬' },
   { id: 'logs', label: 'Terminal/Logs', icon: '📟' },
   { id: 'settings', label: 'Settings', icon: '⚙️' },
 ];
@@ -228,15 +217,6 @@ function DashboardContent() {
         return <LogsPage />;
       case 'settings':
         return <SettingsPage onRerunSetup={handleRerunSetup} />;
-      // Legacy views
-      case 'legacy-dashboard':
-        return <Dashboard />;
-      case 'legacy-canvas':
-        return <CollectiveCanvas />;
-      case 'legacy-observability':
-        return <Observability />;
-      case 'legacy-chat':
-        return <ChatInterface />;
       default:
         return <HomePage />;
     }
