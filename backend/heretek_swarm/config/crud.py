@@ -106,15 +106,9 @@ class ConfigurationServiceCrud:
         changes: dict[str, Any] | None,
         user: str | None,
     ) -> None:
-        """Log a configuration change for audit purposes."""
-        logger.info(
-            "config_change",
-            action=action,
-            entity_type=entity_type,
-            entity_id=str(entity_id) if entity_id else None,
-            changes=changes,
-            user=user,
-        )
+        """Thin delegate to :func:`heretek_swarm.config.crud_audit.log_change`."""
+        from heretek_swarm.config.crud_audit import log_change
+        log_change(self, action, entity_type, entity_id, changes, user)
 
     # =====================================================================
     # User Configuration CRUD
@@ -997,24 +991,9 @@ class ConfigurationServiceCrud:
         entity_id: str | None = None,
         limit: int = 100,
     ) -> list[ConfigAuditLog]:
-        """
-        Get audit log entries.
-
-        Args:
-            entity_type: Optional entity type filter
-            entity_id: Optional entity ID filter
-            limit: Maximum number of entries to return
-
-        Returns:
-            List of audit log entries
-        """
-        logger.info(
-            "audit_log_requested",
-            entity_type=entity_type,
-            entity_id=entity_id,
-            limit=limit,
-        )
-        return []
+        """Thin delegate to :func:`heretek_swarm.config.crud_audit.get_audit_log`."""
+        from heretek_swarm.config.crud_audit import get_audit_log
+        return await get_audit_log(self, entity_type, entity_id, limit)
 
     # =====================================================================
     # Import/Export
