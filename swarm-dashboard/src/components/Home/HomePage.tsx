@@ -13,6 +13,7 @@ import { EmptyState } from '../UI/EmptyState';
 import { getAutonomousStatus, AutonomousStatus } from '../../api/autonomous';
 import { getHistorianEvents } from '../../api/events';
 import { ConsciousnessMetricsPanel } from '../ConsciousnessMetricsPanel';
+import { useAgentStatus } from '../../hooks/useRealTimeAgentUpdates';
 
 // API URL configuration
 const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
@@ -75,6 +76,21 @@ export function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  // Tier 5.4: real-time agent status via WebSocket. Any status
+  // change triggers a refetch of the agent counts so the cards
+  // stay current without waiting for the 30s polling tick.
+  const { agentStatuses } = useAgentStatus();
+  const _agentCount = Object.keys(agentStatuses).length;
+  useEffect(() => {
+    if (_agentCount === 0) return;
+    fetchAgents().then((agents) => {
+      if (agents) setData((prev) => ({ ...prev, agents }));
+    });
+    // _agentCount is a stable primitive derived from agentStatuses
+    // keys; re-running when the count changes is the right signal.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_agentCount]);
 
   // Fetch system health
   const fetchHealth = useCallback(async () => {
