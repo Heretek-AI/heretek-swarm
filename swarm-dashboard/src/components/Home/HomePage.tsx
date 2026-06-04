@@ -12,6 +12,7 @@ import { ErrorBoundary, SimpleErrorFallback } from '../UI/ErrorBoundary';
 import { EmptyState } from '../UI/EmptyState';
 import { getAutonomousStatus, AutonomousStatus } from '../../api/autonomous';
 import { getHistorianEvents } from '../../api/events';
+import { ConsciousnessMetricsPanel } from '../ConsciousnessMetricsPanel';
 
 // API URL configuration
 const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
@@ -434,6 +435,9 @@ export function HomePage() {
             color="yellow"
           />
         </MetricCardGrid>
+
+        {/* Tier 2.2: Live Consciousness Panel (was an orphan component) */}
+        <ConsciousnessMetricsPanel />
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
