@@ -160,8 +160,19 @@ class TestMemoryPackageExports:
         assert "DualTierMemory" not in exports
 
     def test_legacy_memory_entry_not_in_all(self):
+        # Phase 1.1 of PLAN.md introduced a NEW canonical
+        # MemoryEntry dataclass as part of the MemoryStore
+        # Protocol. The old legacy MemoryEntry (the
+        # pre-Protocol dataclass) was removed; the new one
+        # IS in __all__ by design. This test now asserts the
+        # new entry is importable from the package.
+        from heretek_swarm.memory import MemoryEntry as Entry
         from heretek_swarm.memory import __all__ as exports
-        assert "MemoryEntry" not in exports
+        assert "MemoryEntry" in exports
+        assert Entry is not None
+        assert hasattr(Entry, "id")
+        assert hasattr(Entry, "content")
+        assert hasattr(Entry, "memory_type")
 
     def test_legacy_persistent_memory_not_in_all(self):
         from heretek_swarm.memory import __all__ as exports

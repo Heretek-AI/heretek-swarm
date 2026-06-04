@@ -80,40 +80,42 @@ from heretek_swarm.memory.prefetcher import (
 
 logger = structlog.get_logger(__name__)
 
-__all__ = [
-    # Access-pattern analysis
-    "AccessPattern",
-    "AccessPatternAnalyzer",
-    "AccessPatternReport",
-    "AccessStatistics",
-    "AccessTier",
-    # Cognee-backed clients
-    "CogneeMemoryReader",
-    "CogneeMemoryWriter",
-    # Mem0 backend
-    "MEM0_AVAILABLE",
-    "Mem0Backend",
-    "Mem0Config",
-    # Canonical MemoryStore Protocol
-    "MemoryEntry",
-    "MemoryStore",
-    "MemoryType",
-    "get_default_store",
-    "reset_default_store",
-    # Eliza-style memory manager
-    "ElizaMemoryEntry",
-    # Pre-fetching & caching
-    "IntelligentPrefetcher",
-    "LFUCache",
-    "LRUCache",
-    "MemoryAccessProfile",
-    "MemoryAccessRecord",
-    "MemoryManager",
-    "MemoryManagerConfig",
-    "PreFetchPriority",
-    "PreFetchRequest",
-    "PreFetchResult",
-    "PreFetchScheduler",
-    "PreFetchStrategy",
-    "create_memory_manager",
-]
+__all__ = sorted(
+    [
+        # Access-pattern analysis
+        "AccessPattern",
+        "AccessPatternAnalyzer",
+        "AccessPatternReport",
+        "AccessStatistics",
+        "AccessTier",
+        # Cognee-backed clients
+        "CogneeMemoryReader",
+        "CogneeMemoryWriter",
+        # Mem0 backend
+        "MEM0_AVAILABLE",
+        "Mem0Backend",
+        "Mem0Config",
+        # Canonical MemoryStore Protocol (Phase 1.1)
+        "MemoryEntry",
+        "MemoryStore",
+        "MemoryType",
+        "get_default_store",
+        "reset_default_store",
+        # Eliza-style memory manager
+        "ElizaMemoryEntry",
+        # Pre-fetching & caching
+        "IntelligentPrefetcher",
+        "LFUCache",
+        "LRUCache",
+        "MemoryAccessProfile",
+        "MemoryAccessRecord",
+        "MemoryManager",
+        "MemoryManagerConfig",
+        "PreFetchPriority",
+        "PreFetchRequest",
+        "PreFetchResult",
+        "PreFetchScheduler",
+        "PreFetchStrategy",
+        "create_memory_manager",
+    ]
+)
