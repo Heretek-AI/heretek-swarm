@@ -336,7 +336,7 @@ def test_setup_metrics_middleware_records_request():
     client = TestClient(app)
     response = client.get("/spike_test_endpoint")
     assert response.status_code == 200
-    body, ctype = export_prometheus()
+    body, _ctype = export_prometheus()
     text = body.decode("utf-8")
     # The endpoint (after normalization) should appear in the registry output
     assert "/spike_test_endpoint" in text
