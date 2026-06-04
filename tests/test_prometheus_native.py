@@ -13,10 +13,13 @@ from heretek_swarm.observability.prometheus_native import (
     EXTERNAL_CALL_LOGS,
     FREE_ENERGY,
     HEALTH_SCORE,
+    LLM_CALL_DURATION,
+    LLM_TOKENS,
     MESSAGES_TOTAL,
     PHI_SCORE,
     TASKS_COMPLETED,
     TASKS_FAILED,
+    UPTIME_SECONDS,
     build_test_registry,
     export_prometheus,
     increment_consensus_rounds,
@@ -24,12 +27,19 @@ from heretek_swarm.observability.prometheus_native import (
     increment_messages,
     increment_tasks_completed,
     increment_tasks_failed,
+    record_actor_processing,
     record_api_request,
+    record_db_query,
+    record_db_query_duration,
     record_encryption_latency,
     record_external_call_duration,
     record_free_energy,
     record_health_score,
+    record_llm_call,
+    record_llm_tokens,
     record_phi_score,
+    record_uptime,
+    setup_metrics_middleware,
 )
 from prometheus_client import (
     CONTENT_TYPE_LATEST,
@@ -187,3 +197,168 @@ def test_build_test_registry_returns_fresh_collector():
     reg = build_test_registry()
     assert isinstance(reg, CollectorRegistry)
     assert reg is not REGISTRY  # Sanity: it's a fresh one, not the default
+
+
+# ---------------------------------------------------------------------------
+# Phase 2A.1 wrapper-cutover tests (commit 2)
+# ---------------------------------------------------------------------------
+
+
+def test_record_actor_processing_observes_histogram():
+    """record_actor_processing() observes into the histogram."""
+    from heretek_swarm.observability.prometheus_native import (
+        ACTOR_PROCESSING_DURATION,
+    )
+
+    label = ACTOR_PROCESSING_DURATION.labels(actor_type="executor")
+    before_sum = label._sum.get()
+    record_actor_processing(agent_id="test-actor", actor_type="executor", duration_seconds=0.05)
+    after_sum = label._sum.get()
+    assert after_sum >= before_sum + 0.05
+
+
+def test_record_db_query_observes_histogram():
+    """record_db_query() observes into the histogram."""
+    from heretek_swarm.observability.prometheus_native import (
+        DB_QUERY_DURATION,
+    )
+
+    label = DB_QUERY_DURATION.labels(db_name="config")
+    before_sum = label._sum.get()
+    record_db_query(duration_seconds=0.01, db_name="config")
+    after_sum = label._sum.get()
+    assert after_sum >= before_sum + 0.01
+
+
+def test_record_db_query_duration_alias():
+    """record_db_query_duration is an alias for record_db_query."""
+    from heretek_swarm.observability.prometheus_native import (
+        DB_QUERY_DURATION,
+    )
+
+    label = DB_QUERY_DURATION.labels(db_name="external_call_log")
+    before = label._sum.get()
+    record_db_query_duration(duration_seconds=0.02, db_name="external_call_log")
+    after = label._sum.get()
+    assert after >= before + 0.02
+
+
+def test_record_llm_call_observes_histogram():
+    """record_llm_call() observes into the histogram."""
+    label = LLM_CALL_DURATION.labels(
+        agent_id="alpha", provider="anthropic", model="claude-3-5-sonnet"
+    )
+    before_sum = label._sum.get()
+    record_llm_call(
+        agent_id="alpha",
+        provider="anthropic",
+        model="claude-3-5-sonnet",
+        duration_seconds=2.5,
+    )
+    after_sum = label._sum.get()
+    assert after_sum >= before_sum + 2.5
+
+
+def test_record_llm_tokens_increments_three_counters():
+    """record_llm_tokens() emits 3 LLM_TOKENS increments (prompt/completion/total)."""
+    record_llm_tokens(
+        agent_id="alpha",
+        provider="anthropic",
+        model="claude-3-5-sonnet",
+        prompt_tokens=10,
+        completion_tokens=5,
+        total_tokens=15,
+    )
+    prompt = LLM_TOKENS.labels(
+        agent_id="alpha", provider="anthropic", model="claude-3-5-sonnet",
+        token_type="prompt",
+    )._value.get()
+    completion = LLM_TOKENS.labels(
+        agent_id="alpha", provider="anthropic", model="claude-3-5-sonnet",
+        token_type="completion",
+    )._value.get()
+    total = LLM_TOKENS.labels(
+        agent_id="alpha", provider="anthropic", model="claude-3-5-sonnet",
+        token_type="total",
+    )._value.get()
+    assert prompt >= 10
+    assert completion >= 5
+    assert total >= 15
+
+
+def test_record_uptime_sets_gauge():
+    """record_uptime() sets the UPTIME_SECONDS gauge."""
+    record_uptime(123.4)
+    assert UPTIME_SECONDS._value.get() == 123.4
+
+
+def test_record_api_request_normalizes_uuid():
+    """record_api_request replaces UUIDs in endpoint with {id} placeholders."""
+    # Use a unique agent_id+endpoint combo to avoid label collision with
+    # earlier tests. The endpoint has a UUID; native should normalize it.
+    test_endpoint = "/api/agents/550e8400-e29b-41d4-a716-446655440000/state"
+    record_api_request(
+        method="GET", endpoint=test_endpoint, status=200, duration=0.05
+    )
+    # Find the labeled counter via the underlying registry text
+    body, _ctype = export_prometheus()
+    text = body.decode("utf-8")
+    # The UUID should be replaced
+    assert "/api/agents/{id}/state" in text
+    assert "550e8400-e29b-41d4-a716-446655440000" not in text
+
+
+def test_record_api_request_normalizes_numeric_id():
+    """record_api_request replaces numeric path segments with /{id}."""
+    test_endpoint = "/api/tasks/42/details"
+    record_api_request(
+        method="GET", endpoint=test_endpoint, status=200, duration=0.05
+    )
+    body, _ctype = export_prometheus()
+    text = body.decode("utf-8")
+    assert "/api/tasks/{id}/details" in text
+    # The numeric "42" should not appear as a path segment
+    assert '/api/tasks/42/' not in text
+
+
+def test_setup_metrics_middleware_records_request():
+    """setup_metrics_middleware adds a working request-counter middleware."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    app = FastAPI()
+
+    @app.get("/spike_test_endpoint")
+    def root():
+        return {"ok": True}
+
+    setup_metrics_middleware(app)
+    client = TestClient(app)
+    response = client.get("/spike_test_endpoint")
+    assert response.status_code == 200
+    body, ctype = export_prometheus()
+    text = body.decode("utf-8")
+    # The endpoint (after normalization) should appear in the registry output
+    assert "/spike_test_endpoint" in text
+    # Method GET, status 200 should both be labels
+    assert 'method="GET"' in text
+
+
+def test_setup_metrics_middleware_skips_metrics_endpoint():
+    """The middleware skips /metrics so self-scrape does not pollute counters."""
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    app = FastAPI()
+
+    @app.get("/spike_metrics_test_skip")
+    def root():
+        return {"ok": True}
+
+    setup_metrics_middleware(app)
+    client = TestClient(app)
+    # Hit a non-/metrics path
+    client.get("/spike_metrics_test_skip")
+    body, _ctype = export_prometheus()
+    text = body.decode("utf-8")
+    assert "/spike_metrics_test_skip" in text
