@@ -14,16 +14,24 @@ Features:
 """
 
 import structlog
+from datetime import UTC, datetime
 from fastapi import APIRouter, Depends, Response
 from fastapi.responses import PlainTextResponse
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.observability.metrics import (
-    SwarmMetricsCollector,
-    get_metrics_collector,
-)
 from heretek_swarm.observability.prometheus_native import (
+    AGENTS_ACTIVE,
+    AGENTS_TOTAL,
+    CONSENSUS_ROUNDS,
+    FREE_ENERGY,
+    HEALTH_SCORE,
+    MESSAGES_TOTAL,
+    PHI_SCORE,
+    TASKS_COMPLETED,
+    TASKS_FAILED,
     export_prometheus,
+    read_metric_samples,
+    read_metric_value,
     record_free_energy,
     record_health_score,
     record_phi_score,
@@ -173,18 +181,43 @@ async def get_prometheus_metrics_endpoint() -> Response:
     },
 )
 async def get_metrics_json(authenticated: str = Depends(verify_auth)):
-    """Get current metrics in JSON format for debugging and monitoring."""
-    try:
-        collector = get_metrics_collector()
-        sync_with_swarm_collector(collector)
+    """Get current metrics in JSON format for debugging and monitoring.
 
-        swarm_data = collector.collect_swarm_metrics()
-        consciousness_data = collector.collect_consciousness_metrics()
+    Phase 2A.3 cutover: the JSON is read directly from the
+    prometheus-native module's metric objects (which are the
+    canonical store post-Phase-2A.1). The shape is slightly
+    different from the legacy ``SwarmMetricsCollector.to_dict()``
+    — this endpoint is for debugging only.
+
+    Per-agent metrics (``phi_score``, ``free_energy``) report an
+    average across all label combinations; swarm-wide counters
+    (``tasks_completed``, ``messages_total``, etc.) report a sum
+    across all label combinations. This matches the spirit of the
+    legacy collector without touching prometheus_client's private
+    state.
+    """
+    try:
+
+        def _avg(metric) -> float:
+            """Mean of per-label samples; 0.0 if no samples yet."""
+            samples = read_metric_samples(metric)
+            return sum(samples.values()) / len(samples) if samples else 0.0
 
         return {
-            "swarm": swarm_data.to_dict(),
-            "consciousness": consciousness_data.to_dict(),
-            "health_score": collector.calculate_health_score(),
+            "swarm": {
+                "agents_total": read_metric_value(AGENTS_TOTAL),
+                "agents_active": read_metric_value(AGENTS_ACTIVE),
+                "tasks_completed": read_metric_value(TASKS_COMPLETED),
+                "tasks_failed": read_metric_value(TASKS_FAILED),
+                "messages_total": read_metric_value(MESSAGES_TOTAL),
+                "consensus_rounds": read_metric_value(CONSENSUS_ROUNDS),
+                "health_score": read_metric_value(HEALTH_SCORE),
+                "timestamp": datetime.now(UTC).isoformat(),
+            },
+            "consciousness": {
+                "phi_score_avg": _avg(PHI_SCORE),
+                "free_energy_avg": _avg(FREE_ENERGY),
+            },
         }
     except Exception as e:
         logger.error("Failed to get metrics JSON", error=str(e))

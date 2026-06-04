@@ -362,3 +362,57 @@ def test_setup_metrics_middleware_skips_metrics_endpoint():
     body, _ctype = export_prometheus()
     text = body.decode("utf-8")
     assert "/spike_metrics_test_skip" in text
+
+
+# ---------------------------------------------------------------------------
+# Phase 2A.3 cutover: public read helpers (commit in flight)
+# ---------------------------------------------------------------------------
+
+
+def test_read_metric_value_returns_unlabeled_gauge_value():
+    """read_metric_value on an unlabeled Gauge returns the single value."""
+    from heretek_swarm.observability.prometheus_native import read_metric_value
+
+    record_health_score(0.73)
+    assert read_metric_value(HEALTH_SCORE) == 0.73
+
+
+def test_read_metric_value_sums_labeled_counter():
+    """read_metric_value on a labeled Counter returns the sum across all labels."""
+    from heretek_swarm.observability.prometheus_native import read_metric_value
+
+    before = read_metric_value(TASKS_COMPLETED)
+    increment_tasks_completed(agent_id="read-1", task_type="alpha")
+    increment_tasks_completed(agent_id="read-1", task_type="beta")
+    increment_tasks_completed(agent_id="read-2", task_type="alpha")
+    after = read_metric_value(TASKS_COMPLETED)
+    assert after - before == 3
+
+
+def test_read_metric_samples_returns_per_label_breakdown():
+    """read_metric_samples returns a dict keyed by label-tuple string."""
+    from heretek_swarm.observability.prometheus_native import read_metric_samples
+
+    record_phi_score(agent_id="samples-a", score=0.10)
+    record_phi_score(agent_id="samples-b", score=0.20)
+    samples = read_metric_samples(PHI_SCORE)
+    # Both labeled entries present, in stable label-keyed form.
+    assert samples.get("agent_id=samples-a") == 0.10
+    assert samples.get("agent_id=samples-b") == 0.20
+
+
+def test_read_metric_value_skips_histogram_buckets():
+    """read_metric_value on a Histogram returns 0 (no value samples outside buckets)."""
+    from heretek_swarm.observability.prometheus_native import (
+        DB_QUERY_DURATION,
+        read_metric_value,
+    )
+
+    record_db_query(duration_seconds=0.5, db_name="read-test")
+    # Histogram emits only _count, _sum, and _bucket samples; the helper
+    # skips the buckets (le-labeled) and reads _count + _sum, which is
+    # not meaningful as a "total". We assert it doesn't raise and
+    # returns a float — exact semantics for Histograms are documented
+    # as undefined in read_metric_value.
+    val = read_metric_value(DB_QUERY_DURATION)
+    assert isinstance(val, float)

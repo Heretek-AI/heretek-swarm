@@ -515,6 +515,78 @@ def setup_metrics_middleware(app: FastAPI) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Read helpers (Phase 2A.3 cutover) — public values out of metric objects
+# ---------------------------------------------------------------------------
+# The previous approach to reading a metric's value (used by the
+# legacy ``SwarmMetricsCollector`` and the JSON debug endpoint)
+# reached into prometheus_client's private ``_metrics`` / ``_value``
+# attributes. That works on the current version but is brittle:
+# prometheus_client reserves the right to rename or restructure
+# internals. The helpers below go through the public ``collect()``
+# API and tolerate the labeled / unlabeled / no-data cases.
+
+
+def read_metric_value(metric) -> float:
+    """Return the aggregate (sum) of value samples for a Counter or Gauge.
+
+    Uses the public ``metric.collect()`` API — no private attribute
+    access. For an unlabeled metric this is the single value. For a
+    labeled metric this is the sum across all label combinations,
+    which matches the "total" semantic the JSON debug endpoint wants
+    (e.g. tasks completed across all agents, not just one).
+
+    Three classes of "metadata" samples are skipped because they
+    are not data:
+- ``_created`` samples (OpenMetrics creation timestamp; value is a
+      Unix epoch in seconds — would dominate the sum).
+    - Histogram ``_bucket`` samples (the ``le`` label is the reliable
+      signal; summing buckets is meaningless).
+
+    Returns ``0.0`` on any failure so a metrics-reading bug never
+    breaks the request path; callers that need strict error handling
+    should call ``metric.collect()`` directly.
+    """
+    try:
+        total = 0.0
+        for m in metric.collect():
+            for sample in m.samples:
+                if sample.name.endswith("_created"):
+                    continue
+                if "le" in sample.labels:
+                    continue
+                total += sample.value
+        return total
+    except Exception:
+        return 0.0
+
+
+def read_metric_samples(metric) -> dict[str, float]:
+    """Return per-label sample values for a Counter or Gauge.
+
+    Uses the public ``metric.collect()`` API. The dict key is a
+    stable ``"labelname1=value1,labelname2=value2"`` string built
+    from the sample's labels. Unlabeled metrics yield ``{"": value}``.
+    ``_created`` and Histogram bucket samples are skipped (same rules
+    as :func:`read_metric_value`).
+    """
+    out: dict[str, float] = {}
+    try:
+        for m in metric.collect():
+            for sample in m.samples:
+                if sample.name.endswith("_created"):
+                    continue
+                if "le" in sample.labels:
+                    continue
+                key = ",".join(
+                    f"{name}={sample.labels[name]}" for name in sorted(sample.labels)
+                )
+                out[key] = sample.value
+    except Exception:
+        return out
+    return out
+
+
+# ---------------------------------------------------------------------------
 # Test-only: a fresh registry for unit tests
 # ---------------------------------------------------------------------------
 # Tests need to instantiate metrics in a clean registry to avoid
@@ -585,5 +657,7 @@ __all__ = [
     "record_task_completed",
     "record_task_failed",
     "record_uptime",
+    "read_metric_samples",
+    "read_metric_value",
     "setup_metrics_middleware",
 ]
