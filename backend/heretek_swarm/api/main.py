@@ -137,6 +137,7 @@ async def lifespan(app: FastAPI):
     await _init_memory_store()
     await _init_mem0()
     await _init_nats_bridge()
+    await _init_sovereign_services()
 
     # Start the WebSocket status pump — must happen after supervisor init
     _ws_pump_task = asyncio.create_task(_ws_status_pump())
@@ -471,6 +472,79 @@ async def _init_nats_bridge() -> None:
     except Exception as e:
         logger.warning("NATS bridge initialization failed", error=str(e))
         _nats_mesh = None
+
+
+async def _init_sovereign_services() -> None:
+    """Initialize the optional sovereign-service gRPC clients.
+
+    Phase 5 of PLAN.md (graduated sovereign services). When the
+    api process is started with HERETEK_*_GRPC_URL env vars, the
+    corresponding gRPC client is constructed at startup; route
+    handlers can then route through it (with a fall-through to
+    the in-process stub when the env var is unset).
+
+    This is the wire-up the audit's Phase 5 deployment path
+    expects: docker-compose's 'sovereign' profile starts the
+    consensus_svc / memory_svc / realtime_svc / observability_svc
+    sidecars, sets the env vars, and the api process picks them
+    up here. Backwards compatible: when the env vars are unset,
+    the resolvers return None and the api falls back to the
+    in-process stub from Phase 3.2 / 3.3 / 3.4.
+
+    Verification: the gRPC server was tested end-to-end in the
+    Phase 5-actual commit (e15949e7). This commit wires the
+    api process to consume it.
+    """
+    try:
+        from heretek_swarm.services.grpc_clients import (
+            get_consensus_grpc_client,
+            get_memory_grpc_client,
+            get_observability_grpc_client,
+            get_realtime_grpc_client,
+        )
+
+        consensus_grpc = get_consensus_grpc_client()
+        if consensus_grpc is not None:
+            logger.info(
+                "consensus_grpc_client_configured",
+                url=os.getenv("HERETEK_CONSENSUS_GRPC_URL"),
+            )
+        else:
+            logger.info("consensus_grpc_client_unset", fallback="in_process_stub")
+
+        memory_grpc = get_memory_grpc_client()
+        if memory_grpc is not None:
+            logger.info(
+                "memory_grpc_client_configured",
+                url=os.getenv("HERETEK_MEMORY_GRPC_URL"),
+            )
+
+        realtime_grpc = get_realtime_grpc_client()
+        if realtime_grpc is not None:
+            logger.info(
+                "realtime_grpc_client_configured",
+                url=os.getenv("HERETEK_REALTIME_GRPC_URL"),
+            )
+
+        observability_grpc = get_observability_grpc_client()
+        if observability_grpc is not None:
+            logger.info(
+                "observability_grpc_client_configured",
+                url=os.getenv("HERETEK_OBSERVABILITY_GRPC_URL"),
+            )
+
+        configured = sum(
+            1
+            for c in (consensus_grpc, memory_grpc, realtime_grpc, observability_grpc)
+            if c is not None
+        )
+        logger.info(
+            "sovereign_services_init_complete",
+            configured=configured,
+            total=4,
+        )
+    except Exception as e:
+        logger.warning("sovereign_services_init_failed", error=str(e))
 
 
 async def _ws_status_pump() -> None:
