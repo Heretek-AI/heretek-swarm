@@ -107,13 +107,11 @@ class ConfigurationService(ConfigurationServiceCrud):
 
         # Lazy-attach DB timing listener — zero cost until ConfigurationService is instantiated
         from heretek_swarm.observability.db_timing import attach_db_timing
-        from heretek_swarm.observability.prometheus_metrics import (
-            heretek_swarm_db_query_duration_seconds,
-        )
+        from heretek_swarm.observability.prometheus_native import DB_QUERY_DURATION
 
         attach_db_timing(
             self._engine,
-            histogram=heretek_swarm_db_query_duration_seconds,
+            histogram=DB_QUERY_DURATION,
             histogram_labels={"db_name": "config"},
         )
 

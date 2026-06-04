@@ -391,8 +391,10 @@ def _build_status_response(swarm: Any) -> dict[str, Any]:
     ``last_activity``, ``error_count``.
 
     Also includes a ``"consciousness"`` dict with live IIT Phi / FEP
-    metrics collected via ``SwarmMetricsCollector.collect_consciousness_metrics()``.
-    On collection failure, the field is an empty dict and a structured
+    metrics read from the ``prometheus_native`` gauges (populated by
+    the in-house :class:`PhiCalculator` / :class:`FreeEnergyCalculator`
+    via ``record_phi_score`` / ``record_free_energy``). On collection
+    failure, the field is an empty dict and a structured
     ``consciousness_collection_failed`` warning is emitted.
     """
     if swarm is None or swarm.supervisor is None:
@@ -422,34 +424,76 @@ def _build_status_response(swarm: Any) -> dict[str, Any]:
     response: dict[str, Any] = {"agents": agents}
 
     # --- Collect consciousness metrics (IIT Phi + FEP) ---------------------
+    # Phase 2A.3 cutover: read per-agent phi / free-energy values from
+    # the ``prometheus_native`` gauges (populated by the in-house
+    # :class:`PhiCalculator` / :class:`FreeEnergyCalculator` via
+    # ``record_phi_score`` / ``record_free_energy``) and compute the
+    # same aggregates the legacy ``SwarmMetricsCollector`` did. The
+    # ``observability/metrics.py`` module is deleted in commit 9.
     try:
-        from heretek_swarm.observability.metrics import get_metrics_collector
-
-        collector = get_metrics_collector()
-        consciousness = collector.collect_consciousness_metrics()
-
-        # Top-5 agent phi scores (descending)
-        agent_phi = consciousness.agent_phi_scores
-        top_phi = dict(
-            sorted(agent_phi.items(), key=lambda kv: kv[1], reverse=True)[:5]
+        from heretek_swarm.observability.prometheus_native import (
+            FREE_ENERGY,
+            PHI_SCORE,
+            read_metric_samples,
         )
 
-        # Top-5 agent FEP scores (descending)
-        agent_fep = consciousness.agent_fep_scores
-        top_fep = dict(
-            sorted(agent_fep.items(), key=lambda kv: kv[1], reverse=True)[:5]
+        phi_samples = read_metric_samples(PHI_SCORE)
+        if not phi_samples:
+            response["consciousness"] = {}
+            return response
+        phi_values = list(phi_samples.values())
+        phi_avg = sum(phi_values) / len(phi_values)
+        phi_max = max(phi_values)
+        phi_min = min(phi_values)
+
+        if phi_avg >= 0.9:
+            integration_level = "very_high"
+        elif phi_avg >= 0.75:
+            integration_level = "high"
+        elif phi_avg >= 0.5:
+            integration_level = "moderate"
+        elif phi_avg >= 0.25:
+            integration_level = "low"
+        else:
+            integration_level = "minimal"
+        if len(phi_values) < 2:
+            differentiation_level = "minimal"
+        else:
+            std_dev = (
+                sum((x - phi_avg) ** 2 for x in phi_values) / len(phi_values)
+            ) ** 0.5
+            if std_dev > 0.3:
+                differentiation_level = "high"
+            elif std_dev > 0.2:
+                differentiation_level = "moderate"
+            elif std_dev > 0.1:
+                differentiation_level = "low"
+            else:
+                differentiation_level = "minimal"
+
+        fep_samples = read_metric_samples(FREE_ENERGY)
+        fep_values = list(fep_samples.values()) if fep_samples else []
+        fep_avg = sum(fep_values) / len(fep_values) if fep_values else 0.0
+        fep_variance = (
+            sum((x - fep_avg) ** 2 for x in fep_values) / len(fep_values)
+            if fep_values
+            else 0.0
         )
 
         response["consciousness"] = {
-            "phi_avg": consciousness.phi_avg,
-            "phi_max": consciousness.phi_max,
-            "phi_min": consciousness.phi_min,
-            "integration_level": consciousness.integration_level,
-            "differentiation_level": consciousness.differentiation_level,
-            "free_energy_avg": consciousness.free_energy_avg,
-            "free_energy_variance": consciousness.free_energy_variance,
-            "agent_phi_scores": top_phi,
-            "agent_fep_scores": top_fep,
+            "phi_avg": phi_avg,
+            "phi_max": phi_max,
+            "phi_min": phi_min,
+            "integration_level": integration_level,
+            "differentiation_level": differentiation_level,
+            "free_energy_avg": fep_avg,
+            "free_energy_variance": fep_variance,
+            "agent_phi_scores": dict(
+                sorted(phi_samples.items(), key=lambda kv: kv[1], reverse=True)[:5]
+            ),
+            "agent_fep_scores": dict(
+                sorted(fep_samples.items(), key=lambda kv: kv[1], reverse=True)[:5]
+            ),
         }
     except Exception as exc:
         logger.warning("consciousness_collection_failed", error=str(exc))

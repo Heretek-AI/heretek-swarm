@@ -14,71 +14,29 @@ Features:
 """
 
 import structlog
+from datetime import UTC, datetime
 from fastapi import APIRouter, Depends, Response
 from fastapi.responses import PlainTextResponse
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.observability.metrics import (
-    SwarmMetricsCollector,
-    get_metrics_collector,
-)
-from heretek_swarm.observability.prometheus_metrics import (
-    PrometheusMetrics,
-    get_metrics,
+from heretek_swarm.observability.prometheus_native import (
+    AGENTS_ACTIVE,
+    AGENTS_TOTAL,
+    CONSENSUS_ROUNDS,
+    FREE_ENERGY,
+    HEALTH_SCORE,
+    MESSAGES_TOTAL,
+    PHI_SCORE,
+    TASKS_COMPLETED,
+    TASKS_FAILED,
+    export_prometheus,
+    read_metric_samples,
+    read_metric_value,
 )
 
 logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api/metrics", tags=["metrics"])
-
-# Singleton for metrics integration
-_metrics: PrometheusMetrics | None = None
-
-
-def get_prometheus_metrics() -> PrometheusMetrics:
-    """Get or create the Prometheus metrics instance."""
-    global _metrics
-    if _metrics is None:
-        _metrics = get_metrics()
-    return _metrics
-
-
-def sync_with_swarm_collector(collector: SwarmMetricsCollector) -> None:
-    """
-    Synchronize Prometheus metrics with the SwarmMetricsCollector.
-
-    Call this periodically or on metrics collection to keep
-    Prometheus metrics in sync with the internal metrics.
-
-    Args:
-        collector: The SwarmMetricsCollector instance
-    """
-    prom_metrics = get_prometheus_metrics()
-
-    # Collect swarm metrics
-    swarm_data = collector.collect_swarm_metrics()
-    consciousness_data = collector.collect_consciousness_metrics()
-
-    # Update agent counts
-    # Note: Agent type tracking requires integration with the agent registry
-    # For now, we track total and active without type breakdown
-
-    # Update health score
-    prom_metrics.record_health_score(swarm_data.health_score)
-
-    # Update consciousness metrics
-    for agent_id, phi_score in consciousness_data.agent_phi_scores.items():
-        prom_metrics.record_phi_score(agent_id, phi_score)
-
-    for agent_id, fep_score in consciousness_data.agent_fep_scores.items():
-        prom_metrics.record_free_energy(agent_id, fep_score)
-
-    # Aggregate phi and free energy for the swarm
-    if consciousness_data.phi_avg > 0:
-        prom_metrics.record_phi_score("swarm_avg", consciousness_data.phi_avg)
-
-    if consciousness_data.free_energy_avg > 0:
-        prom_metrics.record_free_energy("swarm_avg", consciousness_data.free_energy_avg)
 
 
 @router.get(
@@ -125,37 +83,18 @@ heretek_swarm_api_request_duration_seconds_bucket{method="GET",endpoint="/api/ag
     },
 )
 async def get_prometheus_metrics_endpoint() -> Response:
-    """
-    Get Prometheus metrics for scraping.
+    """Get Prometheus metrics for scraping.
 
-    This endpoint is designed to be scraped by Prometheus at regular intervals
-    (typically 15-60 seconds).
+    This endpoint is designed to be scraped by Prometheus at regular
+    intervals (typically 15-60 seconds).
 
     Returns:
         PlainTextResponse: Metrics in Prometheus text exposition format
-
-    Example Prometheus scrape config:
-        scrape_configs:
-          - job_name: 'heretek-swarm'
-            static_configs:
-              - targets: ['heretek-swarm:8000']
-            metrics_path: /metrics
-            scrape_interval: 15s
     """
     try:
-        # Sync with swarm metrics collector if available
-        try:
-            collector = get_metrics_collector()
-            sync_with_swarm_collector(collector)
-        except Exception as e:
-            logger.warning("Failed to sync with swarm collector", error=str(e))
-
-        # Get Prometheus metrics
-        prom_metrics = get_prometheus_metrics()
-
-        # Export in Prometheus format
-        metrics_output = prom_metrics.export_prometheus()
-        content_type = prom_metrics.get_content_type()
+        # Export via the native module-level helper. ``export_prometheus``
+        # returns ``(bytes, str)`` — body and content_type in one call.
+        metrics_output, content_type = export_prometheus()
 
         return Response(
             content=metrics_output,
@@ -201,23 +140,44 @@ async def get_prometheus_metrics_endpoint() -> Response:
     },
 )
 async def get_metrics_json(authenticated: str = Depends(verify_auth)):
-    """
-    Get current metrics in JSON format for debugging and monitoring.
+    """Get current metrics in JSON format for debugging and monitoring.
 
-    Returns:
-        Dictionary of current metric values
+    Phase 2A.3 cutover: the JSON is read directly from the
+    prometheus-native module's metric objects (which are the
+    canonical store post-Phase-2A.1). The shape is slightly
+    different from the legacy :class:`SwarmMetricsCollector`
+    that previously owned this endpoint (deleted in commit 9)
+    — this endpoint is for debugging only.
+
+    Per-agent metrics (``phi_score``, ``free_energy``) report an
+    average across all label combinations; swarm-wide counters
+    (``tasks_completed``, ``messages_total``, etc.) report a sum
+    across all label combinations. This matches the spirit of the
+    legacy collector without touching prometheus_client's private
+    state.
     """
     try:
-        collector = get_metrics_collector()
-        sync_with_swarm_collector(collector)
 
-        swarm_data = collector.collect_swarm_metrics()
-        consciousness_data = collector.collect_consciousness_metrics()
+        def _avg(metric) -> float:
+            """Mean of per-label samples; 0.0 if no samples yet."""
+            samples = read_metric_samples(metric)
+            return sum(samples.values()) / len(samples) if samples else 0.0
 
         return {
-            "swarm": swarm_data.to_dict(),
-            "consciousness": consciousness_data.to_dict(),
-            "health_score": collector.calculate_health_score(),
+            "swarm": {
+                "agents_total": read_metric_value(AGENTS_TOTAL),
+                "agents_active": read_metric_value(AGENTS_ACTIVE),
+                "tasks_completed": read_metric_value(TASKS_COMPLETED),
+                "tasks_failed": read_metric_value(TASKS_FAILED),
+                "messages_total": read_metric_value(MESSAGES_TOTAL),
+                "consensus_rounds": read_metric_value(CONSENSUS_ROUNDS),
+                "health_score": read_metric_value(HEALTH_SCORE),
+                "timestamp": datetime.now(UTC).isoformat(),
+            },
+            "consciousness": {
+                "phi_score_avg": _avg(PHI_SCORE),
+                "free_energy_avg": _avg(FREE_ENERGY),
+            },
         }
     except Exception as e:
         logger.error("Failed to get metrics JSON", error=str(e))

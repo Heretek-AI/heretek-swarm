@@ -30,12 +30,39 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import structlog
-from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 logger = structlog.get_logger("observability")
 
-from .prometheus_metrics import PrometheusMetrics
-from .tracing import initialize_tracing, span_context
+# Phase 0 freeze: unified trace context propagation contract.
+# See heretek_swarm.observability.context for the full module docstring
+# describing the W3C-compliant contract that Phase 2 telemetry work
+# (opik cutover, prometheus bridge, AgentScope observability,
+# partysocket WS traces, Temporal workflow spans) will all bind to.
+# Explicit re-exports so ruff F401 (suppressed per-file) treats these
+# as intentional public API.
+from .context import TRACE_CONTEXT_INTERFACE_VERSION as TRACE_CONTEXT_INTERFACE_VERSION  # noqa: E402
+from .context import TraceContext as TraceContext  # noqa: E402
+from .context import extract_trace_context as extract_trace_context  # noqa: E402
+from .context import inject_trace_context as inject_trace_context  # noqa: E402
+from .context import new_trace_context as new_trace_context  # noqa: E402
+from .prometheus_native import (  # noqa: E402
+    export_prometheus,
+    record_api_request,
+    record_consensus_round,
+    record_free_energy,
+    record_message,
+    record_phi_score,
+    record_task_completed,
+    record_task_failed,
+    record_uptime,
+)
+from .prometheus_native import (  # noqa: E402
+    record_agent_active as record_agent_active,
+)
+from .prometheus_native import (  # noqa: E402
+    record_agent_registration as record_agent_registration,
+)
+from .tracing import initialize_tracing, span_context  # noqa: E402
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -338,7 +365,6 @@ class ObservabilityManager:
         )
         self.prometheus_port = prometheus_port
 
-        self.metrics = PrometheusMetrics()
         self._loki_handler: LokiHandler | None = None
         self._initialized = False
         self._start_time = time.time()
@@ -377,7 +403,7 @@ class ObservabilityManager:
             self.logger.warning("Failed to initialize Loki handler: {e}")
 
         # Record startup
-        self.metrics.record_uptime(time.time() - self._start_time)
+        record_uptime(time.time() - self._start_time)
 
         self._initialized = True
         self._status = ServiceStatus.HEALTHY
@@ -407,43 +433,46 @@ class ObservabilityManager:
 
     def get_metrics(self) -> bytes:
         """Get Prometheus metrics in text format."""
-        return generate_latest(self.metrics.registry)
+        body, _ctype = export_prometheus()
+        return body
 
     def get_metrics_content_type(self) -> str:
         """Get Prometheus metrics content type."""
-        return CONTENT_TYPE_LATEST
+        # Use the native export to derive the content type (single source of truth).
+        _body, ctype = export_prometheus()
+        return ctype
 
     def record_agent_registration(self, agent_id: str, agent_type: str) -> None:
         """Record agent registration."""
-        self.metrics.record_agent_registration(agent_id, agent_type)
+        record_agent_registration(agent_id, agent_type)
 
     def record_agent_active(self, agent_id: str, agent_type: str) -> None:
         """Record agent activity."""
-        self.metrics.record_agent_active(agent_id, agent_type)
+        record_agent_active(agent_id, agent_type)
 
     def record_task_completed(self, agent_id: str, agent_type: str, task_type: str) -> None:
         """Record task completion."""
-        self.metrics.record_task_completed(agent_id, agent_type, task_type)
+        record_task_completed(agent_id, agent_type, task_type)
 
     def record_task_failed(self, agent_id: str, agent_type: str, task_type: str) -> None:
         """Record task failure."""
-        self.metrics.record_task_failed(agent_id, agent_type, task_type)
+        record_task_failed(agent_id, agent_type, task_type)
 
     def record_message(self, direction: str, message_type: str) -> None:
         """Record message processing."""
-        self.metrics.record_message(direction, message_type)
+        record_message(direction, message_type)
 
     def record_consensus_round(self, consensus_type: str, outcome: str) -> None:
         """Record consensus round."""
-        self.metrics.record_consensus_round(consensus_type, outcome)
+        record_consensus_round(consensus_type, outcome)
 
     def record_phi_score(self, agent_id: str, phi_score: float) -> None:
         """Record consciousness phi score."""
-        self.metrics.record_phi_score(agent_id, phi_score)
+        record_phi_score(agent_id, phi_score)
 
     def record_free_energy(self, agent_id: str, free_energy: float) -> None:
         """Record free energy level."""
-        self.metrics.record_free_energy(agent_id, free_energy)
+        record_free_energy(agent_id, free_energy)
 
     def record_api_request(
         self,
@@ -453,11 +482,11 @@ class ObservabilityManager:
         duration: float,
     ) -> None:
         """Record API request."""
-        self.metrics.record_api_request(method, endpoint, status, duration)
+        record_api_request(method, endpoint, status, duration)
 
     def record_uptime(self, uptime_seconds: float) -> None:
         """Record service uptime."""
-        self.metrics.record_uptime(uptime_seconds)
+        record_uptime(uptime_seconds)
 
     # =========================================================================
     # Tracing

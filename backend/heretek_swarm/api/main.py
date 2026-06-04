@@ -16,13 +16,12 @@ Reference: MiniMax Audit Lines 585-725
 import asyncio
 import os
 from contextlib import asynccontextmanager, suppress
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from typing import Any
 
 import structlog
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
 from heretek_swarm.agents.agent_factory import build_agent_for
 from heretek_swarm.config.secrets_loader import SecretsLoader
@@ -61,8 +60,10 @@ from heretek_swarm.api import (
     wizard,
     workflows,
 )
+
+# Import logging middleware
+from heretek_swarm.api.logging_middleware import setup_logging_middleware
 from heretek_swarm.api.rate_limiting import setup_rate_limiting
-from heretek_swarm.api.websockets import manager
 from heretek_swarm.config.loader import (
     get_config,
     initialize_config_loader,
@@ -72,13 +73,11 @@ from heretek_swarm.config.service import (
     initialize_config_service,
     shutdown_config_service,
 )
-from heretek_swarm.consensus.deliberation import Position
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
 from heretek_swarm.mcp.server import router as mcp_router
 from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
 from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
-from heretek_swarm.observability.tracing import setup_telemetry_middleware
 
 # Import mem0 backend — see heretek_swarm.memory.mem0_backend
 # (Previously this did `from memory import …` which always failed because
@@ -89,9 +88,7 @@ from heretek_swarm.memory.mem0_backend import (
     Mem0Backend,
     Mem0Config,
 )
-
-# Import logging middleware
-from heretek_swarm.api.logging_middleware import setup_logging_middleware
+from heretek_swarm.observability.tracing import setup_telemetry_middleware
 
 logger = structlog.get_logger("api.main")
 
@@ -702,7 +699,7 @@ app.include_router(collective_evolution.router)
 app.include_router(mcp_router)
 
 # Setup Prometheus metrics middleware
-from heretek_swarm.observability.prometheus_metrics import setup_metrics_middleware
+from heretek_swarm.observability.prometheus_native import setup_metrics_middleware
 
 setup_metrics_middleware(app)
 logger.info("Prometheus metrics middleware configured")

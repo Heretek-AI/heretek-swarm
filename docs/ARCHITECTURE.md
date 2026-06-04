@@ -1,10 +1,8 @@
 # Heretek Swarm Architecture
 
-> **M010 Audit Alignment:** This document has been verified against the M010 full architecture audit (2026-05-10). All paths, actor counts (23), mixin counts (10), API router counts (27), and service topology references match the canonical M010-RESEARCH.md findings. No stale paths; no structural reorganizations needed.
-
-**Version:** 2.2.0
-**Date:** 2026-06-10
-**Status:** Production-Ready — M001 Complete (mem0 embedded, 7 logical services)
+**Version:** 2.3.0
+**Date:** 2026-06-04
+**Status:** Production-Ready — M001 Complete (mem0 embedded, 7 logical services); Phase 2A.3 opik cutover applied (deleted 5 of 8 `api/observability` routers, 3 observability wrappers, 1 plugin; see "Observability" section below)
 
 ---
 
@@ -223,10 +221,12 @@ backend/
 │   │   ├── threat_detection.py
 │   │   └── validators.py
 │   ├── observability/             # Prometheus metrics + tracing
-│   │   ├── prometheus_metrics.py
-│   │   ├── alerting.py
-│   │   ├── metrics.py
-│   │   └── tracing.py
+│   │   ├── __init__.py            #   LokiHandler (log aggregation)
+│   │   ├── prometheus_native.py   #   canonical prometheus_client surface
+│   │   ├── db_timing.py           #   OTel SQLAlchemyInstrumentor wrapper
+│   │   ├── alerting.py            #   AlertManager (PagerDuty, OpsGenie)
+│   │   ├── context.py             #   observability context propagation
+│   │   └── tracing.py             #   tracing helpers
 │   ├── config/                    # Configuration system
 │   │   ├── models.py
 │   │   ├── service.py
@@ -616,7 +616,7 @@ The Heretek Swarm provides comprehensive observability through Prometheus metric
 
 ### Metrics
 
-**File:** [`backend/heretek_swarm/observability/prometheus_metrics.py`](backend/heretek_swarm/observability/prometheus_metrics.py)
+**File:** [`backend/heretek_swarm/observability/prometheus_native.py`](backend/heretek_swarm/observability/prometheus_native.py)
 
 The system exposes Prometheus-compatible metrics for monitoring autonomous 24/7 operation.
 
@@ -665,15 +665,11 @@ The system exposes Prometheus-compatible metrics for monitoring autonomous 24/7 
 #### Prometheus Integration
 
 ```python
-from heretek_swarm.observability.prometheus_metrics import (
-    PrometheusMetrics,
-    get_metrics,
+from heretek_swarm.observability.prometheus_native import (
     increment_tasks_completed,
     record_api_request,
+    export_prometheus,
 )
-
-# Get singleton metrics instance
-metrics = get_metrics()
 
 # Record task completion
 increment_tasks_completed(agent_id="alpha", task_type="analysis")

@@ -9,6 +9,7 @@ This module contains:
 """
 
 import asyncio
+import time
 import uuid
 from datetime import UTC, datetime
 from typing import Any
@@ -16,10 +17,10 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.base.core import ActorMessage, AgentActor
-from heretek_swarm.observability.prometheus_metrics import (
-    heretek_swarm_actor_processing_duration_seconds,
+from heretek_swarm.observability.prometheus_native import (
+    ACTOR_PROCESSING_DURATION,
+    record_actor_processing,
 )
-from heretek_swarm.observability.timing import TimedContext
 
 logger = structlog.get_logger("AgentActor")
 
@@ -40,7 +41,7 @@ class AgentActorMessageHandling(AgentActor):
 
             plugin = get_consciousness_plugin()
             plugin.record_interaction(from_agent, to_agent)
-        except Exception as e:
+        except Exception:
             # Consciousness tracking is non-fatal — do not break message delivery
             logger.debug(
                 "Consciousness tracking unavailable, continuing message delivery",
@@ -352,7 +353,7 @@ class AgentActorMessageHandling(AgentActor):
 
                 return reply_message.content
 
-            except TimeoutError as e:
+            except TimeoutError:
                 logger.warning(
                     f"[{self.agent_id}] Request timeout after {timeout}s for correlation_id={correlation_id}",
                     extra={"recipient": recipient, "message_type": message_type},
@@ -385,7 +386,7 @@ class AgentActorMessageHandling(AgentActor):
                     extra={"message_type": message.message_type},
                 )
                 return  # Success, exit retry loop
-            except TimeoutError as e:
+            except TimeoutError:
                 if attempt < max_retries - 1:
                     # P1-10e fix: Retry with exponential backoff
                     logger.warning(
@@ -417,20 +418,22 @@ class AgentActorMessageHandling(AgentActor):
                 self._messages_since_persist += 1  # P0-1: Track for auto-persist
                 self.last_activity = datetime.now(UTC).isoformat()
 
-                # Process message with timing instrumentation
+                # Process message with timing instrumentation.
+                # Phase 2A.3 cutover: inline perf_counter + record_actor_processing
+                # replaces the deleted observability.timing.TimedContext. The
+                # legacy call to record_actor_execution (which populated the
+                # collector's per-agent avg_task_duration_ms) is dropped along
+                # with the collector itself in commit 9.
                 actor_type = getattr(self, "actor_type", "unknown")
-                with TimedContext(
-                    "actor_message_processed",
-                    histogram=heretek_swarm_actor_processing_duration_seconds,
-                    histogram_labels={"actor_type": actor_type},
-                    agent_id=self.agent_id,
-                    message_type=message.message_type,
-                ) as ctx:
+                start = time.perf_counter()
+                try:
                     await self.process_message(message)
-
-                # Wire execution timing into SwarmMetricsCollector (populates avg_task_duration_ms)
-                from heretek_swarm.observability.metrics import record_actor_execution
-                record_actor_execution(self.agent_id, ctx.elapsed_ms)
+                finally:
+                    record_actor_processing(
+                        agent_id=self.agent_id,
+                        actor_type=actor_type,
+                        duration_seconds=time.perf_counter() - start,
+                    )
 
                 # P0-1: Auto-persist if interval configured and threshold reached
                 if (
@@ -447,7 +450,7 @@ class AgentActorMessageHandling(AgentActor):
                 # Mark as done
                 self.mailbox.task_done()
 
-            except TimeoutError as e:
+            except TimeoutError:
                 # No messages, continue
                 continue
             except asyncio.CancelledError:
@@ -871,7 +874,7 @@ Please provide your analysis and recommendation for this collective task."""
             supervisor = get_supervisor()
             if supervisor and hasattr(supervisor, "actors"):
                 return supervisor.actors
-        except (ImportError, Exception) as e:
+        except (ImportError, Exception):
             logger.warning("Failed to retrieve supervisor actors", exc_info=True)
         return None
 
@@ -898,7 +901,7 @@ Please provide your analysis and recommendation for this collective task."""
         """
         import time
 
-        from heretek_swarm.observability.prometheus_metrics import (
+        from heretek_swarm.observability.prometheus_native import (
             record_llm_call,
             record_llm_tokens,
         )
@@ -933,20 +936,21 @@ Please provide your analysis and recommendation for this collective task."""
                         temperature=kwargs.pop("temperature", 0.7),
                         max_tokens=kwargs.pop("max_tokens", None),
                     )
+                    # Phase 2A.3 cutover: inline perf_counter + record_actor_processing
+                    # replaces the deleted TimedContext (observability.timing).
                     actor_type = getattr(self, "actor_type", "unknown")
-                    with TimedContext(
-                        "llm_call_completed",
-                        histogram=heretek_swarm_actor_processing_duration_seconds,
-                        histogram_labels={"actor_type": actor_type},
-                        agent_id=self.agent_id,
-                        provider="garage",
-                        model=decision.model,
-                        complexity=decision.complexity.value,
-                    ):
+                    start = time.perf_counter()
+                    try:
                         response = await model_garage.complete(
                             messages=request.messages,
                             model=decision.model,
                             provider_id=decision.provider_id,
+                        )
+                    finally:
+                        record_actor_processing(
+                            agent_id=self.agent_id,
+                            actor_type=actor_type,
+                            duration_seconds=time.perf_counter() - start,
                         )
                     logger.info(
                         f"[{self.agent_id}] Routed via garage",
@@ -987,14 +991,11 @@ Please provide your analysis and recommendation for this collective task."""
                 )
 
             try:
+                # Phase 2A.3 cutover: inline perf_counter + record_actor_processing
+                # replaces the deleted TimedContext (observability.timing).
                 actor_type = getattr(self, "actor_type", "unknown")
-                with TimedContext(
-                    "llm_call_completed",
-                    histogram=heretek_swarm_actor_processing_duration_seconds,
-                    histogram_labels={"actor_type": actor_type},
-                    agent_id=self.agent_id,
-                    provider="swarms_agent",
-                ):
+                start = time.perf_counter()
+                try:
                     raw_response = await asyncio.wait_for(
                         asyncio.to_thread(
                             self.swarms_agent.run,
@@ -1002,6 +1003,12 @@ Please provide your analysis and recommendation for this collective task."""
                             **kwargs,
                         ),
                         timeout=timeout,
+                    )
+                finally:
+                    record_actor_processing(
+                        agent_id=self.agent_id,
+                        actor_type=actor_type,
+                        duration_seconds=time.perf_counter() - start,
                     )
                 model_name = "swarms_agent"
                 provider_name = "swarms_agent"

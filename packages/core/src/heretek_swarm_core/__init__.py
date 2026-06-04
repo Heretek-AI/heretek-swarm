@@ -70,15 +70,6 @@ from heretek_swarm.memory import (  # noqa: F401
     MemoryEntry,
     get_default_store,
 )
-from heretek_swarm.observability.opik_compat import (  # noqa: F401
-    OPIK_AVAILABLE,
-    OPIK_ENABLED,
-    timed,
-    timed_decorator,
-    track_metric,
-    log_span,
-    alert,
-)
 from heretek_swarm.llm.headroom_compat import (  # noqa: F401
     HEADROOM_AVAILABLE,
     wrap as headroom_wrap,
@@ -139,13 +130,6 @@ __all__ = [
     "MemoryType",
     "MemoryEntry",
     "get_default_store",
-    "OPIK_AVAILABLE",
-    "OPIK_ENABLED",
-    "timed",
-    "timed_decorator",
-    "track_metric",
-    "log_span",
-    "alert",
     "HEADROOM_AVAILABLE",
     "headroom_wrap",
     "headroom_unwrap",

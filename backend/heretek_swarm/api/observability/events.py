@@ -8,6 +8,7 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException
 
 from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.gateway.message_replay import get_replay_manager
 
 from . import (
     ReplayJobCreate,
@@ -15,7 +16,6 @@ from . import (
     ReplayJobResponse,
     TimeTravelRequestCreate,
     TimeTravelResponse,
-    get_replay_manager,
 )
 
 logger = structlog.get_logger(__name__)
