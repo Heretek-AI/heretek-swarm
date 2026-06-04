@@ -38,6 +38,7 @@ from heretek_swarm.llm.headroom_compat import (
 )
 from heretek_swarm.observability.opik_compat import (
     OPIK_AVAILABLE as _OPIK_AVAILABLE,
+    OPIK_ENABLED as _OPIK_ENABLED,
     alert as _opik_alert,
     log_span as _opik_log_span,
     timed as _opik_timed,
@@ -45,6 +46,28 @@ from heretek_swarm.observability.opik_compat import (
     track_metric as _opik_track_metric,
 )
 from heretek_swarm.infrastructure.otel import InstrumentedAsyncClient, instrumented_httpx_client
+
+# Phase 1.3 follow-up: when OPIK_ENABLED is True, opik.track is
+# applied to the 5 LLM provider complete() methods below. The
+# decorator is a no-op when the opik package is missing or
+# OPIK_ENABLED=0; when enabled, opik captures the call as a
+# 'llm' span for the Opik Agent Optimizer + Guardrails
+# integration. The decorator is a no-op stub when opik is
+# unavailable so the class definitions stay valid in every
+# environment.
+try:
+    import opik as _opik  # type: ignore[import-untyped]
+
+    def _opik_track_llm(func):
+        """Apply opik.track with type='llm' when OPIK_ENABLED."""
+        if _OPIK_ENABLED:
+            return _opik.track(name=func.__qualname__, type="llm")(func)
+        return func
+except ImportError:
+    _opik = None  # type: ignore[assignment]
+
+    def _opik_track_llm(func):  # type: ignore[no-redef]
+        return func
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
@@ -348,6 +371,7 @@ class LLMProvider(ABC):
 class OpenAIProvider(LLMProvider):
     """OpenAI API provider."""
 
+    @_opik_track_llm
     async def complete(self, request: LLMRequest) -> LLMResponse:
         """Send a completion request.
 
@@ -432,6 +456,7 @@ class OpenAIProvider(LLMProvider):
 class OllamaProvider(LLMProvider):
     """Ollama local API provider."""
 
+    @_opik_track_llm
     async def complete(self, request: LLMRequest) -> LLMResponse:
         await self._rate_limit()
         async with self._rate_limiter:
@@ -511,6 +536,7 @@ class OllamaProvider(LLMProvider):
 class MiniMaxProvider(LLMProvider):
     """MiniMax API provider."""
 
+    @_opik_track_llm
     async def complete(self, request: LLMRequest) -> LLMResponse:
         await self._rate_limit()
         async with self._rate_limiter:
@@ -615,6 +641,7 @@ class MiniMaxProvider(LLMProvider):
 class AnthropicProvider(LLMProvider):
     """Anthropic Claude API provider."""
 
+    @_opik_track_llm
     async def complete(self, request: LLMRequest) -> LLMResponse:
         await self._rate_limit()
         async with self._rate_limiter:
@@ -730,6 +757,7 @@ class AnthropicProvider(LLMProvider):
 class OpenAICompatibleProvider(LLMProvider):
     """Generic OpenAI-compatible API provider."""
 
+    @_opik_track_llm
     async def complete(self, request: LLMRequest) -> LLMResponse:
         await self._rate_limit()
         async with self._rate_limiter:
