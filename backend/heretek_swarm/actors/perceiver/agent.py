@@ -1299,30 +1299,15 @@ class PerceiverAgent(
         return result
 
     def _extract_sensor_features(self, sensor_data: dict[str, Any]) -> dict[str, Any]:
-        """Extract features from sensor data."""
-        if not isinstance(sensor_data, dict):
-            return {"error": "Sensor data must be a dictionary"}
+        """Extract features from sensor data.
 
-        # Extract basic statistics from numeric values
-        numeric_values = []
-        for value in sensor_data.values():
-            if isinstance(value, (int, float)):
-                numeric_values.append(value)
-
-        stats = {}
-        if numeric_values:
-            stats = {
-                "min": min(numeric_values),
-                "max": max(numeric_values),
-                "avg": sum(numeric_values) / len(numeric_values),
-                "count": len(numeric_values),
-            }
-
-        return {
-            "keys": list(sensor_data.keys()),
-            "numeric_stats": stats,
-            "analyzed_by": "sensor_parser",
-        }
+        Phase 2.7 of PLAN.md: thin delegate to
+        :func:`heretek_swarm.actors.perceiver.extraction.sensor.extract_sensor_features`.
+        """
+        from heretek_swarm.actors.perceiver.extraction.sensor import (
+            extract_sensor_features,
+        )
+        return extract_sensor_features(sensor_data)
 
     def _assess_input_quality(
         self, input_data: Any, modality: str, features: dict[str, Any]

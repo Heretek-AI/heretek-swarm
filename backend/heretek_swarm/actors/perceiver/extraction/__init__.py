@@ -467,6 +467,7 @@ __all__ = [
     "detect_image_mime",
     "detect_text_structure",
     "extract_image_pil",
+    "extract_sensor_features",
     "extract_text_features",
     "merge_image_features",
     "parse_r_frame_rate",
