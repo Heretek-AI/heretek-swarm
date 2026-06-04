@@ -527,6 +527,15 @@ class MiniMaxProvider(LLMProvider):
             if self.config.metadata.get("group_id"):
                 payload["group_id"] = self.config.metadata["group_id"]
 
+            # Phase 1.4 — headroom token compression + Phase 1.3
+            # opik timing. Same pattern as OpenAIProvider /
+            # OllamaProvider. wrap() is a passthrough when the
+            # Rust binding is unavailable or HEADROOM_ENABLED=0.
+            with _opik_timed("llm_minimax_complete", tags={"model": model, "provider": "minimax"}):
+                _compression = _headroom_wrap(payload.get("messages", []))
+            if isinstance(_compression.data, list):
+                payload["messages"] = _compression.data
+
             try:
                 response = await client.post("/text/chatcompletion_v2", json=payload)
                 response.raise_for_status()
@@ -631,6 +640,16 @@ class AnthropicProvider(LLMProvider):
             if system_prompt:
                 payload["system"] = system_prompt
 
+            # Phase 1.4 — headroom token compression + Phase 1.3
+            # opik timing. Anthropic splits system prompt from
+            # the messages list, so we wrap the messages list
+            # only. wrap() is a passthrough when the Rust binding
+            # is unavailable or HEADROOM_ENABLED=0.
+            with _opik_timed("llm_anthropic_complete", tags={"model": model, "provider": "anthropic"}):
+                _compression = _headroom_wrap(payload.get("messages", []))
+            if isinstance(_compression.data, list):
+                payload["messages"] = _compression.data
+
             try:
                 response = await client.post("/v1/messages", json=payload)
                 response.raise_for_status()
@@ -723,6 +742,16 @@ class OpenAICompatibleProvider(LLMProvider):
 
             payload = request.to_dict()
             payload["model"] = model
+
+            # Phase 1.4 — headroom token compression + Phase 1.3
+            # opik timing. Same pattern as OpenAIProvider /
+            # OllamaProvider / MiniMaxProvider / AnthropicProvider.
+            # wrap() is a passthrough when the Rust binding is
+            # unavailable or HEADROOM_ENABLED=0.
+            with _opik_timed("llm_openai_compatible_complete", tags={"model": model, "provider": "openai_compatible"}):
+                _compression = _headroom_wrap(payload.get("messages", []))
+            if isinstance(_compression.data, list):
+                payload["messages"] = _compression.data
 
             try:
                 response = await client.post("/chat/completions", json=payload)
