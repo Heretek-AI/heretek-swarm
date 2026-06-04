@@ -137,6 +137,12 @@ class BehaviorMetrics:
     tasks_completed: int = 0
     tasks_failed: int = 0
     task_success_rate: float = 0.0
+    # Phase 2A.3 cutover: this field is now updated from the
+    # activity log (see _update_metrics below) instead of the
+    # rolling-100 actor-execution window that lived in the
+    # deleted SwarmMetricsCollector. The statistical sample is
+    # different (activity-log means vs rolling-100 mean of
+    # perf_counter deltas) but the field is still live.
     avg_task_duration_ms: float = 0.0
 
     # Error metrics
