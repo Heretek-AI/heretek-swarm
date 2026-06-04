@@ -223,7 +223,7 @@ backend/
 │   │   ├── threat_detection.py
 │   │   └── validators.py
 │   ├── observability/             # Prometheus metrics + tracing
-│   │   ├── prometheus_metrics.py
+│   │   ├── prometheus_native.py
 │   │   ├── alerting.py
 │   │   ├── metrics.py
 │   │   └── tracing.py
@@ -616,7 +616,7 @@ The Heretek Swarm provides comprehensive observability through Prometheus metric
 
 ### Metrics
 
-**File:** [`backend/heretek_swarm/observability/prometheus_metrics.py`](backend/heretek_swarm/observability/prometheus_metrics.py)
+**File:** [`backend/heretek_swarm/observability/prometheus_native.py`](backend/heretek_swarm/observability/prometheus_native.py)
 
 The system exposes Prometheus-compatible metrics for monitoring autonomous 24/7 operation.
 
@@ -665,15 +665,11 @@ The system exposes Prometheus-compatible metrics for monitoring autonomous 24/7 
 #### Prometheus Integration
 
 ```python
-from heretek_swarm.observability.prometheus_metrics import (
-    PrometheusMetrics,
-    get_metrics,
+from heretek_swarm.observability.prometheus_native import (
     increment_tasks_completed,
     record_api_request,
+    export_prometheus,
 )
-
-# Get singleton metrics instance
-metrics = get_metrics()
 
 # Record task completion
 increment_tasks_completed(agent_id="alpha", task_type="analysis")
