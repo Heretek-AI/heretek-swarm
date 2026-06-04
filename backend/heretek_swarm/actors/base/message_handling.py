@@ -16,9 +16,7 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.base.core import ActorMessage, AgentActor
-from heretek_swarm.observability.prometheus_metrics import (
-    heretek_swarm_actor_processing_duration_seconds,
-)
+from heretek_swarm.observability.prometheus_native import ACTOR_PROCESSING_DURATION
 from heretek_swarm.observability.timing import TimedContext
 
 logger = structlog.get_logger("AgentActor")
@@ -40,7 +38,7 @@ class AgentActorMessageHandling(AgentActor):
 
             plugin = get_consciousness_plugin()
             plugin.record_interaction(from_agent, to_agent)
-        except Exception as e:
+        except Exception:
             # Consciousness tracking is non-fatal — do not break message delivery
             logger.debug(
                 "Consciousness tracking unavailable, continuing message delivery",
@@ -352,7 +350,7 @@ class AgentActorMessageHandling(AgentActor):
 
                 return reply_message.content
 
-            except TimeoutError as e:
+            except TimeoutError:
                 logger.warning(
                     f"[{self.agent_id}] Request timeout after {timeout}s for correlation_id={correlation_id}",
                     extra={"recipient": recipient, "message_type": message_type},
@@ -385,7 +383,7 @@ class AgentActorMessageHandling(AgentActor):
                     extra={"message_type": message.message_type},
                 )
                 return  # Success, exit retry loop
-            except TimeoutError as e:
+            except TimeoutError:
                 if attempt < max_retries - 1:
                     # P1-10e fix: Retry with exponential backoff
                     logger.warning(
@@ -421,7 +419,7 @@ class AgentActorMessageHandling(AgentActor):
                 actor_type = getattr(self, "actor_type", "unknown")
                 with TimedContext(
                     "actor_message_processed",
-                    histogram=heretek_swarm_actor_processing_duration_seconds,
+                    histogram=ACTOR_PROCESSING_DURATION,
                     histogram_labels={"actor_type": actor_type},
                     agent_id=self.agent_id,
                     message_type=message.message_type,
@@ -447,7 +445,7 @@ class AgentActorMessageHandling(AgentActor):
                 # Mark as done
                 self.mailbox.task_done()
 
-            except TimeoutError as e:
+            except TimeoutError:
                 # No messages, continue
                 continue
             except asyncio.CancelledError:
@@ -871,7 +869,7 @@ Please provide your analysis and recommendation for this collective task."""
             supervisor = get_supervisor()
             if supervisor and hasattr(supervisor, "actors"):
                 return supervisor.actors
-        except (ImportError, Exception) as e:
+        except (ImportError, Exception):
             logger.warning("Failed to retrieve supervisor actors", exc_info=True)
         return None
 
@@ -898,7 +896,7 @@ Please provide your analysis and recommendation for this collective task."""
         """
         import time
 
-        from heretek_swarm.observability.prometheus_metrics import (
+        from heretek_swarm.observability.prometheus_native import (
             record_llm_call,
             record_llm_tokens,
         )
@@ -936,7 +934,7 @@ Please provide your analysis and recommendation for this collective task."""
                     actor_type = getattr(self, "actor_type", "unknown")
                     with TimedContext(
                         "llm_call_completed",
-                        histogram=heretek_swarm_actor_processing_duration_seconds,
+                        histogram=ACTOR_PROCESSING_DURATION,
                         histogram_labels={"actor_type": actor_type},
                         agent_id=self.agent_id,
                         provider="garage",
@@ -990,7 +988,7 @@ Please provide your analysis and recommendation for this collective task."""
                 actor_type = getattr(self, "actor_type", "unknown")
                 with TimedContext(
                     "llm_call_completed",
-                    histogram=heretek_swarm_actor_processing_duration_seconds,
+                    histogram=ACTOR_PROCESSING_DURATION,
                     histogram_labels={"actor_type": actor_type},
                     agent_id=self.agent_id,
                     provider="swarms_agent",
