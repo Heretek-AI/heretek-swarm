@@ -83,9 +83,13 @@ def test_increment_tasks_failed_increments_counter():
 
 def test_increment_messages_increments_counter():
     """increment_messages() increments the MESSAGES_TOTAL counter."""
-    before = MESSAGES_TOTAL.labels(direction="sent", agent_id="test-3")._value.get()
-    increment_messages(direction="sent", agent_id="test-3")
-    after = MESSAGES_TOTAL.labels(direction="sent", agent_id="test-3")._value.get()
+    before = MESSAGES_TOTAL.labels(
+        direction="sent", message_type="request"
+    )._value.get()
+    increment_messages(direction="sent", message_type="request")
+    after = MESSAGES_TOTAL.labels(
+        direction="sent", message_type="request"
+    )._value.get()
     assert after == before + 1
 
 
@@ -141,9 +145,17 @@ def test_increment_external_call_logs_increments_counter():
 
 def test_record_external_call_duration_observes_histogram():
     """record_external_call_duration() observes into the histogram."""
-    label = EXTERNAL_CALL_DURATION.labels(call_type="tool", status="200")
+    label = EXTERNAL_CALL_DURATION.labels(
+        agent_type="executor", call_type="tool", method="POST"
+    )
     before_sum = label._sum.get()
-    record_external_call_duration(call_type="tool", status=200, duration_seconds=0.1)
+    record_external_call_duration(
+        call_type="tool",
+        status=200,
+        duration_seconds=0.1,
+        agent_type="executor",
+        method="POST",
+    )
     after_sum = label._sum.get()
     assert after_sum >= before_sum + 0.1
 

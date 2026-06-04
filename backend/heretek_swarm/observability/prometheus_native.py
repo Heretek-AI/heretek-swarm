@@ -52,6 +52,10 @@ backward compat) records the event. No class instance, no wrapper.
 
 from __future__ import annotations
 
+import re
+import time
+from typing import TYPE_CHECKING
+
 from prometheus_client import (
     CONTENT_TYPE_LATEST,
     REGISTRY,
@@ -61,6 +65,9 @@ from prometheus_client import (
     Histogram,
     generate_latest,
 )
+
+if TYPE_CHECKING:
+    from fastapi import FastAPI
 
 # ---------------------------------------------------------------------------
 # Module-level metrics — the prometheus_client pattern
@@ -74,11 +81,13 @@ from prometheus_client import (
 AGENTS_TOTAL = Gauge(
     "heretek_swarm_agents_total",
     "Total number of registered agents in the swarm",
+    labelnames=["agent_type"],
     registry=REGISTRY,
 )
 AGENTS_ACTIVE = Gauge(
     "heretek_swarm_agents_active",
     "Number of currently active agents",
+    labelnames=["agent_type"],
     registry=REGISTRY,
 )
 TASKS_COMPLETED = Counter(
@@ -96,7 +105,7 @@ TASKS_FAILED = Counter(
 MESSAGES_TOTAL = Counter(
     "heretek_swarm_messages_total",
     "Total messages processed",
-    labelnames=["direction", "agent_id"],
+    labelnames=["direction", "message_type"],
     registry=REGISTRY,
 )
 CONSENSUS_ROUNDS = Counter(
@@ -143,7 +152,7 @@ EXTERNAL_CALL_LOGS = Counter(
 EXTERNAL_CALL_DURATION = Histogram(
     "heretek_swarm_external_call_log_duration_seconds",
     "External call duration in seconds",
-    labelnames=["call_type", "status"],
+    labelnames=["agent_type", "call_type", "method"],
     registry=REGISTRY,
 )
 ENCRYPTION_LATENCY = Histogram(
@@ -152,6 +161,64 @@ ENCRYPTION_LATENCY = Histogram(
     labelnames=["operation", "field_type"],
     registry=REGISTRY,
 )
+
+# Additional metrics required by the wrapper's call sites (Phase 2A.1 cutover).
+ACTOR_PROCESSING_DURATION = Histogram(
+    "heretek_swarm_actor_processing_duration_seconds",
+    "Actor mailbox-processing latency in seconds",
+    labelnames=["actor_type"],
+    registry=REGISTRY,
+)
+DB_QUERY_DURATION = Histogram(
+    "heretek_swarm_db_query_duration_seconds",
+    "Database query latency in seconds",
+    labelnames=["db_name"],
+    registry=REGISTRY,
+)
+LLM_CALL_DURATION = Histogram(
+    "heretek_swarm_llm_call_duration_seconds",
+    "LLM call latency in seconds",
+    labelnames=["agent_id", "provider", "model"],
+    registry=REGISTRY,
+)
+LLM_TOKENS = Counter(
+    "heretek_swarm_llm_tokens_total",
+    "LLM token usage by token_type (prompt/completion/total)",
+    labelnames=["agent_id", "provider", "model", "token_type"],
+    registry=REGISTRY,
+)
+UPTIME_SECONDS = Gauge(
+    "heretek_swarm_uptime_seconds",
+    "Swarm uptime in seconds",
+    registry=REGISTRY,
+)
+
+
+# ---------------------------------------------------------------------------
+# Endpoint normalization (lifted from the legacy wrapper)
+# ---------------------------------------------------------------------------
+# The legacy wrapper's _normalize_endpoint() reduces Prometheus label
+# cardinality by replacing dynamic path segments (UUIDs, numeric IDs) with
+# ``{id}`` placeholders. Without this, every UUID-bearing endpoint
+# would explode the label space and blow out Prometheus storage.
+# Compiled once at module scope (hot path).
+
+_UUID_PATTERN = re.compile(
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+    re.IGNORECASE,
+)
+_NUMERIC_ID_PATTERN = re.compile(r"/\d+(?=/|$)")
+
+
+def _normalize_endpoint(endpoint: str) -> str:
+    """Reduce endpoint label cardinality by replacing UUIDs/numeric IDs with ``{id}``.
+
+    Public-utility helper (not exported in __all__); called from
+    :func:`record_api_request` so every call site benefits automatically.
+    """
+    endpoint = _UUID_PATTERN.sub("{id}", endpoint)
+    endpoint = _NUMERIC_ID_PATTERN.sub("/{id}", endpoint)
+    return endpoint
 
 
 # ---------------------------------------------------------------------------
@@ -173,9 +240,13 @@ def increment_tasks_failed(agent_id: str, task_type: str = "default") -> None:
     TASKS_FAILED.labels(agent_id=agent_id, task_type=task_type).inc()
 
 
-def increment_messages(direction: str, agent_id: str = "anonymous") -> None:
-    """Record a message processed (direction = 'sent' or 'received')."""
-    MESSAGES_TOTAL.labels(direction=direction, agent_id=agent_id).inc()
+def increment_messages(direction: str, message_type: str = "general") -> None:
+    """Record a message processed (direction = 'sent' or 'received').
+
+    Label schema is reconciled to the legacy wrapper:
+    ``(direction, message_type)``.
+    """
+    MESSAGES_TOTAL.labels(direction=direction, message_type=message_type).inc()
 
 
 def increment_consensus_rounds(consensus_type: str, outcome: str) -> None:
@@ -201,8 +272,14 @@ def record_health_score(score: float) -> None:
 def record_api_request(
     method: str, endpoint: str, status: int, duration: float
 ) -> None:
-    """Record an API request's status code and duration."""
+    """Record an API request's status code and duration.
+
+    The endpoint is normalized via :func:`_normalize_endpoint` to
+    keep Prometheus label cardinality bounded (UUIDs and numeric
+    IDs collapse to ``{id}`` placeholders).
+    """
     status_str = str(status)
+    endpoint = _normalize_endpoint(endpoint)
     API_REQUESTS_TOTAL.labels(method=method, endpoint=endpoint, status=status_str).inc()
     API_REQUEST_DURATION.labels(method=method, endpoint=endpoint, status=status_str).observe(
         duration
@@ -219,12 +296,22 @@ def increment_external_call_logs(
 
 
 def record_external_call_duration(
-    call_type: str, status: int, duration_seconds: float
+    call_type: str,
+    status: int,
+    duration_seconds: float,
+    agent_type: str = "unknown",
+    method: str = "POST",
 ) -> None:
-    """Record the duration of an external call."""
-    EXTERNAL_CALL_DURATION.labels(call_type=call_type, status=str(status)).observe(
-        duration_seconds
-    )
+    """Record the duration of an external call.
+
+    Label schema is reconciled to the legacy wrapper:
+    ``(agent_type, call_type, method)``. The ``status`` argument is
+    accepted for backward compat but is not a label (the legacy
+    wrapper tracked it via a Counter, not the Duration Histogram).
+    """
+    EXTERNAL_CALL_DURATION.labels(
+        agent_type=agent_type, call_type=call_type, method=method
+    ).observe(duration_seconds)
 
 
 def record_encryption_latency(
@@ -243,6 +330,183 @@ def export_prometheus() -> tuple[bytes, str]:
     Uses ``prometheus_client.generate_latest()`` directly.
     """
     return generate_latest(REGISTRY), CONTENT_TYPE_LATEST
+
+
+# ---------------------------------------------------------------------------
+# Helpers added for the Phase 2A.1 wrapper-cutover (commit 1)
+# ---------------------------------------------------------------------------
+# These are the wrapper class's `record_*` methods, lifted to
+# module-level so callers can drop their `PrometheusMetrics` instance
+# and call the native helpers directly. Signatures match the
+# wrapper's signatures so the migration is a 1-line import swap.
+
+
+def record_agent_registration(agent_id: str, agent_type: str) -> None:
+    """Register a new agent and increment the agents_total gauge."""
+    AGENTS_TOTAL.labels(agent_type=agent_type).inc()
+
+
+def record_agent_unregistration(agent_id: str, agent_type: str) -> None:
+    """Unregister an agent and decrement the agents_total gauge."""
+    AGENTS_TOTAL.labels(agent_type=agent_type).dec()
+
+
+def record_agent_active(agent_id: str, agent_type: str) -> None:
+    """Mark an agent as active (increment the agents_active gauge)."""
+    AGENTS_ACTIVE.labels(agent_type=agent_type).inc()
+
+
+def record_agent_inactive(agent_id: str, agent_type: str) -> None:
+    """Mark an agent as inactive (decrement the agents_active gauge)."""
+    AGENTS_ACTIVE.labels(agent_type=agent_type).dec()
+
+
+def record_task_completed(
+    agent_id: str, agent_type: str, task_type: str = "general"
+) -> None:
+    """Record a task completion event (wrapper-class signature)."""
+    TASKS_COMPLETED.labels(agent_id=agent_id, task_type=task_type).inc()
+
+
+def record_task_failed(
+    agent_id: str, agent_type: str, task_type: str = "general"
+) -> None:
+    """Record a task failure event (wrapper-class signature)."""
+    TASKS_FAILED.labels(agent_id=agent_id, task_type=task_type).inc()
+
+
+def record_message(direction: str, message_type: str = "general") -> None:
+    """Record a message processed (direction = 'sent' or 'received').
+
+    Label schema: ``(direction, message_type)``.
+    """
+    MESSAGES_TOTAL.labels(direction=direction, message_type=message_type).inc()
+
+
+def record_message_sent(message_type: str = "general") -> None:
+    """Record a sent message."""
+    record_message("sent", message_type)
+
+
+def record_message_received(message_type: str = "general") -> None:
+    """Record a received message."""
+    record_message("received", message_type)
+
+
+def record_consensus_round(
+    consensus_type: str = "deliberation", outcome: str = "success"
+) -> None:
+    """Record a consensus round completion."""
+    CONSENSUS_ROUNDS.labels(consensus_type=consensus_type, outcome=outcome).inc()
+
+
+def record_actor_processing(
+    agent_id: str,
+    actor_type: str = "unknown",
+    duration_seconds: float = 0.0,
+) -> None:
+    """Record actor mailbox-processing latency.
+
+    The ``agent_id`` is logged via structlog in the wrapper; in the
+    native module it is not used as a label (cardinality control).
+    """
+    ACTOR_PROCESSING_DURATION.labels(actor_type=actor_type).observe(duration_seconds)
+
+
+def record_db_query(
+    duration_seconds: float = 0.0, db_name: str = "unknown"
+) -> None:
+    """Record a database-query latency observation."""
+    DB_QUERY_DURATION.labels(db_name=db_name).observe(duration_seconds)
+
+
+def record_db_query_duration(
+    duration_seconds: float = 0.0, db_name: str = "unknown"
+) -> None:
+    """Alias for :func:`record_db_query` (matches the wrapper's
+    ``record_db_query_duration`` helper)."""
+    record_db_query(duration_seconds, db_name)
+
+
+def record_llm_call(
+    agent_id: str,
+    provider: str,
+    model: str,
+    duration_seconds: float,
+) -> None:
+    """Record an LLM call invocation duration."""
+    LLM_CALL_DURATION.labels(
+        agent_id=agent_id, provider=provider, model=model
+    ).observe(duration_seconds)
+
+
+def record_llm_tokens(
+    agent_id: str,
+    provider: str,
+    model: str,
+    prompt_tokens: int,
+    completion_tokens: int,
+    total_tokens: int,
+) -> None:
+    """Record LLM token usage across prompt / completion / total buckets.
+
+    Emits three ``.labels(token_type=...).inc(count)`` calls so the
+    wire format matches the wrapper's ``record_llm_tokens_consumed``.
+    """
+    LLM_TOKENS.labels(
+        agent_id=agent_id, provider=provider, model=model, token_type="prompt"
+    ).inc(prompt_tokens)
+    LLM_TOKENS.labels(
+        agent_id=agent_id, provider=provider, model=model, token_type="completion"
+    ).inc(completion_tokens)
+    LLM_TOKENS.labels(
+        agent_id=agent_id, provider=provider, model=model, token_type="total"
+    ).inc(total_tokens)
+
+
+def record_uptime(seconds: float) -> None:
+    """Set the swarm-uptime gauge (seconds since process start)."""
+    UPTIME_SECONDS.set(seconds)
+
+
+# ---------------------------------------------------------------------------
+# FastAPI middleware (lifted from the legacy wrapper)
+# ---------------------------------------------------------------------------
+
+
+def setup_metrics_middleware(app: FastAPI) -> None:
+    """Install Prometheus per-request middleware on a FastAPI app.
+
+    Records every request's method, endpoint (normalized), status,
+    and duration. Exceptions during metric collection are swallowed
+    so a misbehaving exporter can never break the request path.
+    The ``/metrics`` path is skipped to avoid self-scrape pollution.
+    """
+    import structlog
+    from starlette.middleware.base import BaseHTTPMiddleware
+
+    _logger = structlog.get_logger("prometheus_middleware")
+
+    class PrometheusRequestMiddleware(BaseHTTPMiddleware):
+        async def dispatch(self, request, call_next):  # type: ignore[override]
+            # Skip the metrics endpoint itself.
+            if request.url.path == "/metrics":
+                return await call_next(request)
+            start_time = time.perf_counter()
+            response = await call_next(request)
+            duration = time.perf_counter() - start_time
+            try:
+                record_api_request(
+                    method=request.method,
+                    endpoint=request.url.path,
+                    status=response.status_code,
+                    duration=duration,
+                )
+            except Exception as exc:  # never let metrics break the request
+                _logger.debug("prometheus_metrics_collection_failed", error=str(exc))
+            return response
+
+    app.add_middleware(PrometheusRequestMiddleware)
 
 
 # ---------------------------------------------------------------------------
@@ -267,21 +531,26 @@ def build_test_registry() -> CollectorRegistry:
 
 
 __all__ = [
+    "ACTOR_PROCESSING_DURATION",
     "AGENTS_ACTIVE",
     "AGENTS_TOTAL",
     "API_REQUESTS_TOTAL",
     "API_REQUEST_DURATION",
     "CONSENSUS_ROUNDS",
     "CONTENT_TYPE_LATEST",
+    "DB_QUERY_DURATION",
     "ENCRYPTION_LATENCY",
     "EXTERNAL_CALL_DURATION",
     "EXTERNAL_CALL_LOGS",
     "FREE_ENERGY",
     "HEALTH_SCORE",
+    "LLM_CALL_DURATION",
+    "LLM_TOKENS",
     "MESSAGES_TOTAL",
     "PHI_SCORE",
     "TASKS_COMPLETED",
     "TASKS_FAILED",
+    "UPTIME_SECONDS",
     "build_test_registry",
     "export_prometheus",
     "increment_consensus_rounds",
@@ -289,10 +558,27 @@ __all__ = [
     "increment_messages",
     "increment_tasks_completed",
     "increment_tasks_failed",
+    "record_actor_processing",
+    "record_agent_active",
+    "record_agent_inactive",
+    "record_agent_registration",
+    "record_agent_unregistration",
     "record_api_request",
+    "record_consensus_round",
+    "record_db_query",
+    "record_db_query_duration",
     "record_encryption_latency",
     "record_external_call_duration",
     "record_free_energy",
     "record_health_score",
+    "record_llm_call",
+    "record_llm_tokens",
+    "record_message",
+    "record_message_received",
+    "record_message_sent",
     "record_phi_score",
+    "record_task_completed",
+    "record_task_failed",
+    "record_uptime",
+    "setup_metrics_middleware",
 ]
