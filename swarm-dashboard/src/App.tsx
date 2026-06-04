@@ -30,6 +30,10 @@ import { AgentsPage } from './components/Agents/AgentsPage';
 import { ConsciousnessPage } from './components/Consciousness/ConsciousnessPage';
 import { DeliberationPage } from './components/Deliberation/DeliberationPage';
 import { AutonomousPage } from './components/Autonomous/AutonomousPage';
+import { ObservabilityPage } from './components/Observability/ObservabilityPage';
+import { MessageList } from './components/Chat/MessageList';
+import { AnalysisHistory } from './components/Autonomous/AnalysisHistory';
+import { EnhancedCanvas } from './components/Canvas/EnhancedCanvas';
 import { SettingsPage } from './components/Settings/SettingsPage';
 import { LogsPage } from './components/Logs/LogsPage';
 import { ToastProvider, useToast } from './components/UI/Toast';
@@ -50,7 +54,11 @@ type View =
   | 'autonomous'
   | 'workflows'
   | 'logs'
-  | 'settings';
+  | 'settings'
+  | 'observability'
+  | 'chat'
+  | 'memory'
+  | 'canvas';
 
 const navItems: NavItem[] = [
   { id: 'home', label: 'Home', icon: '🏠' },
@@ -58,6 +66,10 @@ const navItems: NavItem[] = [
   { id: 'consciousness', label: 'Consciousness', icon: '🧠' },
   { id: 'deliberation', label: 'Deliberation', icon: '🗳️' },
   { id: 'autonomous', label: 'Autonomous', icon: '🔄' },
+  { id: 'observability', label: 'Observability', icon: '🔍' },
+  { id: 'memory', label: 'Memory', icon: '🧠' },
+  { id: 'chat', label: 'Chat', icon: '💬' },
+  { id: 'canvas', label: 'Canvas', icon: '🎨' },
   { id: 'workflows', label: 'Workflows', icon: '🔀' },
   { id: 'logs', label: 'Terminal/Logs', icon: '📟' },
   { id: 'settings', label: 'Settings', icon: '⚙️' },
@@ -211,6 +223,14 @@ function DashboardContent() {
         return <DeliberationPage />;
       case 'autonomous':
         return <AutonomousPage />;
+      case 'observability':
+        return <ObservabilityPage />;
+      case 'chat':
+        return <MessageList />;
+      case 'memory':
+        return <AnalysisHistory />;
+      case 'canvas':
+        return <EnhancedCanvas />;
       case 'workflows':
         return <WorkflowBuilder />;
       case 'logs':
