@@ -34,6 +34,18 @@ from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 logger = structlog.get_logger("observability")
 
+# Phase 0 freeze: unified trace context propagation contract.
+# See heretek_swarm.observability.context for the full module docstring
+# describing the W3C-compliant contract that Phase 2 telemetry work
+# (opik cutover, prometheus bridge, AgentScope observability,
+# partysocket WS traces, Temporal workflow spans) will all bind to.
+# Explicit re-exports so ruff F401 (suppressed per-file) treats these
+# as intentional public API.
+from .context import TRACE_CONTEXT_INTERFACE_VERSION as TRACE_CONTEXT_INTERFACE_VERSION  # noqa: E402
+from .context import TraceContext as TraceContext  # noqa: E402
+from .context import extract_trace_context as extract_trace_context  # noqa: E402
+from .context import inject_trace_context as inject_trace_context  # noqa: E402
+from .context import new_trace_context as new_trace_context  # noqa: E402
 from .prometheus_metrics import PrometheusMetrics
 from .tracing import initialize_tracing, span_context
 

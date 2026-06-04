@@ -19,7 +19,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any
+from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
 from pydantic import ValidationError
 from swarms import Agent
@@ -119,6 +119,38 @@ class ActorStatus:
     mesh_type: str = "none"
 
 
+# ---------------------------------------------------------------------------
+# Phase 0 freeze: AgentActor interface contract
+# ---------------------------------------------------------------------------
+# This module defines the canonical ``AgentActor`` class used by all 23
+# in-house agents. The interface is the gate for Phase 3 framework
+# migrations (AgentScope, langgraph, Temporal, consensus, the official
+# ``mcp`` SDK integration). The version constant below is bumped on any
+# breaking change to the public surface.
+#
+# Stability policy:
+# - ``AGENT_ACTOR_INTERFACE_VERSION`` is bumped on any breaking change.
+# - Adding a new optional parameter to ``__init__`` or a new
+#   non-required method/attribute is NOT a breaking change (minor).
+# - Removing or renaming a public attribute, method, or constructor
+#   parameter IS a breaking change (major).
+# - Changing the signature of a method (positional arg rename, return
+#   type narrowing) IS a breaking change.
+#
+# The contract covers the four orthogonal surfaces the swarm depends on:
+#   * input  — process_message() + handler registry
+#   * output — send() + reply_to correlation
+#   * state  — ActorState + internal_state + persistence hooks
+#   * trace  — observability.context.TraceContext propagation hooks
+#
+# See :class:`AgentActorProtocol` below for the runtime-checkable
+# Protocol that all 23 agents must satisfy. Subclasses of ``AgentActor``
+# satisfy it automatically; independent implementations (e.g. an
+# AgentScope node wrapped in a thin adapter) must implement the
+# Protocol explicitly.
+AGENT_ACTOR_INTERFACE_VERSION: str = "1.0.0"
+
+
 class AgentActor:
     """
     Base class for all actors in the Heretek Swarm system.
@@ -153,6 +185,12 @@ class AgentActor:
 
     # Class-level actor type identifier
     actor_type: str = "AgentActor"
+
+    # Phase 0 freeze: every concrete AgentActor carries the
+    # AGENT_ACTOR_INTERFACE_VERSION of the contract it satisfies.
+    # External adapters (AgentScope, Temporal, etc.) must set the
+    # same value on their wrapper class to be considered compliant.
+    AGENT_ACTOR_INTERFACE_VERSION: str = AGENT_ACTOR_INTERFACE_VERSION
 
     @classmethod
     def get_actor_type(cls) -> str:
@@ -352,6 +390,44 @@ class AgentActor:
 
         # Clear message handlers (no re-registration of defaults per test contract)
         self._message_handlers.clear()
+
+    # ------------------------------------------------------------------
+    # Trace surface (Phase 0 freeze)
+    # ------------------------------------------------------------------
+    # Default implementations of the AgentActorProtocol's trace hooks.
+    # They delegate to the FROZEN contract in
+    # :mod:`heretek_swarm.observability.context`, so the existing 23
+    # agents satisfy ``isinstance(actor, AgentActorProtocol)`` without
+    # any per-agent retrofit. Subclasses that maintain their own span
+    # bookkeeping (e.g. when wrapping an external framework like
+    # AgentScope) SHOULD override these to surface the framework-native
+    # span as the actor's current context.
+    @property
+    def trace_context(self) -> "TraceContext | None":
+        """Return the actor's current :class:`TraceContext` or ``None``.
+
+        Default: derive from the active OTel context via
+        :func:`heretek_swarm.observability.context.get_current_trace_context`.
+        Long-lived actors that span many sequential operations will see
+        different contexts across their lifetime; this property
+        always reports the *current* one.
+        """
+        from heretek_swarm.observability.context import get_current_trace_context
+
+        return get_current_trace_context()
+
+    def with_trace_context(self, context: "TraceContext"):
+        """Bind ``context`` for the duration of a block.
+
+        Default: return a context manager from
+        :func:`heretek_swarm.observability.context.use_trace_context`.
+        The returned object is awaitable in ``async with`` form. See
+        :meth:`AgentActorProtocol.with_trace_context` for the full
+        contract.
+        """
+        from heretek_swarm.observability.context import use_trace_context
+
+        return use_trace_context(context)
 
         logger.info(f"[{self.agent_id}] Actor cleanup complete")
 
@@ -571,3 +647,188 @@ class AgentActor:
 # Backward-compat: existing code that imports ActorMessage from actors.base.core
 # gets the internal dataclass ActorMessage (defined above), not the Pydantic one.
 # Use heretek_swarm.schemas.actors for the Pydantic models.
+
+
+# ---------------------------------------------------------------------------
+# Phase 0 freeze: AgentActorProtocol
+# ---------------------------------------------------------------------------
+# A ``typing.Protocol`` that captures the minimum surface every agent
+# implementation must satisfy. The Protocol is ``runtime_checkable`` so
+# frameworks (e.g. AgentScope, langgraph, the ``mcp`` SDK) that want to
+# duck-type a foreign actor can be validated against it with
+# ``isinstance(obj, AgentActorProtocol)``.
+#
+# The four contract surfaces (input / output / state / trace) correspond
+# to the four orthogonal dimensions of agent operation:
+#
+#   input  — :meth:`process_message` consumes a typed ``ActorMessage``;
+#            handler-typed dispatches go through
+#            :meth:`register_handler` / :meth:`unregister_handler`.
+#   output — :meth:`send` writes to a peer identified by topic or
+#            agent_id; correlation is via ``ActorMessage.correlation_id``
+#            and ``ActorMessage.reply_to``.
+#   state  — :attr:`state` exposes the public lifecycle enum
+#            (``ActorState``); :attr:`internal_state` is a free-form
+#            ``dict`` for mixin-owned state; persistence hooks
+#            (:meth:`load_state`, :meth:`save_state`) integrate with
+#            ``StateRepository`` when configured.
+#   trace  — :attr:`trace_context` exposes the current
+#            :class:`TraceContext` so callers can correlate spans
+#            across services; :meth:`with_trace_context` returns an
+#            async context manager that binds a context for the
+#            duration of a block. This is the slice that the Phase 0
+#            ``observability.context`` contract (FROZEN 2026-06-03)
+#            gates on.
+#
+# Adding a new optional method or attribute to this Protocol is a
+# minor change. Removing or renaming anything below is a major change
+# and requires a ``AGENT_ACTOR_INTERFACE_VERSION`` bump.
+
+if TYPE_CHECKING:
+    from heretek_swarm.observability.context import TraceContext
+
+
+@runtime_checkable
+class AgentActorProtocol(Protocol):
+    """Runtime-checkable contract every Heretek agent must satisfy.
+
+    See module docstring (the "Phase 0 freeze: AgentActor interface
+    contract" block) for the full stability policy. The Protocol is
+    a TypeScript-style structural interface: any class that exposes
+    the attributes and methods listed below is a valid agent for
+    the purposes of Phase 3 framework migration (AgentScope,
+    langgraph, Temporal) and Phase 2 telemetry binding
+    (``observability.context.TraceContext``).
+    """
+
+    # --- Identity (state) --------------------------------------------------
+    agent_id: str
+    """Unique actor identifier. Stable across the actor's lifetime."""
+
+    name: str
+    """Human-readable name. Defaults to ``self.__class__.__name__``."""
+
+    actor_type: str
+    """Class-level type identifier used by ``ActorFactory`` registration."""
+
+    state: ActorState
+    """Current lifecycle state. Mutations are actor-internal."""
+
+    internal_state: dict[str, Any]
+    """Free-form dict for mixin-owned state. Treat as opaque from outside."""
+
+    # --- Required methods (input / output / state / trace) ----------------
+
+    async def process_message(self, message: ActorMessage) -> None:
+        """Consume a single mailbox message.
+
+        Subclasses MAY override; the default dispatcher in
+        :class:`AgentActor` delegates to the registered handler for
+        ``message.message_type``. This returns ``None``; the
+        ``send(...)`` side effect is the public return contract.
+        """
+        ...
+
+    async def send(
+        self,
+        topic: str,
+        content: dict[str, Any],
+        message_type: str = "default",
+        reply_to: str | None = None,
+        correlation_id: str | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> str:
+        """Publish a message to ``topic`` (or peer ``agent_id``).
+
+        Args:
+            topic: Target topic name (or peer agent_id).
+            content: Message payload (Pydantic-validated downstream).
+            message_type: Type identifier for the message.
+            reply_to: Optional topic the recipient should respond on.
+            correlation_id: Optional id for request/response correlation.
+            metadata: Additional metadata. **Trace context**
+                propagation is conveyed via this dict: callers SHOULD
+                include a ``"trace_context"`` key with a serialized
+                :class:`TraceContext` (use :meth:`TraceContext.to_dict`)
+                so the receiver can bind the parent's span.
+
+        Returns:
+            The generated message id (a UUID4 hex string).
+        """
+        ...
+
+    def register_handler(self, message_type: str, handler: Callable) -> None:
+        """Register an async handler for ``message_type``."""
+        ...
+
+    def unregister_handler(self, message_type: str) -> None:
+        """Remove a previously-registered handler (no-op if missing)."""
+        ...
+
+    async def spawn(self) -> None:
+        """Start the actor's mailbox and heartbeat loops.
+
+        Idempotent: a second call on an already-spawned actor MUST be
+        a no-op (logged at debug).
+        """
+        ...
+
+    async def terminate(self) -> None:
+        """Stop loops, cancel pending tasks, and persist state.
+
+        Idempotent and exception-safe: callers may invoke it from
+        finally blocks without additional guards.
+        """
+        ...
+
+    async def initialize(self) -> None:
+        """Subclass-specific setup hook invoked once at spawn()."""
+        ...
+
+    async def cleanup(self) -> None:
+        """Subclass-specific teardown hook invoked at terminate()."""
+        ...
+
+    # --- Trace surface (the Phase 0 freeze) -------------------------------
+
+    @property
+    def trace_context(self) -> TraceContext | None:
+        """Return the actor's current :class:`TraceContext` or ``None``.
+
+        Implementations may derive this from the active OTel context
+        or from an attribute they set during ``send`` / message
+        handling. The contract is "current", not "root": a long-lived
+        actor may have many sequential contexts across its lifetime.
+        """
+        ...
+
+    def with_trace_context(
+        self,
+        context: TraceContext,
+    ) -> Any:
+        """Return a context manager that binds ``context`` for a block.
+
+        Typical usage::
+
+            async with actor.with_trace_context(ctx):
+                await actor.process_message(msg)
+
+        Implementations may return either a synchronous
+        ``contextlib.contextmanager``-decorated object or an
+        ``asynccontextmanager``-decorated one. The return type is
+        ``Any`` so the Protocol accommodates both. Adapters that
+        wrap framework-native objects (AgentScope, Temporal) MUST
+        preserve the W3C-compliant contract from
+        :mod:`heretek_swarm.observability.context`.
+        """
+        ...
+
+
+__all__ = [
+    "AGENT_ACTOR_INTERFACE_VERSION",
+    "ActorMessage",
+    "ActorState",
+    "ActorStatus",
+    "AgentActor",
+    "AgentActorProtocol",
+]
