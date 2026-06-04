@@ -189,6 +189,16 @@ services:
       EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-lemonade}
       EMBEDDER_MODEL: ${EMBEDDER_MODEL:-nomic-embed-text-v2-moe-GGUF}
       EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-768}
+      # Phase 5 sovereign-service wire-up (PLAN.md P3 #16).
+      # When the 'sovereign' profile brings the gRPC sidecars up,
+      # the api process picks them up here. When the env vars are
+      # unset (default), the api falls back to the in-process
+      # ConsensusServiceStub / MemoryStore / ConnectionManager /
+      # opik_compat shim.
+      HERETEK_CONSENSUS_GRPC_URL: ${HERETEK_CONSENSUS_GRPC_URL:-}
+      HERETEK_MEMORY_GRPC_URL: ${HERETEK_MEMORY_GRPC_URL:-}
+      HERETEK_REALTIME_GRPC_URL: ${HERETEK_REALTIME_GRPC_URL:-}
+      HERETEK_OBSERVABILITY_GRPC_URL: ${HERETEK_OBSERVABILITY_GRPC_URL:-}
     volumes:
       - config_keys:/config
       - ./certs:/etc/nats/certs:ro,z
