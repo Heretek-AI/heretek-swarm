@@ -1952,3 +1952,121 @@ are the source of truth for "what each commit did."
 * `from heretek_swarm.llm.headroom_compat import wrap, CompressionResult` succeeds; passthrough mode is exercised.
 * `POST /api/prompt` is registered exactly once in the FastAPI app.
 * Cold-start re-validation from `PRIME_DIRECTIVE.md` is **deferred** — this environment lacks NATS / Qdrant / Redis / Postgres. The change gates are syntax + import + `isinstance` checks, which are the achievable verification here.
+
+---
+
+## Next Steps — Prioritized Plan (2026-06-03)
+
+This section captures the work that comes after the audit's
+structural work is done. Each item is sized for a single
+PR or a small follow-up; grouping is by priority, not by
+phase.
+
+### Where we are
+
+* 34 commits, 9,972 insertions, 2,446 deletions, 67 files
+  changed across the session.
+* All 5 audit phases structurally addressed (Phases 0, 1, 2,
+  3, 4, 5 each have shipped work).
+* Live docker compose: 7/7 containers healthy; LLM +
+  embeddings wired to local Ollama (deepseek-v4-flash,
+  nomic-embed-text-v2-moe); dashboard verified via
+  chrome-devtools MCP; gRPC server tested end-to-end
+  (`gRPC CreateRound OK: 6wxQPch06aaPoa3zDNUTgw VOTING`).
+* The audit's exit criterion for Phase 2 ("largest file <
+  1,000 LOC") is not yet met:
+    - `gateway/nats_event_mesh.py` 1,804 LOC (was 1,888)
+    - `runtime/main_loop.py` 1,802 LOC (was 1,800)
+    - `actors/perceiver/agent.py` 1,607 LOC (was 1,731)
+    - `consensus/maker_enhanced.py` 1,496 LOC
+    - `consensus/deliberation.py` 1,487 LOC
+    - `consensus/immune.py` 1,462 LOC
+
+### Known bugs (PRIME_DIRECTIVE.md)
+
+* **F-010** (carried forward, characterized not fixed):
+  Dashboard WebSocket reconnects every render due to
+  inline-callback instability in
+  `useRealTimeAgentUpdates.ts` / `useWebSocket.ts`. UI works
+  via polling fallback. Fix proposal: stabilize the
+  `connect` callback's identity via `useRef` slots for
+  `onMessage` / `onOpen` / `onClose` / `onError`, and
+  reduce the mount `useEffect` dep array to `[]`.
+* **F-002** (carried forward): Dashboard WS 403 through
+  nginx. Fix: `location /ws/ { proxy_pass
+  http://api:8000/api/ws/; }` (trailing slashes on both
+  sides enable prefix rewrite).
+* **Stale DB-registered LLM/embedding providers**
+  (carried forward): `/api/config/{llm,embedding}/providers`
+  returns a stale `openai-default` entry from a prior DB
+  seed. The runtime env config is correct. Either re-seed
+  the DB provider or change `/test` to read runtime env.
+
+### P1 — Stability & correctness (do these first)
+
+| # | Action | Effort | Notes |
+|---|---|---|---|
+| 1 | **Fix F-010** (dashboard WS reconnect loop) | 1 PR | 74k console errors/min. Documented fix in PRIME_DIRECTIVE.md. |
+| 2 | **Fix F-002** (nginx WS 403) | 1 PR | Trailing-slash nginx proxy fix. |
+| 3 | **Run the test suite** end-to-end (21 test files) | 1 PR | Catch regressions from the 34-commit refactor. |
+| 4 | **Validate CI** against the new code | 1 PR | Router / shim / gRPC-stub import graph may have broken `pytest` collection. |
+
+### P2 — Complete the god-class extractions
+
+The audit's exit criterion for Phase 2 is "largest file <
+1,000 LOC". The current top four are all 1,400+ LOC.
+
+| # | Action | Effort | Notes |
+|---|---|---|---|
+| 5 | Extract `nats_event_mesh` connection / JetStream / consumers / mTLS / backoff into `gateway/nats_{connection,jetstream,consumers,tls,backoff}.py` | 3-5 PRs | `nats_fallback.py` is the pattern. Each module is a focused concern. |
+| 6 | Convert the 11 `_initialize_*` methods in `main_loop` into composable initializers (`runtime/initializers/{memory,rag,consensus,event_mesh,jetstream,mcp_tools,supervisor,model_garage,election_manager,channel_registry}.py`) | 1-2 PRs | Each initializer takes the service in its constructor. `_rewire_orchestrator_refs` already delegates to `wiring.wire_orchestrators`. |
+| 7 | Extract image / audio / video / document / sensor feature extractors from `perceiver/agent.py` into `actors/perceiver/extraction/{image,audio,video,document,sensor}.py` | 2-3 PRs | `extraction.py` is the pattern; ~1,000 LOC of per-modality code to move. |
+| 8 | Extract remaining crud concerns (`crud_embedding_providers.py`, `crud_agent_configs.py`, `crud_infrastructure.py`, `crud_audit.py`) | 2-3 PRs | `crud_llm_providers.py` is the pattern. |
+| 9 | Split `consensus/maker_enhanced.py` (1,496 LOC) — move the NATS-emit + reasoning-chain concerns to a separate module | 1 PR | The `compute_consensus` engine is small; the surrounding concerns are not. |
+| 10 | Split `consensus/deliberation.py` (1,487 LOC) — extract argument / counter-argument / evidence types to `deliberation_types.py` | 1 PR | Pydantic models, separate from the engine. |
+| 11 | Move `consensus/immune.py` (1,462 LOC) into `security/immune_engine.py` (split per Phase 2.5) | 1 PR | Re-export shim is already in `security/immune.py`. |
+
+### P3 — Wire the new abstractions through the call graph
+
+The shims are in place; most call sites still use the
+legacy path. Migration is mechanical but touches many
+files.
+
+| # | Action | Effort | Notes |
+|---|---|---|---|
+| 12 | Replace `self.access_analyzer` references with `_get_memory_store()` throughout `actors/`, `collectives/` | 1-2 PRs | The mixin already has the fallback (Phase 1.1 follow-up). |
+| 13 | Apply `@opik.track` to the LLM/agent call sites that `opik_compat.timed` already times | 1 PR | The shim's structured-log path is the fallback. |
+| 14 | Wire `headroom.wrap()` into the remaining LLM provider classes (Anthropic, Ollama, Groq, Mistral, DeepSeek) | 1-2 PRs | `OpenAIProvider.complete` is the pattern. |
+| 15 | Use `services/grpc_clients.ConsensusGrpcClient` in `api/main.py` when `HERETEK_CONSENSUS_GRPC_URL` is set | 1 PR | Fall-through to in-process stub when unset (backwards compatible). |
+| 16 | Activate docker-compose's `consensus_svc` service in dev (`docker compose --profile sovereign up`) and verify the api process routes consensus calls through gRPC | 1 PR | End-to-end verification with the gRPC server running. |
+| 17 | Re-seed the stale `openai-default` LLM/embedding provider in the DB | 1 PR | One-shot fix. |
+
+### P4 — Strategic (multi-week)
+
+| # | Action | Effort | Notes |
+|---|---|---|---|
+| 18 | Move sub-packages from `backend/heretek_swarm/` into `packages/core/src/heretek_swarm_core/` and `packages/api/src/heretek_swarm_api/`. Update internal imports. Activate the workspace member. | 4-6 weeks | Cold-start re-validate at every step. The re-export shims in `packages/{core,api}/src/heretek_swarm_{core,api}/__init__.py` are the bridge. |
+| 19 | Activate sovereign services (memory_svc, realtime_svc, observability_svc) in addition to consensus_svc | 1 PR each | Each one needs its own gRPC extraction rationale per `docs/SOVEREIGN_SERVICES.md`. |
+| 20 | Decide on dashboard WS architecture (WebSocket per topic vs single multiplexed) | 1 PR (design) | Affects `realtime/` package design and the F-010 fix. |
+| 21 | Add `pre-commit` hook to run `ruff` and `mypy` per the existing pyproject config | 1 PR | Quality gate for the 34-commit refactor's surface area. |
+| 22 | Replace the dashboard's polling fallback with a working WS once F-010 is fixed | 1 PR | Closes the audit's "WS not flowing" finding. |
+
+### My recommendation
+
+Start with **P1 #1, 2, 3, 4** (F-010, F-002, test run, CI
+validation). They protect the value of the 34 commits
+already on `main`. Then **P2 #5** (splitting
+`nats_event_mesh.py` is the biggest win per unit effort —
+the pattern is proven and there's a clear file-by-file
+split). Then **P2 #6, 7, 8** to bring the top four files
+under 1,000 LOC and clear the audit's exit criterion for
+Phase 2.
+
+### How to track
+
+Each P1-P4 row maps to a future commit. Adding a "Next
+Steps" checkbox list to the bottom of this section is
+the lightweight way to keep the plan honest — the items
+get checked off as the commits land. A formal task
+tracker (TodoWrite) is also fine; the choice is what
+makes the operator's day easier.
