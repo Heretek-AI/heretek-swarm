@@ -167,7 +167,7 @@ Expected: `200 {"instances":[],"total":0}` and a `101 Switching Protocols` upgra
 
 ## ✅ Re-Verified Operational State — 2026-06-01 (cold-start re-validation)
 
-> **Status:** A second 2026-06-01 validation run was executed: a full `docker compose down -v` + `docker compose up --build -d` cold start, followed by zero-trust audit of all 23 agent routes, LLM/embedding wiring, and a browser session against the Cognitive Dashboard. F-009 was found and fixed; F-010 was characterized but not fixed (out of scope for this run).
+> **Status:** A second 2026-06-01 validation run was executed: a full `docker compose down -v` + `docker compose up --build -d` cold start, followed by zero-trust audit of all 23 agent routes, LLM/embedding wiring, and a browser session against the Cognitive Dashboard. F-009 was found and fixed.
 
 ### Re-Validation Evidence
 - **Cold start:** All 5 named volumes + 6 containers recreated. `encryption.key` in `/config` regenerated (proves volume wipe was real; pre-restart key `5PjzrUWL…` → post-restart `TtU_5PPU…`).
@@ -199,7 +199,7 @@ Expected: `200 {"instances":[],"total":0}` and a `101 Switching Protocols` upgra
 **Proposed fix (for a follow-up slice, not in this run):** Stabilize the `connect` callback's identity in `useWebSocket.ts` by reading the latest callbacks via refs (not via useCallback dep array). Concretely: keep `onMessage` / `onOpen` / `onClose` / `onError` in `useRef` slots, update them via a separate `useEffect`, and have the `connect` useCallback read from the refs. The mount effect can then use `[]` as its dep array, guaranteeing one connect per mount, with the latest callback references always used.
 
 ### Updated Known Minor Items
-- **F-010** (new): Dashboard WS client rebuilds its connection every render due to inline-callback instability. UI works via polling fallback. See above for fix proposal.
+- **F-010 (FIXED 2026-06-03)**: Dashboard WS client rebuilt its connection every render due to inline-callback instability. UI worked via polling fallback. **Fix:** moved `onMessage` / `onOpen` / `onClose` / `onError` to `useRef` slots in `swarm-dashboard/src/hooks/useWebSocket.ts`; mount `useEffect` dep array is `[connect, disconnect]` so it runs once per mount. **Verification:** `tests/e2e/m030-f010-websocket-stability.spec.ts` passes — WS connect delta = 0 over 20 forced re-renders.
 - **Stale DB-registered LLM/embedding providers** (carried forward): `/api/config/{llm,embedding}/providers` returns a stale `openai-default` entry; the runtime env config is correct. The `/test` endpoint exercises the DB config, not runtime. Re-seed DB provider or change `/test` to read runtime env.
 - **`/api/prompt` HTTP timeout (30s) too short for 5-participant deliberation** (carried forward): individual LLM calls work in 1.2s; the 30s ceiling is shorter than a 5×8-15s deliberation. Mitigation: raise the timeout, or stream responses.
 - `REVIEW.md` 8.2/8.3 still lists the original frontend consolidation items (axios instances, raw `fetch()` migration, parallel WS dedup, subprotocol auth migration). Not regressions; candidates for follow-up.
