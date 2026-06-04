@@ -223,10 +223,12 @@ backend/
 │   │   ├── threat_detection.py
 │   │   └── validators.py
 │   ├── observability/             # Prometheus metrics + tracing
-│   │   ├── prometheus_native.py
-│   │   ├── alerting.py
-│   │   ├── metrics.py
-│   │   └── tracing.py
+│   │   ├── __init__.py            #   LokiHandler (log aggregation)
+│   │   ├── prometheus_native.py   #   canonical prometheus_client surface
+│   │   ├── db_timing.py           #   OTel SQLAlchemyInstrumentor wrapper
+│   │   ├── alerting.py            #   AlertManager (PagerDuty, OpsGenie)
+│   │   ├── context.py             #   observability context propagation
+│   │   └── tracing.py             #   tracing helpers
 │   ├── config/                    # Configuration system
 │   │   ├── models.py
 │   │   ├── service.py
