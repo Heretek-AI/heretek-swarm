@@ -17,12 +17,12 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC = REPO_ROOT / "backend" / "heretek_swarm"
 
-# The 11 files that were migrated (per T01-T06 task plans).
+# The files that were migrated (per T01-T06 task plans).
 # Note: instances.py accesses cognee_reader via api.main, not a direct import.
+# agent_runtime.py was removed in the Phase 2 dead-cluster cleanup.
 MIGRATED_FILES: list[Path] = [
     SRC / "runtime" / "main_loop.py",
     SRC / "tools" / "mcp_tools.py",
-    SRC / "runtime" / "agent_runtime.py",
     SRC / "runtime" / "tools.py",
     SRC / "actors" / "historian" / "agent.py",
     SRC / "api" / "main.py",
