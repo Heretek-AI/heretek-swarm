@@ -210,6 +210,7 @@ class AgentActor:
         topics: list[str] | None = None,
         capabilities: list[str] | None = None,
         swarms_agent: Agent | None = None,
+        pydantic_ai_agent: Any | None = None,
         model_router: AgentModelRouter | None = None,
         max_mailbox_size: int = 1000,
         heartbeat_interval: float = 10.0,
@@ -272,6 +273,7 @@ class AgentActor:
         self.topics = topics or []
         self.capabilities = capabilities or []
         self.swarms_agent = swarms_agent
+        self.pydantic_ai_agent = pydantic_ai_agent
         self.max_mailbox_size = max_mailbox_size
         self.heartbeat_interval = heartbeat_interval
         self.actor_type = actor_type or self.__class__.__name__

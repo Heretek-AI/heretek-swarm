@@ -983,11 +983,12 @@ Please provide your analysis and recommendation for this collective task."""
             except Exception as e:
                 logger.warning(f"[{self.agent_id}] Router failed, using swarms_agent fallback: {e}")
 
-        # Fallback: use the swarms Agent directly
+        # Fallback: use the pydantic-ai agent directly
         if raw_response is None:
-            if self.swarms_agent is None:
+            pydantic_ai_agent = getattr(self, "pydantic_ai_agent", None)
+            if pydantic_ai_agent is None:
                 raise RuntimeError(
-                    "No LLM path available — configure providers or provide a swarms_agent"
+                    "No LLM path available — configure providers or provide a pydantic_ai_agent"
                 )
 
             try:
@@ -996,13 +997,12 @@ Please provide your analysis and recommendation for this collective task."""
                 actor_type = getattr(self, "actor_type", "unknown")
                 start = time.perf_counter()
                 try:
-                    raw_response = await asyncio.wait_for(
-                        asyncio.to_thread(
-                            self.swarms_agent.run,
-                            prompt,
-                            **kwargs,
-                        ),
+                    pydantic_ai_result = await asyncio.wait_for(
+                        pydantic_ai_agent.run(prompt, **kwargs),
                         timeout=timeout,
+                    )
+                    raw_response = getattr(
+                        pydantic_ai_result, "output", str(pydantic_ai_result)
                     )
                 finally:
                     record_actor_processing(
@@ -1010,8 +1010,8 @@ Please provide your analysis and recommendation for this collective task."""
                         actor_type=actor_type,
                         duration_seconds=time.perf_counter() - start,
                     )
-                model_name = "swarms_agent"
-                provider_name = "swarms_agent"
+                model_name = "pydantic_ai_agent"
+                provider_name = "pydantic_ai_agent"
                 # Estimate token counts using the ~4 characters per token baseline approximation
                 prompt_tokens = len(prompt) // 4
                 completion_tokens = len(raw_response) // 4

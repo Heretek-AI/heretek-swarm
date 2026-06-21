@@ -11,7 +11,7 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
-from heretek_swarm.agents.agent_factory import build_agent_for
+from heretek_swarm.llm.pydantic_ai_agent_factory import build_pydantic_ai_agent_for
 
 # Module-level constants for repeated tier labels
 _TIER1_LABEL = "Tier 1 (Core Triad)"
@@ -288,40 +288,23 @@ class ActorOrchestrator:
         for agent_class, agent_id, _topics in actors:
             try:
                 actor = await self._supervisor.spawn_actor(agent_class, agent_id)
-                # Inject a swarms.Agent so the actor can produce real LLM output
+                # Inject a pydantic-ai Agent so the actor can produce real
+                # LLM output when ModelGarage is unavailable (e.g. --no-infra).
                 system_prompt = _SYSTEM_PROMPTS.get(agent_id)
-                actor.swarms_agent = build_agent_for(
+                mcp_registry = (
+                    self._mcp_tools.get_registry() if self._mcp_tools is not None else None
+                )
+                actor.pydantic_ai_agent = build_pydantic_ai_agent_for(
                     agent_id,
                     agent_class.__name__,
                     system_prompt=system_prompt,
+                    mcp_registry=mcp_registry,
                 )
-                # Inject MCP tools into every agent's swarms_agent post-spawn
-                if self._mcp_tools is not None:
-                    from heretek_swarm.mcp.agent_tools import (
-                        build_tool_handlers,
-                        build_tools_list_dictionary,
-                    )
-
-                    mcp_registry = self._mcp_tools.get_registry()
-                    tool_schemas = build_tools_list_dictionary(mcp_registry)
-                    tool_handlers = build_tool_handlers(mcp_registry)
-                    if tool_schemas:
-                        actor.swarms_agent.tools_list_dictionary = tool_schemas
-                        actor.swarms_agent.tools = list(tool_handlers.values())
-                        logger.info(
-                            "mcp_tools_injected",
-                            agent_id=agent_id,
-                            tool_count=len(tool_schemas),
-                        )
-                    else:
-                        logger.warning(
-                            "mcp_tools_injection_skipped_empty",
-                            agent_id=agent_id,
-                        )
-                else:
-                    logger.warning(
-                        "mcp_tools_injection_skipped_no_registry",
+                if mcp_registry is not None and mcp_registry.list_tools(category=None):
+                    logger.info(
+                        "mcp_tools_injected",
                         agent_id=agent_id,
+                        tool_count=len(mcp_registry.list_tools(category=None)),
                     )
                 logger.info("actor_spawned", agent_id=agent_id, tier=self._get_tier(agent_id))
             except Exception as e:

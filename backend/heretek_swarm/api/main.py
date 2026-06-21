@@ -23,7 +23,7 @@ import structlog
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from heretek_swarm.agents.agent_factory import build_agent_for
+from heretek_swarm.llm.pydantic_ai_agent_factory import build_pydantic_ai_agent_for
 from heretek_swarm.config.secrets_loader import SecretsLoader
 from heretek_swarm.swarm_logging.config import logger as logging_logger
 
@@ -312,8 +312,8 @@ async def _spawn_all_agents() -> None:
     for agent_class, agent_id in actors:
         try:
             actor = await supervisor.spawn_actor(agent_class, agent_id)
-            # Inject a swarms.Agent so the actor can produce real LLM output
-            actor.swarms_agent = build_agent_for(agent_id, agent_class.__name__)
+            # Inject a pydantic-ai Agent so the actor can produce real LLM output
+            actor.pydantic_ai_agent = build_pydantic_ai_agent_for(agent_id, agent_class.__name__)
             logger.info("actor_spawned", agent_id=agent_id)
             spawned_count += 1
         except Exception as e:
