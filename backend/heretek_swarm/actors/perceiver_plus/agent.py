@@ -43,10 +43,7 @@ from heretek_swarm.collective.learning import PatternType
 # Session 44: Consensus Integration
 from heretek_swarm.knowledge.unified_access import KnowledgeQueryResult, UnifiedKnowledgeAccess
 
-if TYPE_CHECKING:
-    from swarms import Agent
-
-    from heretek_swarm.consensus.swarm_deliberation import Position
+from heretek_swarm.consensus.swarm_deliberation import Position
 
 logger = structlog.get_logger("PerceiverPlusAgent")
 
@@ -84,7 +81,6 @@ class PerceiverPlusAgent(
         agent_id: str = "perceiver-plus",
         name: str = "Perceiver+",
         description: str = "Advanced analytics and enhanced perception specialist",
-        swarms_agent: Agent | None = None,
         max_analyses: int = 100,
         confidence_threshold: float = 0.7,
         significance_level: float = 0.05,
@@ -101,7 +97,6 @@ class PerceiverPlusAgent(
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             max_analyses: Maximum analyses to store
             confidence_threshold: Minimum confidence for reporting
             significance_level: Statistical significance threshold
@@ -130,7 +125,6 @@ class PerceiverPlusAgent(
                 "trend-forecasting",
                 "signal-processing",
             ],
-            swarms_agent=swarms_agent,
             pattern_extractor=pattern_extractor,
             deliberation_engine=deliberation_engine,
             access_analyzer=access_analyzer,

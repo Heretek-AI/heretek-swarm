@@ -16,8 +16,6 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from swarms import Agent
-
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import (
     DeliberationMixin,
@@ -88,7 +86,6 @@ class PrismAgent(
         agent_id: str = "prism",
         name: str = "Prism",
         description: str = "Multi-perspective analysis and bias detection specialist",
-        swarms_agent: Agent | None = None,
         max_perspectives: int = 12,
         max_bias_history: int = 100,
         confidence_threshold: float = 0.6,
@@ -105,7 +102,6 @@ class PrismAgent(
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             max_perspectives: Maximum perspectives to generate per issue
             max_bias_history: Maximum bias detections to track
             confidence_threshold: Minimum confidence for perspective recommendations
@@ -133,7 +129,6 @@ class PrismAgent(
                 "stakeholder-mapping",
                 "viewpoint-synthesis",
             ],
-            swarms_agent=swarms_agent,
             pattern_extractor=pattern_extractor,
             deliberation_engine=deliberation_engine,
             access_analyzer=access_analyzer,
@@ -366,7 +361,7 @@ Respond in JSON format:
 
         try:
             # Try LLM-based generation
-            if self.swarms_agent:
+            if self.pydantic_ai_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
@@ -499,7 +494,7 @@ Respond in JSON format:
 ]"""
 
         try:
-            if self.swarms_agent:
+            if self.pydantic_ai_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
@@ -629,7 +624,7 @@ Respond in JSON format:
         prompt = get_framework_prompt(framework, issue)
 
         try:
-            if self.swarms_agent:
+            if self.pydantic_ai_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
@@ -733,7 +728,7 @@ Respond in JSON:
 }}"""
 
         try:
-            if self.swarms_agent:
+            if self.pydantic_ai_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
@@ -960,7 +955,7 @@ Respond in JSON:
 ]"""
 
         try:
-            if self.swarms_agent:
+            if self.pydantic_ai_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,

@@ -146,7 +146,6 @@ class LangroidAgent:
         agent_id: str | None = None,
         name: str | None = None,
         config: LangroidConfig | None = None,
-        swarms_agent: Any | None = None,
         max_conversations: int = 100,
         conversation_timeout: float = 300.0,
     ) -> None:
@@ -157,14 +156,12 @@ class LangroidAgent:
             agent_id: Unique agent identifier
             name: Agent name
             config: Langroid configuration
-            swarms_agent: Optional Swarms Agent for LLM
             max_conversations: Max concurrent conversations
             conversation_timeout: Conversation timeout in seconds
         """
         self.agent_id = agent_id or f"langroid_{uuid.uuid4().hex[:8]}"
         self.name = name or "LangroidAgent"
         self.config = config or LangroidConfig(agent_name=self.name)
-        self.swarms_agent = swarms_agent
 
         self.max_conversations = max_conversations
         self.conversation_timeout = conversation_timeout
@@ -374,9 +371,9 @@ class LangroidAgent:
             messages = self._format_messages(conversation)
             return await self._langroid_agent.chat(messages)
 
-        # Fallback to Swarms Agent
-        if self.swarms_agent:
-            return await self._use_swarms_agent(conversation)
+        # Fallback to pydantic-ai Agent
+        if self.pydantic_ai_agent:
+            return await self._use_pydantic_ai_agent(conversation)
 
         # Simple echo fallback
         return await self._echo_response(conversation)
@@ -387,7 +384,7 @@ class LangroidAgent:
             {"role": msg["role"], "content": msg["content"]} for msg in conversation.get_messages()
         ]
 
-    async def _use_swarms_agent(self, conversation: AgentConversation) -> str:
+    async def _use_pydantic_ai_agent(self, conversation: AgentConversation) -> str:
         """Use Swarms agent for response."""
         messages = conversation.get_messages()
 
@@ -404,15 +401,12 @@ class LangroidAgent:
         if last_user is None:
             return "No user message found"
 
-        # Run through Swarms agent
+        # Run through pydantic-ai agent
         try:
-            response = await asyncio.to_thread(
-                self.swarms_agent.run,
-                last_user,
-            )
-            return str(response)
+            result = await self.pydantic_ai_agent.run(last_user)
+            return getattr(result, "output", str(result))
         except Exception as e:
-            logger.error("Swarms agent error: {e}")
+            logger.error(f"pydantic_ai agent error: {e}")
             return f"Error generating response: {e}"
 
     async def _echo_response(self, conversation: AgentConversation) -> str:

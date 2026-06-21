@@ -825,7 +825,7 @@ class AgentActorMessageHandling(AgentActor):
             Dict with contribution and confidence
         """
         # Try using LLM if available
-        if hasattr(self, "swarms_agent") and self.swarms_agent is not None:
+        if self.pydantic_ai_agent is not None:
             try:
                 prompt = f"""You are participating in a collective task.
 

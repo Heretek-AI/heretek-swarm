@@ -48,12 +48,9 @@ from heretek_swarm.consciousness.phi_training import (
 # Session 44: Memory Optimization Integration
 # Session 44: Zero-Trust Validation
 
-if TYPE_CHECKING:
-    from swarms import Agent
-
-    from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
-    from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
-    from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
+from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
+from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger("HabitForgeAgent")
 
@@ -92,7 +89,6 @@ class HabitForgeAgent(
         agent_id: str = "habit-forge",
         name: str = "Habit-Forge",
         description: str = "Behavior architecture and habit optimization specialist",
-        swarms_agent: Agent | None = None,
         max_habits: int = 50,
         max_patterns: int = 100,
         min_adherence_threshold: float = 0.7,
@@ -109,7 +105,6 @@ class HabitForgeAgent(
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             max_habits: Maximum habits to track
             max_patterns: Maximum patterns to store
             min_adherence_threshold: Minimum adherence rate for habit success
@@ -133,7 +128,6 @@ class HabitForgeAgent(
                 "progress-tracking",
                 "reinforcement-design",
             ],
-            swarms_agent=swarms_agent,
             pattern_extractor=pattern_extractor,
             deliberation_engine=deliberation_engine,
             access_analyzer=access_analyzer,
@@ -472,7 +466,7 @@ Respond in JSON format:
 ]"""
 
         try:
-            if self.swarms_agent:
+            if self.pydantic_ai_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
@@ -750,7 +744,7 @@ Respond in JSON:
 }}"""
 
         try:
-            if self.swarms_agent:
+            if self.pydantic_ai_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
@@ -1246,7 +1240,7 @@ Respond in JSON:
 }}"""
 
         try:
-            if self.swarms_agent:
+            if self.pydantic_ai_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,

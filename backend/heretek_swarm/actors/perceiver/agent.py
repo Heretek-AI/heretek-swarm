@@ -19,8 +19,6 @@ from datetime import UTC, datetime
 from typing import Any, ClassVar
 
 import structlog
-from swarms import Agent
-
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 # Session 44: Collective Learning Integration
@@ -98,7 +96,6 @@ class PerceiverAgent(
         agent_id: str = "perceiver",
         name: str = "Perceiver",
         description: str = "Multi-modal sensory input processing specialist",
-        swarms_agent: Agent | None = None,
         max_input_size_mb: int = 50,
         feature_cache_size: int = 1000,
         enable_cross_modal: bool = True,
@@ -115,7 +112,6 @@ class PerceiverAgent(
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             max_input_size_mb: Maximum input size in megabytes
             feature_cache_size: Maximum cached feature entries
             enable_cross_modal: Enable cross-modal correlation
@@ -141,7 +137,6 @@ class PerceiverAgent(
                 "feature-extraction",
                 "cross-modal-fusion",
             ],
-            swarms_agent=swarms_agent,
             **kwargs,
         )
 
@@ -497,7 +492,7 @@ class PerceiverAgent(
         return {}
 
     async def _try_describe_image_llm(self, image_data: Any) -> str | None:
-        if not (self.swarms_agent and self.swarms_agent.llm and isinstance(image_data, str)):
+        if not (self.pydantic_ai_agent and isinstance(image_data, str)):
             return None
         try:
             return await asyncio.wait_for(self._describe_image_llm(image_data), timeout=60)

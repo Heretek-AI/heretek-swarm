@@ -17,8 +17,6 @@ from typing import Any
 
 import structlog
 from pydantic import ValidationError
-from swarms import Agent
-
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import (
     DeliberationMixin,
@@ -69,7 +67,6 @@ class EmpathAgent(
         agent_id: str = "empath",
         name: str = "Empath",
         description: str = "Emotional intelligence and sentiment analysis specialist",
-        swarms_agent: Agent | None = None,
         sentiment_threshold: float = 0.7,
         stress_threshold: float = 0.8,
         max_mood_history: int = 100,
@@ -86,7 +83,6 @@ class EmpathAgent(
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             sentiment_threshold: Threshold for flagging strong sentiments (0-1)
             stress_threshold: Threshold for stress alerts (0-1)
             max_mood_history: Maximum mood history entries per agent
@@ -109,7 +105,6 @@ class EmpathAgent(
                 "stress-monitoring",
                 "emotional-context",
             ],
-            swarms_agent=swarms_agent,
             **kwargs,
         )
 
@@ -326,11 +321,11 @@ class EmpathAgent(
             Sentiment analysis result dict
         """
         try:
-            if self.swarms_agent and self.swarms_agent.llm:
+            if self.pydantic_ai_agent:
                 # Use LLM for sophisticated sentiment analysis
                 prompt = self._build_sentiment_prompt(text, context)
                 response = await asyncio.wait_for(
-                    self.swarms_agent.llm(prompt),
+                    self.pydantic_ai_agent.run(prompt),
                     timeout=60,  # P1-2: LLM timeout
                 )
                 return self._parse_sentiment_response(response)
@@ -815,7 +810,7 @@ Provide your analysis in this exact JSON format:
     ) -> dict[str, Any]:
         """Generate mediation suggestions."""
         try:
-            if self.swarms_agent and self.swarms_agent.llm:
+            if self.pydantic_ai_agent:
                 prompt = f"""
 Generate a fair mediation suggestion for a conflict between these agents: {agents}.
 
@@ -825,7 +820,7 @@ Provide a balanced resolution that considers all perspectives.
 Return as JSON: {{"resolution": "...", "reasoning": "..."}}
 """
                 response = await asyncio.wait_for(
-                    self.swarms_agent.llm(prompt),
+                    self.pydantic_ai_agent.run(prompt),
                     timeout=60,
                 )
                 import json

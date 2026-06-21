@@ -205,7 +205,7 @@ Respond in JSON:
 }}"""
 
         try:
-            if self.swarms_agent:
+            if self.pydantic_ai_agent:
                 result = await self.run_with_llm(prompt=prompt, timeout=60)
                 import json
 
@@ -265,7 +265,7 @@ Respond in JSON:
 }}"""
 
         try:
-            if self.swarms_agent:
+            if self.pydantic_ai_agent:
                 result = await self.run_with_llm(prompt=prompt, timeout=60)
                 import json
 

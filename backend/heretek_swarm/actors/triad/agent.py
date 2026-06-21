@@ -31,9 +31,6 @@ from heretek_swarm.actors.mixins import (
     PatternMixin,
 )
 
-if TYPE_CHECKING:
-    from swarms import Agent
-
 logger = structlog.get_logger("TriadAgents")
 
 
@@ -54,7 +51,6 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
         agent_id: str = "triad",
         name: str = "Triad",
         description: str = "Triad agent",
-        swarms_agent: Agent | None = None,
         max_history_size: int = 1000,
         topics: list[str] | None = None,
         capabilities: list[str] | None = None,
@@ -67,7 +63,6 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             max_history_size: Maximum history size to prevent memory leaks
             topics: Agent topics (subclass can override via kwargs)
             capabilities: Agent capabilities (subclass can override via kwargs)
@@ -79,7 +74,6 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             description=description,
             topics=topics or ["triad"],
             capabilities=capabilities or [],
-            swarms_agent=swarms_agent,
             **kwargs,
         )
 
@@ -182,7 +176,7 @@ class TriadAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
         prompt = self._get_analysis_prompt(problem)
         extras = self._get_analysis_extras()
 
-        if self.swarms_agent:
+        if self.pydantic_ai_agent:
             try:
                 analysis_result = await self.run_with_llm(prompt=prompt, timeout=60)
                 return {
@@ -245,7 +239,6 @@ class StewardAgent(TriadAgent):
         agent_id: str = "steward",
         name: str = "Steward",
         description: str = "Triad coordinator and governance agent",
-        swarms_agent: Agent | None = None,
         **kwargs,
     ) -> None:
         """
@@ -255,7 +248,6 @@ class StewardAgent(TriadAgent):
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             **kwargs: Additional arguments
         """
         super().__init__(
@@ -269,7 +261,6 @@ class StewardAgent(TriadAgent):
                 "decision-making",
                 "resource-management",
             ],
-            swarms_agent=swarms_agent,
             max_history_size=0,  # Steward doesn't use analysis history
             **kwargs,
         )
@@ -374,7 +365,7 @@ class StewardAgent(TriadAgent):
         )
 
         # Make executive decision or delegate to triad
-        if self.swarms_agent:
+        if self.pydantic_ai_agent:
             try:
                 decision = await self.run_with_llm(
                     prompt=f"Make an executive decision on: {decision_context}", timeout=60
@@ -710,7 +701,6 @@ class AlphaAgent(TriadAgent):
         agent_id: str = "alpha",
         name: str = "Alpha",
         description: str = "Primary decision maker and analyst",
-        swarms_agent: Agent | None = None,
         analysis_depth: str = "deep",
         **kwargs,
     ) -> None:
@@ -721,7 +711,6 @@ class AlphaAgent(TriadAgent):
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             analysis_depth: Analysis depth level (shallow, medium, deep)
             **kwargs: Additional arguments
         """
@@ -736,7 +725,6 @@ class AlphaAgent(TriadAgent):
                 "consensus-building",
                 "validation",
             ],
-            swarms_agent=swarms_agent,
             max_history_size=1000,
             **kwargs,
         )
@@ -874,7 +862,7 @@ class AlphaAgent(TriadAgent):
         Returns:
             Validation results
         """
-        if self.swarms_agent:
+        if self.pydantic_ai_agent:
             try:
                 validation_result = await self.run_with_llm(
                     prompt=f"Validate this decision: {decision}", timeout=60
@@ -919,7 +907,6 @@ class BetaAgent(TriadAgent):
         agent_id: str = "beta",
         name: str = "Beta",
         description: str = "Secondary analyst and validator",
-        swarms_agent: Agent | None = None,
         validation_strictness: float = 0.8,
         **kwargs,
     ) -> None:
@@ -930,7 +917,6 @@ class BetaAgent(TriadAgent):
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             validation_strictness: Validation strictness threshold
             **kwargs: Additional arguments
         """
@@ -945,7 +931,6 @@ class BetaAgent(TriadAgent):
                 "error-detection",
                 "alternative-generation",
             ],
-            swarms_agent=swarms_agent,
             max_history_size=1000,
             **kwargs,
         )
@@ -1085,7 +1070,7 @@ class BetaAgent(TriadAgent):
         alpha_findings: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Validate a decision with Beta's perspective."""
-        if self.swarms_agent:
+        if self.pydantic_ai_agent:
             try:
                 validation_result = await self.run_with_llm(
                     prompt=f"Beta validation of: {decision}. Original: {original_analysis}",
@@ -1111,7 +1096,7 @@ class BetaAgent(TriadAgent):
         """Detect errors in content."""
         errors = []
 
-        if self.swarms_agent:
+        if self.pydantic_ai_agent:
             try:
                 error_check = await self.run_with_llm(
                     prompt=f"Check for errors in: {content}", timeout=60
@@ -1156,7 +1141,6 @@ class CharlieAgent(TriadAgent):
         agent_id: str = "charlie",
         name: str = "Charlie",
         description: str = "Tertiary perspective and challenger",
-        swarms_agent: Agent | None = None,
         challenge_intensity: str = "moderate",
         **kwargs,
     ) -> None:
@@ -1167,7 +1151,6 @@ class CharlieAgent(TriadAgent):
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             challenge_intensity: Challenge intensity (low, moderate, high)
             **kwargs: Additional arguments
         """
@@ -1182,7 +1165,6 @@ class CharlieAgent(TriadAgent):
                 "edge-case-analysis",
                 "creative-solutions",
             ],
-            swarms_agent=swarms_agent,
             max_history_size=1000,
             **kwargs,
         )
@@ -1322,7 +1304,7 @@ class CharlieAgent(TriadAgent):
         """Generate challenges to a proposition."""
         challenges = []
 
-        if self.swarms_agent:
+        if self.pydantic_ai_agent:
             try:
                 challenge_result = await self.run_with_llm(
                     prompt=f"Challenge this proposition: {proposition}", timeout=60
@@ -1341,7 +1323,7 @@ class CharlieAgent(TriadAgent):
 
     async def _assess_risks(self, scenario: Any) -> dict[str, Any]:
         """Assess risks in a scenario."""
-        if self.swarms_agent:
+        if self.pydantic_ai_agent:
             try:
                 risk_result = await self.run_with_llm(
                     prompt=f"Assess risks: {scenario}", timeout=60

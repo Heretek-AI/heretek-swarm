@@ -22,7 +22,6 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
 from pydantic import ValidationError
-from swarms import Agent
 
 import heretek_swarm.actors.stubs as _actor_stubs
 from heretek_swarm.actors.validation import (
@@ -209,7 +208,6 @@ class AgentActor:
         description: str | None = None,
         topics: list[str] | None = None,
         capabilities: list[str] | None = None,
-        swarms_agent: Agent | None = None,
         pydantic_ai_agent: Any | None = None,
         model_router: AgentModelRouter | None = None,
         max_mailbox_size: int = 1000,
@@ -236,7 +234,6 @@ class AgentActor:
             description: Actor description
             topics: Topics to subscribe to
             capabilities: Actor capabilities list
-            swarms_agent: Optional Swarms Agent instance for LLM capabilities
             max_mailbox_size: Maximum mailbox queue size
             heartbeat_interval: Interval between heartbeats in seconds
             actor_type: Optional type identifier for factory registration
@@ -272,7 +269,6 @@ class AgentActor:
         self.description = description or f"Actor: {self.name}"
         self.topics = topics or []
         self.capabilities = capabilities or []
-        self.swarms_agent = swarms_agent
         self.pydantic_ai_agent = pydantic_ai_agent
         self.max_mailbox_size = max_mailbox_size
         self.heartbeat_interval = heartbeat_interval

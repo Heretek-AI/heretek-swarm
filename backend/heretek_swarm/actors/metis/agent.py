@@ -15,8 +15,6 @@ from datetime import UTC, datetime
 from typing import Any
 
 import structlog
-from swarms import Agent
-
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import (
     DeliberationMixin,
@@ -78,7 +76,6 @@ class MetisAgent(
         agent_id: str = "metis",
         name: str = "Metis",
         description: str = "Strategic planning and long-term thinking specialist",
-        swarms_agent: Agent | None = None,
         planning_horizon_days: int = 90,
         max_scenarios: int = 5,
         pattern_extractor: PatternExtractor | None = None,
@@ -94,7 +91,6 @@ class MetisAgent(
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             planning_horizon_days: Default planning horizon in days
             max_scenarios: Maximum scenarios to generate in analysis
             **kwargs: Additional arguments
@@ -117,7 +113,6 @@ class MetisAgent(
                 "scenario-analysis",
                 "dependency-tracking",
             ],
-            swarms_agent=swarms_agent,
             **kwargs,
         )
 

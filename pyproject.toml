@@ -22,7 +22,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
-    "swarms>=9.0.4,<10.0.0",
     "pydantic>=2.13.4",
     "httpx>=0.28.1",
     "redis>=8.0.0",
@@ -66,7 +65,6 @@ dependencies = [
 
 [project.optional-dependencies]
 core = [
-    "swarms>=9.0.4,<10.0.0",
     "pydantic>=2.13.4",
     "structlog>=25.5.0",
     "tenacity>=9.1.4",
@@ -166,10 +164,9 @@ where = ["backend", "."]
 include = ["heretek_swarm*", "research*"]
 
 # ============== UV RESOLUTION OVERRIDES ==============
-# swarms 9.0.4 hard-pins pypdf==5.1.0 (which has known CVEs) and
-# tenacity<8.2.3. cognee>=1.1.0 requires pypdf>=6.6.2,<7.0.0 and
-# tenacity>=9.0.0. Override swarms' pins so the resolver picks the
-# security-patched pypdf and the newer tenacity.
+# cognee>=1.1.0 requires pypdf>=6.6.2,<7.0.0 and tenacity>=9.0.0;
+# pypdf 5.1.0 (older) has known CVEs. Pin the security-patched pypdf
+# and the newer tenacity so the resolver stays satisfied.
 [tool.uv]
 override-dependencies = [
     "pypdf>=6.12.2,<7.0.0",

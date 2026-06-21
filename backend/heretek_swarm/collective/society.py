@@ -774,7 +774,7 @@ class AgentSociety:
                 return await actor.process_contribution(task, protocol)  # type: ignore[no-any-return]
 
         # Try using LLM if available
-        if hasattr(actor, "run_with_llm") and actor.swarms_agent is not None:
+        if hasattr(actor, "run_with_llm") and getattr(actor, "pydantic_ai_agent", None) is not None:
             prompt = self._build_contribution_prompt(task, protocol)
             async with asyncio.timeout(30.0):
                 response = await actor.run_with_llm(prompt)

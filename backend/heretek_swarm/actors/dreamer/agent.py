@@ -83,7 +83,6 @@ class DreamerAgent(
         agent_id: str = "dreamer",
         name: str = "Dreamer",
         description: str = "Creative Solution Generation Specialist",
-        swarms_agent=None,
         pattern_extractor=None,
         deliberation_engine=None,
         access_analyzer=None,

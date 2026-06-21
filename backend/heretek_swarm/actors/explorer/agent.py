@@ -34,9 +34,6 @@ from heretek_swarm.actors.mixins import (
     ValidationMixin,
 )
 
-if TYPE_CHECKING:
-    from swarms import Agent
-
 logger = structlog.get_logger("ExplorerAgent")
 
 
@@ -73,7 +70,6 @@ class ExplorerAgent(
         agent_id: str = "explorer",
         name: str = "Explorer",
         description: str = "Intelligence gathering and opportunity discovery specialist",
-        swarms_agent: Agent | None = None,
         monitoring_interval_seconds: int = 300,
         max_opportunities: int = 50,
         max_anomalies: int = 100,
@@ -87,7 +83,6 @@ class ExplorerAgent(
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             monitoring_interval_seconds: Interval between monitoring cycles
             max_opportunities: Maximum tracked opportunities (LRU eviction)
             max_anomalies: Maximum tracked anomalies (LRU eviction)
@@ -122,7 +117,6 @@ class ExplorerAgent(
                 "intelligence-gathering",
                 "capability-discovery",
             ],
-            swarms_agent=swarms_agent,
             **kwargs,
         )
 

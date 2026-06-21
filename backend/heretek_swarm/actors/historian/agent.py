@@ -23,8 +23,6 @@ from pathlib import Path
 from typing import Any
 
 import structlog
-from swarms import Agent
-
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.historian.types import LRUCache
 from heretek_swarm.actors.mixins import (
@@ -80,7 +78,6 @@ class HistorianAgent(
         agent_id: str = "historian",
         name: str = "Historian",
         description: str = "Memory and context provider for the Triad",
-        swarms_agent: Agent | None = None,
         cognee_writer: CogneeMemoryWriter | None = None,
         context_window: int = 10,
         context_cache_max_size: int = 100,
@@ -100,7 +97,6 @@ class HistorianAgent(
             agent_id: Unique identifier
             name: Human-readable name
             description: Agent description
-            swarms_agent: Optional Swarms Agent for LLM capabilities
             cognee_writer: Optional Cognee write-path client
             context_window: Number of recent memories to include as context
             context_cache_max_size: Maximum context cache entries (default: 100)
@@ -119,7 +115,6 @@ class HistorianAgent(
                 "pattern-recognition",
                 "lineage-tracking",
             ],
-            swarms_agent=swarms_agent,
             **kwargs,
         )
 
@@ -920,7 +915,7 @@ class HistorianAgent(
             }
 
         # Synthesize (would use LLM in full implementation)
-        if self.swarms_agent:
+        if self.pydantic_ai_agent:
             try:
                 memory_texts = [str(e.get("content", "")) for e in results]
                 synthesis_prompt = f"Synthesize knowledge from these memories: {memory_texts}"
