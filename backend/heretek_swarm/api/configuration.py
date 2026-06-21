@@ -24,9 +24,6 @@ from heretek_swarm.config.models import (
     EmbeddingProviderTestRequest,
     EmbeddingProviderUpdate,
     ImportOptions,
-    LLMProviderCreate,
-    LLMProviderTestRequest,
-    LLMProviderUpdate,
     UserConfigurationCreate,
     UserConfigurationUpdate,
 )
@@ -43,14 +40,10 @@ from heretek_swarm.utils import get_lazy_import
 if TYPE_CHECKING:
     from uuid import UUID
 
-# Lazy-loaded provider factory functions
-_llm_factory = get_lazy_import("heretek_swarm.llm.providers.factory")
+# Lazy-loaded provider factory functions (embedding factory only; LLM CRUD
+# routes were consolidated onto the ModelGarage-backed /api/providers/llm
+# surface in Phase 4 follow-up).
 _embedding_factory = get_lazy_import("heretek_swarm.embeddings.providers.factory")
-
-
-def _get_llm_provider_factory():
-    """Get LLM provider factory functions with lazy resolution."""
-    return _llm_factory
 
 
 def _get_embedding_provider_factory():
@@ -146,164 +139,6 @@ async def delete_config(
     if not success:
         raise HTTPException(404, f"Configuration '{key}' not found")
     return {"status": "deleted", "key": key}
-
-
-# =============================================================================
-# LLM Provider Type Helpers
-# =============================================================================
-
-
-def _list_llm_provider_types() -> list[str]:
-    """List available LLM provider type identifiers."""
-    return ["openai", "anthropic", "google", "azure", "ollama", "local"]
-
-
-def _get_llm_provider_info(provider_type: str) -> dict[str, Any]:
-    """Get information about a specific LLM provider type."""
-    info_map: dict[str, dict[str, Any]] = {
-        "openai": {"type": "openai", "name": "OpenAI", "models": ["gpt-4o", "gpt-4o-mini"]},
-        "anthropic": {"type": "anthropic", "name": "Anthropic", "models": ["claude-sonnet-4-6"]},
-        "google": {"type": "google", "name": "Google AI", "models": ["gemini-2.5-pro"]},
-        "azure": {"type": "azure", "name": "Azure OpenAI", "models": ["gpt-4o"]},
-        "ollama": {"type": "ollama", "name": "Ollama", "models": ["llama3.1"]},
-        "local": {"type": "local", "name": "Local", "models": ["local"]},
-    }
-    return info_map.get(provider_type, {"type": provider_type, "name": provider_type, "models": []})
-
-
-# =============================================================================
-# LLM Provider Endpoints
-# =============================================================================
-
-
-@router.get("/llm/types")
-async def list_llm_provider_types(
-    authenticated: str = Depends(verify_auth),
-) -> dict[str, Any]:
-    """List available LLM provider types."""
-    types = _list_llm_provider_types()
-    info = [_get_llm_provider_info(t) for t in types]
-    return {"provider_types": info}
-
-
-@router.get("/llm/providers")
-async def list_llm_providers(
-    enabled_only: bool = Query(False, description="Only return enabled providers"),
-    authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),
-) -> dict[str, Any]:
-    """List configured LLM providers."""
-    providers = await service.list_llm_providers(
-        include_disabled=not enabled_only,
-    )
-    return {
-        "providers": [p.model_dump() for p in providers],
-        "total": len(providers),
-    }
-
-
-@router.get("/llm/providers/{provider_id}")
-async def get_llm_provider(
-    provider_id: UUID,
-    authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),
-) -> dict[str, Any]:
-    """Get a specific LLM provider."""
-    provider = await service.get_llm_provider(provider_id)
-    if not provider:
-        raise HTTPException(404, f"LLM provider '{provider_id}' not found")
-    return provider.model_dump()
-
-
-@router.post("/llm/providers")
-async def create_llm_provider(
-    provider: LLMProviderCreate,
-    authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),
-) -> dict[str, Any]:
-    """Create a new LLM provider."""
-    try:
-        # Note: API key should be encrypted before storage in production
-        new_provider = await service.create_llm_provider(provider, user=authenticated)
-        return new_provider.model_dump()
-    except ValueError as e:
-        logger.warning("create_llm_provider_validation_failed", error=str(e))
-        raise HTTPException(400, "Invalid LLM provider data") from e
-async def update_llm_provider(
-    provider_id: UUID,
-    update: LLMProviderUpdate,
-    authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),
-) -> dict[str, Any]:
-    """Update an LLM provider."""
-    provider = await service.update_llm_provider(provider_id, update, user=authenticated)
-    if not provider:
-        raise HTTPException(404, f"LLM provider '{provider_id}' not found")
-    return provider.model_dump()
-
-
-@router.delete("/llm/providers/{provider_id}")
-async def delete_llm_provider(
-    provider_id: UUID,
-    authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),
-) -> dict[str, Any]:
-    """Delete an LLM provider."""
-    success = await service.delete_llm_provider(provider_id, user=authenticated)
-    if not success:
-        raise HTTPException(404, f"LLM provider '{provider_id}' not found")
-    return {"status": "deleted", "id": str(provider_id)}
-
-
-@router.post("/llm/providers/{provider_id}/test")
-async def test_llm_provider(
-    provider_id: UUID,
-    test_request: LLMProviderTestRequest,
-    authenticated: str = Depends(verify_auth),
-    service: ConfigurationService = Depends(get_service),
-) -> dict[str, Any]:
-    """Test LLM provider connectivity."""
-    provider = await service.get_llm_provider(provider_id)
-    if not provider:
-        raise HTTPException(404, f"LLM provider '{provider_id}' not found")
-
-    try:
-        # Create provider instance
-        llm_provider = _get_llm_provider_factory().create_llm_provider(
-            provider.provider_type,
-            {
-                "base_url": provider.base_url,
-                "api_key": "test-key",  # In production, decrypt the actual key
-                "default_model": test_request.model or provider.default_model,
-                "extra_config": provider.extra_config,
-            },
-        )
-
-        # Test connectivity
-        result = await llm_provider.test_connectivity(model=test_request.model)
-
-        return {
-            "provider_id": str(provider_id),
-            "provider_name": provider.provider_name,
-            "success": result.success,
-            "model_used": result.model_used,
-            "latency_ms": result.latency_ms,
-            "response_text": result.response_text if result.success else None,
-            "error": result.error if not result.success else None,
-        }
-
-    except Exception:
-        logger.exception(
-            "LLM provider connectivity test failed",
-            provider_id=str(provider_id),
-            provider_name=provider.provider_name,
-        )
-        return {
-            "provider_id": str(provider_id),
-            "provider_name": provider.provider_name,
-            "success": False,
-            "error": "Provider connectivity test failed",
-        }
 
 
 # =============================================================================
