@@ -696,6 +696,9 @@ app.include_router(metrics.router)
 app.include_router(memories.router)
 app.include_router(memory_versions.router)
 app.include_router(collective_evolution.router)
+from heretek_swarm.api.chat import router as chat_router  # noqa: E402
+
+app.include_router(chat_router)
 app.include_router(mcp_router)
 
 # Setup Prometheus metrics middleware
