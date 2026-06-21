@@ -5,7 +5,7 @@
  * Provides a consistent structure across all dashboard views.
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { StatusIndicator } from '../UI/StatusBadge';
 
 export interface NavItem {
@@ -57,6 +57,25 @@ export function DashboardLayout({
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
   }, []);
+
+  // Tier 6.1: on viewports < 768px wide, default the sidebar to
+  // collapsed (icon-only) and let the toggle button open it as a
+  // slide-over. This makes the dashboard usable on phones and
+  // tablets without a separate mobile layout.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 767px)');
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  // Auto-collapse on small viewports; let the user re-open.
+  useEffect(() => {
+    if (isMobile) setSidebarOpen(false);
+  }, [isMobile]);
 
   const statusConfig = systemStatusConfig[systemStatus];
 

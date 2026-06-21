@@ -53,7 +53,12 @@ from typing import Any
 import structlog
 
 from heretek_swarm.consensus.expertise import AgentExpertiseProfiler
-from heretek_swarm.consensus.maker import ConsensusResult, ConsensusState, MAKERConsensus
+from heretek_swarm.consensus.maker import (
+    ConsensusResult,
+    ConsensusState,
+    MAKERConsensus,
+    Vote,
+)
 from heretek_swarm.consensus.maker_enhanced_types import (
     DecisionProvenance,
     EnhancedVote,

@@ -792,7 +792,7 @@ class AgentActorProtocol(Protocol):
     # --- Trace surface (the Phase 0 freeze) -------------------------------
 
     @property
-    def trace_context(self) -> TraceContext | None:
+    def trace_context(self) -> "TraceContext | None":
         """Return the actor's current :class:`TraceContext` or ``None``.
 
         Implementations may derive this from the active OTel context
@@ -804,7 +804,7 @@ class AgentActorProtocol(Protocol):
 
     def with_trace_context(
         self,
-        context: TraceContext,
+        context: "TraceContext",
     ) -> Any:
         """Return a context manager that binds ``context`` for a block.
 
