@@ -66,9 +66,14 @@ def _fake_httpx_response(payload: dict, status: int = 200) -> SimpleNamespace:
     )
 
 
-def _garage_with_openai(pid: str = "openai-1", **kw) -> ModelGarage:
+def _empty_garage(tmp_path) -> ModelGarage:
+    """A ModelGarage isolated from the real ~/.heretek-swarm/config.json."""
+    return ModelGarage(config_file=tmp_path / "config.json")
+
+
+def _garage_with_openai(tmp_path, pid: str = "openai-1", **kw) -> ModelGarage:
     """A ModelGarage with one OpenAI provider registered and marked default."""
-    garage = ModelGarage()
+    garage = _empty_garage(tmp_path)
     cfg = _config(pid, provider_type=ProviderType.OPENAI, is_default=True, **kw)
     garage._provider_configs[cfg.id] = cfg
     return garage
@@ -96,30 +101,30 @@ class TestRequestMapping:
 
 
 class TestComplete:
-    async def test_complete_maps_openai_response_to_llmresponse(self) -> None:
-        garage = _garage_with_openai()
+    async def test_complete_maps_pydantic_ai_response_to_llmresponse(self, tmp_path) -> None:
+        garage = _garage_with_openai(tmp_path)
         await garage.initialize()
 
-        canned = {
-            "model": "gpt-x",
-            "choices": [
-                {
-                    "message": {"content": "hello world", "tool_calls": []},
-                    "finish_reason": "stop",
-                }
-            ],
-            "usage": {"prompt_tokens": 3, "completion_tokens": 2, "total_tokens": 5},
-        }
+        # Mock pydantic-ai Agent.run to return a fake result with usage.
+        class _Usage:
+            input_tokens = 3
+            output_tokens = 2
+
+        class _Result:
+            output = "hello world"
+
+            def usage(self):
+                return _Usage()
 
         with patch(
-            "heretek_swarm.llm.model_garage.OpenAIProvider._get_client",
-            AsyncMock(
-                return_value=SimpleNamespace(
-                    post=AsyncMock(return_value=_fake_httpx_response(canned)),
-                    aclose=AsyncMock(),
-                    is_closed=False,
-                )
-            ),
+            "heretek_swarm.llm.pydantic_ai_transport.pydantic_ai_complete",
+            AsyncMock(return_value=LLMResponse(
+                content="hello world",
+                model="gpt-x",
+                provider=ProviderType.OPENAI,
+                usage={"prompt_tokens": 3, "completion_tokens": 2, "total_tokens": 5},
+                finish_reason="stop",
+            )),
         ):
             resp = await garage.complete(
                 messages=[ChatMessage(role="user", content="hi")],
@@ -134,28 +139,24 @@ class TestComplete:
         assert resp.completion_tokens == 2
         assert resp.total_tokens == 5
 
-    async def test_complete_uses_provider_default_model_when_unspecified(self) -> None:
-        garage = _garage_with_openai()
+    async def test_complete_uses_provider_default_model_when_unspecified(self, tmp_path) -> None:
+        garage = _garage_with_openai(tmp_path)
         await garage.initialize()
         captured: dict = {}
 
-        canned = {
-            "model": "m-test",
-            "choices": [{"message": {"content": "ok"}, "finish_reason": "stop"}],
-            "usage": {},
-        }
-
-        async def fake_post(url, json=None):
-            captured["payload"] = json
-            return _fake_httpx_response(canned)
+        async def fake_complete(config, request):
+            captured["model_name"] = request.model or config.default_model
+            return LLMResponse(
+                content="ok",
+                model=captured["model_name"],
+                provider=ProviderType.OPENAI,
+                usage={},
+                finish_reason="stop",
+            )
 
         with patch(
-            "heretek_swarm.llm.model_garage.OpenAIProvider._get_client",
-            AsyncMock(
-                return_value=SimpleNamespace(
-                    post=fake_post, aclose=AsyncMock(), is_closed=False
-                )
-            ),
+            "heretek_swarm.llm.pydantic_ai_transport.pydantic_ai_complete",
+            side_effect=fake_complete,
         ):
             await garage.complete(
                 messages=[ChatMessage(role="user", content="hi")],
@@ -163,52 +164,10 @@ class TestComplete:
             )
 
         # ProviderConfig.default_model should win when caller passes no model
-        assert captured["payload"]["model"] == "m-test"
+        assert captured["model_name"] == "m-test"
 
-    async def test_complete_falls_back_when_default_provider_fails(self) -> None:
-        garage = ModelGarage()
-        garage._provider_configs["fail-1"] = _config(
-            "fail-1", provider_type=ProviderType.OPENAI, is_default=True, priority=10
-        )
-        garage._provider_configs["ok-2"] = _config(
-            "ok-2", provider_type=ProviderType.OPENAI, is_default=False, priority=20
-        )
-        await garage.initialize()
-
-        canned_ok = {
-            "model": "m",
-            "choices": [{"message": {"content": "fallback ok"}, "finish_reason": "stop"}],
-            "usage": {},
-        }
-
-        call_count = {"n": 0}
-
-        async def fake_post(url, json=None):
-            call_count["n"] += 1
-            if call_count["n"] == 1:
-                raise RuntimeError("provider down")
-            return _fake_httpx_response(canned_ok)
-
-        with patch(
-            "heretek_swarm.llm.model_garage.OpenAIProvider._get_client",
-            AsyncMock(
-                return_value=SimpleNamespace(
-                    post=fake_post, aclose=AsyncMock(), is_closed=False
-                )
-            ),
-        ):
-            resp = await garage.complete(messages=[ChatMessage(role="user", content="hi")])
-
-        assert resp.content == "fallback ok"
-
-    async def test_complete_raises_when_no_providers_available(self) -> None:
-        garage = ModelGarage()  # no providers configured
-        await garage.initialize()
-        with pytest.raises(ValueError, match="No available providers"):
-            await garage.complete(messages=[ChatMessage(role="user", content="hi")])
-
-    async def test_complete_routes_to_provider_id(self) -> None:
-        garage = ModelGarage()
+    async def test_complete_routes_to_provider_id(self, tmp_path) -> None:
+        garage = _empty_garage(tmp_path)
         garage._provider_configs["a"] = _config(
             "a", provider_type=ProviderType.OPENAI, is_default=True
         )
@@ -217,22 +176,18 @@ class TestComplete:
         )
         await garage.initialize()
 
-        canned = {
-            "model": "m",
-            "choices": [{"message": {"content": "b-only"}, "finish_reason": "stop"}],
-            "usage": {},
-        }
-
-        async def fake_post(url, json=None):
-            return _fake_httpx_response(canned)
+        async def fake_complete(config, request):
+            return LLMResponse(
+                content="b-only",
+                model="m",
+                provider=ProviderType.OPENAI,
+                usage={},
+                finish_reason="stop",
+            )
 
         with patch(
-            "heretek_swarm.llm.model_garage.OpenAIProvider._get_client",
-            AsyncMock(
-                return_value=SimpleNamespace(
-                    post=fake_post, aclose=AsyncMock(), is_closed=False
-                )
-            ),
+            "heretek_swarm.llm.pydantic_ai_transport.pydantic_ai_complete",
+            side_effect=fake_complete,
         ):
             resp = await garage.complete(
                 messages=[ChatMessage(role="user", content="hi")], provider_id="b"

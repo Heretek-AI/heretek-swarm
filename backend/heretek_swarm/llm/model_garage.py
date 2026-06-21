@@ -368,33 +368,24 @@ class LLMProvider(ABC):
 
 
 class OpenAIProvider(LLMProvider):
-    """OpenAI API provider."""
+    """OpenAI API provider.
+
+    Transport delegated to ``heretek_swarm.llm.pydantic_ai_transport``
+    (Phase 2 consolidation). The hand-rolled httpx + manual SSE parsing
+    has been retired; pydantic-ai handles both completion and token
+    streaming. The public surface (``complete`` / ``stream`` /
+    ``LLMResponse``) is preserved.
+    """
 
     @_opik_track_llm
     async def complete(self, request: LLMRequest) -> LLMResponse:
-        """Send a completion request.
-
-        Phase 1.4 of PLAN.md: messages are wrapped through
-        headroom_compat.wrap() before the LLM call, so the
-        token-count savings are captured end-to-end. When
-        headroom is unavailable or disabled, wrap() is a
-        passthrough that returns the input unchanged.
-        """
+        """Send a completion request via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            start_time = time.time()
-
-            model = request.model or self.config.default_model or _DEFAULT_OPENAI_MODEL
-            payload = request.to_dict()
-            payload["model"] = model
-
-            # Phase 2A.3 cutover: inline perf_counter + record_external_call_duration
-            # replaces the deleted opik_compat.timed. Times the headroom
-            # compression step (not the LLM call itself).
+            # Headroom compression timing (preserved from the legacy path)
             start = time.perf_counter()
             try:
-                _compression = _headroom_wrap(payload.get("messages", []))
+                _headroom_wrap([m.to_dict() for m in request.messages])
             finally:
                 record_external_call_duration(
                     call_type="llm_openai_complete",
@@ -403,93 +394,35 @@ class OpenAIProvider(LLMProvider):
                     agent_type="openai",
                     method="POST",
                 )
+            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_complete
 
-            # If headroom returned a list, replace the
-            # messages; if it returned a string, that means
-            # the shim passed the original through.
-            if isinstance(_compression.data, list):
-                payload["messages"] = _compression.data
-
-            try:
-                response = await client.post("/chat/completions", json=payload)
-                response.raise_for_status()
-                data = response.json()
-
-                latency_ms = (time.time() - start_time) * 1000
-                choice = data["choices"][0]
-                message = choice.get("message", {})
-
-                return LLMResponse(
-                    content=message.get("content", ""),
-                    model=data.get("model", model),
-                    provider=ProviderType.OPENAI,
-                    usage=data.get("usage", {}),
-                    finish_reason=choice.get("finish_reason"),
-                    tool_calls=message.get("tool_calls", []),
-                    raw_response=data,
-                    latency_ms=latency_ms,
-                )
-            except httpx.HTTPStatusError as e:
-                logger.error(
-                    "OpenAI API error", status=e.response.status_code, detail=e.response.text
-                )
-                raise
-            except Exception as e:
-                logger.error("OpenAI completion failed", error=str(e))
-                raise
+            return await pydantic_ai_complete(self.config, request)
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+        """Stream completion tokens via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            model = request.model or self.config.default_model or _DEFAULT_OPENAI_MODEL
-            payload = request.to_dict()
-            payload["model"] = model
-            payload["stream"] = True
+            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_stream
 
-            async with client.stream("POST", "/chat/completions", json=payload) as response:
-                response.raise_for_status()
-                async for line in response.aiter_lines():
-                    if not line:
-                        continue
-                    try:
-                        chunk = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-                    token = self._try_extract_chat_token(chunk)
-                    if token:
-                        yield token
+            async for chunk in pydantic_ai_stream(self.config, request):
+                yield chunk
 
 
 class OllamaProvider(LLMProvider):
-    """Ollama local API provider."""
+    """Ollama local API provider.
+
+    Transport delegated to ``heretek_swarm.llm.pydantic_ai_transport``
+    (Phase 2 consolidation). Public surface preserved.
+    """
 
     @_opik_track_llm
     async def complete(self, request: LLMRequest) -> LLMResponse:
+        """Send a completion request via pydantic-ai (OpenAI-compat adapter)."""
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            start_time = time.time()
-
-            model = request.model or self.config.default_model or _DEFAULT_OLLAMA_MODEL
-            payload = {
-                "model": model,
-                "messages": [m.to_dict() for m in request.messages],
-                "stream": False,
-                "options": {
-                    "temperature": request.temperature,
-                    "top_p": request.top_p,
-                },
-            }
-            if request.max_tokens:
-                payload["options"]["num_predict"] = request.max_tokens
-
-            # Phase 2A.3 cutover: inline perf_counter + record_external_call_duration
-            # replaces the deleted opik_compat.timed. Times the headroom
-            # compression step (not the LLM call itself).
             start = time.perf_counter()
             try:
-                _compression = _headroom_wrap(payload.get("messages", []))
+                _headroom_wrap([m.to_dict() for m in request.messages])
             finally:
                 record_external_call_duration(
                     call_type="llm_ollama_complete",
@@ -498,84 +431,35 @@ class OllamaProvider(LLMProvider):
                     agent_type="ollama",
                     method="POST",
                 )
+            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_complete
 
-            if isinstance(_compression.data, list):
-                payload["messages"] = _compression.data
-
-            try:
-                response = await client.post("/api/chat", json=payload)
-                response.raise_for_status()
-                data = response.json()
-
-                latency_ms = (time.time() - start_time) * 1000
-                message = data.get("message", {})
-
-                return LLMResponse(
-                    content=message.get("content", ""),
-                    model=model,
-                    provider=ProviderType.OLLAMA,
-                    usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
-                    finish_reason=data.get("done_reason"),
-                    raw_response=data,
-                    latency_ms=latency_ms,
-                    cost=0.0,
-                )
-            except Exception as e:
-                logger.error("Ollama completion failed", error=str(e))
-                raise
+            return await pydantic_ai_complete(self.config, request)
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+        """Stream completion tokens via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            model = request.model or self.config.default_model or _DEFAULT_OLLAMA_MODEL
-            payload = {
-                "model": model,
-                "messages": [m.to_dict() for m in request.messages],
-                "stream": True,
-                "options": {"temperature": request.temperature},
-            }
+            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_stream
 
-            async with client.stream("POST", "/api/chat", json=payload) as response:
-                response.raise_for_status()
-                async for line in response.aiter_lines():
-                    if line:
-                        try:
-                            data = json.loads(line)
-                            if "message" in data and "content" in data["message"]:
-                                yield data["message"]["content"]
-                            if data.get("done"):
-                                break
-                        except json.JSONDecodeError:
-                            continue
+            async for chunk in pydantic_ai_stream(self.config, request):
+                yield chunk
 
 
 class MiniMaxProvider(LLMProvider):
-    """MiniMax API provider."""
+    """MiniMax API provider.
+
+    Transport delegated to ``heretek_swarm.llm.pydantic_ai_transport``
+    (Phase 2 consolidation). Public surface preserved.
+    """
 
     @_opik_track_llm
     async def complete(self, request: LLMRequest) -> LLMResponse:
+        """Send a completion request via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            start_time = time.time()
-
-            model = request.model or self.config.default_model or _DEFAULT_MINIMAX_MODEL
-            payload = {
-                "model": model,
-                "messages": [m.to_dict() for m in request.messages],
-                "temperature": request.temperature,
-                "max_tokens": request.max_tokens or 2048,
-            }
-            if self.config.metadata.get("group_id"):
-                payload["group_id"] = self.config.metadata["group_id"]
-
-            # Phase 2A.3 cutover: inline perf_counter + record_external_call_duration
-            # replaces the deleted opik_compat.timed. Times the headroom
-            # compression step (not the LLM call itself).
             start = time.perf_counter()
             try:
-                _compression = _headroom_wrap(payload.get("messages", []))
+                _headroom_wrap([m.to_dict() for m in request.messages])
             finally:
                 record_external_call_duration(
                     call_type="llm_minimax_complete",
@@ -584,120 +468,35 @@ class MiniMaxProvider(LLMProvider):
                     agent_type="minimax",
                     method="POST",
                 )
-            if isinstance(_compression.data, list):
-                payload["messages"] = _compression.data
+            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_complete
 
-            try:
-                response = await client.post("/text/chatcompletion_v2", json=payload)
-                response.raise_for_status()
-                data = response.json()
-
-                latency_ms = (time.time() - start_time) * 1000
-                choice = data["choices"][0]
-                message = choice.get("message", {})
-
-                return LLMResponse(
-                    content=message.get("content", ""),
-                    model=model,
-                    provider=ProviderType.MINIMAX,
-                    usage=data.get("usage", {}),
-                    finish_reason=choice.get("finish_reason"),
-                    raw_response=data,
-                    latency_ms=latency_ms,
-                )
-            except Exception as e:
-                logger.error("MiniMax completion failed", error=str(e))
-                raise
+            return await pydantic_ai_complete(self.config, request)
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
-        """Stream chat completion tokens."""
+        """Stream completion tokens via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            model = request.model or self.config.default_model or _DEFAULT_MINIMAX_MODEL
+            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_stream
 
-            # Convert messages to MiniMax format
-            messages = []
-            for msg in request.messages:
-                messages.append(
-                    {
-                        "sender_type": msg.role,
-                        "text": msg.content,
-                    }
-                )
-
-            payload = {
-                "model": model,
-                "messages": messages,
-                "temperature": request.temperature,
-                "top_p": request.top_p,
-                "stream": True,
-            }
-            if request.max_tokens:
-                payload["tokens_to_generate"] = request.max_tokens
-            if self.config.metadata.get("group_id"):
-                payload["group_id"] = self.config.metadata["group_id"]
-
-            try:
-                async with client.stream(
-                    "POST", "/text/chatcompletion_v2", json=payload
-                ) as response:
-                    response.raise_for_status()
-                    async for line in response.aiter_lines():
-                        if line.startswith("data: "):
-                            data = line[6:]
-                            if data.strip() == "[DONE]":
-                                break
-                            try:
-                                chunk = json.loads(data)
-                                choices = chunk.get("choices", [])
-                                if choices:
-                                    delta = choices[0].get("delta", {})
-                                    content = delta.get("text", "")
-                                    if content:
-                                        yield content
-                            except json.JSONDecodeError:
-                                continue
-            except Exception as e:
-                logger.error("MiniMax streaming failed", error=str(e))
-                raise
+            async for chunk in pydantic_ai_stream(self.config, request):
+                yield chunk
 
 
 class AnthropicProvider(LLMProvider):
-    """Anthropic Claude API provider."""
+    """Anthropic Claude API provider.
+
+    Transport delegated to ``heretek_swarm.llm.pydantic_ai_transport``
+    (Phase 2 consolidation). Public surface preserved.
+    """
 
     @_opik_track_llm
     async def complete(self, request: LLMRequest) -> LLMResponse:
+        """Send a completion request via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            start_time = time.time()
-
-            model = request.model or self.config.default_model or "claude-3-5-sonnet-20241022"
-
-            anthropic_messages = []
-            system_prompt = ""
-            for msg in request.messages:
-                if msg.role == "system":
-                    system_prompt += msg.content + "\n"
-                else:
-                    anthropic_messages.append({"role": msg.role, "content": msg.content})
-
-            payload: dict[str, Any] = {
-                "model": model,
-                "messages": anthropic_messages,
-                "max_tokens": request.max_tokens or 4096,
-                "temperature": request.temperature,
-            }
-            if system_prompt:
-                payload["system"] = system_prompt
-
-            # Phase 2A.3 cutover: inline perf_counter + record_external_call_duration
-            # replaces the deleted opik_compat.timed. Times the headroom
-            # compression step (not the LLM call itself).
             start = time.perf_counter()
             try:
-                _compression = _headroom_wrap(payload.get("messages", []))
+                _headroom_wrap([m.to_dict() for m in request.messages])
             finally:
                 record_external_call_duration(
                     call_type="llm_anthropic_complete",
@@ -706,109 +505,39 @@ class AnthropicProvider(LLMProvider):
                     agent_type="anthropic",
                     method="POST",
                 )
-            if isinstance(_compression.data, list):
-                payload["messages"] = _compression.data
+            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_complete
 
-            try:
-                response = await client.post("/v1/messages", json=payload)
-                response.raise_for_status()
-                data = response.json()
-
-                latency_ms = (time.time() - start_time) * 1000
-
-                content = data.get("content", [{"text": ""}])
-                text = content[0].get("text", "") if content else ""
-
-                return LLMResponse(
-                    content=text,
-                    model=model,
-                    provider=ProviderType.ANTHROPIC,
-                    usage=data.get("usage", {}),
-                    finish_reason=data.get("stop_reason"),
-                    raw_response=data,
-                    latency_ms=latency_ms,
-                )
-            except Exception as e:
-                logger.error("Anthropic completion failed", error=str(e))
-                raise
+            return await pydantic_ai_complete(self.config, request)
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
-        """Stream chat completion tokens."""
+        """Stream completion tokens via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            model = request.model or self.config.default_model or "claude-3-5-sonnet-20241022"
+            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_stream
 
-            # Convert messages to Anthropic format
-            anthropic_messages = []
-            system_prompt = ""
-            for msg in request.messages:
-                if msg.role == "system":
-                    system_prompt += msg.content + "\n"
-                else:
-                    anthropic_messages.append({"role": msg.role, "content": msg.content})
-
-            payload: dict[str, Any] = {
-                "model": model,
-                "messages": anthropic_messages,
-                "max_tokens": request.max_tokens or 4096,
-                "temperature": request.temperature,
-                "stream": True,
-            }
-            if system_prompt:
-                payload["system"] = system_prompt
-
-            try:
-                async with client.stream("POST", "/v1/messages", json=payload) as response:
-                    response.raise_for_status()
-                    current_event = None
-                    async for line in response.aiter_lines():
-                        if line.startswith("event: "):
-                            current_event = line[7:].strip()
-                        elif line.startswith("data: "):
-                            data_str = line[5:].strip()
-                            if not data_str:
-                                current_event = None
-                                continue
-                            try:
-                                chunk = json.loads(data_str)
-                            except json.JSONDecodeError:
-                                current_event = None
-                                continue
-                            token = self._try_extract_anthropic_token(chunk, current_event)
-                            if token:
-                                yield token
-                            elif current_event == "message_stop":
-                                break
-                            current_event = None
-            except Exception as e:
-                logger.error("Anthropic streaming failed", error=str(e))
-                raise
+            async for chunk in pydantic_ai_stream(self.config, request):
+                yield chunk
 
 
 class OpenAICompatibleProvider(LLMProvider):
-    """Generic OpenAI-compatible API provider."""
+    """Generic OpenAI-compatible API provider.
+
+    Transport delegated to ``heretek_swarm.llm.pydantic_ai_transport``
+    (Phase 2 consolidation). Public surface preserved.
+    """
 
     @_opik_track_llm
     async def complete(self, request: LLMRequest) -> LLMResponse:
+        """Send a completion request via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            start_time = time.time()
-
-            model = request.model or self.config.default_model
-            if not model:
-                raise ValueError("Model must be specified for OpenAI-compatible providers")
-
-            payload = request.to_dict()
-            payload["model"] = model
-
-            # Phase 2A.3 cutover: inline perf_counter + record_external_call_duration
-            # replaces the deleted opik_compat.timed. Times the headroom
-            # compression step (not the LLM call itself).
+            if not (request.model or self.config.default_model):
+                raise ValueError(
+                    "Model must be specified for OpenAI-compatible providers"
+                )
             start = time.perf_counter()
             try:
-                _compression = _headroom_wrap(payload.get("messages", []))
+                _headroom_wrap([m.to_dict() for m in request.messages])
             finally:
                 record_external_call_duration(
                     call_type="llm_openai_compatible_complete",
@@ -817,64 +546,22 @@ class OpenAICompatibleProvider(LLMProvider):
                     agent_type="openai_compatible",
                     method="POST",
                 )
-            if isinstance(_compression.data, list):
-                payload["messages"] = _compression.data
+            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_complete
 
-            try:
-                response = await client.post("/chat/completions", json=payload)
-                response.raise_for_status()
-                data = response.json()
-
-                latency_ms = (time.time() - start_time) * 1000
-                choice = data["choices"][0]
-                message = choice.get("message", {})
-
-                return LLMResponse(
-                    content=message.get("content", ""),
-                    model=data.get("model", model),
-                    provider=ProviderType.OPENAI_COMPATIBLE,
-                    usage=data.get("usage", {}),
-                    finish_reason=choice.get("finish_reason"),
-                    tool_calls=message.get("tool_calls", []),
-                    raw_response=data,
-                    latency_ms=latency_ms,
-                )
-            except Exception as e:
-                logger.error("OpenAI-compatible completion failed", error=str(e))
-                raise
+            return await pydantic_ai_complete(self.config, request)
 
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
-        """Stream chat completion tokens."""
+        """Stream completion tokens via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            model = request.model or self.config.default_model
-            if not model:
-                raise ValueError("Model must be specified for OpenAI-compatible providers")
+            if not (request.model or self.config.default_model):
+                raise ValueError(
+                    "Model must be specified for OpenAI-compatible providers"
+                )
+            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_stream
 
-            payload = request.to_dict()
-            payload["model"] = model
-            payload["stream"] = True
-
-            try:
-                async with client.stream("POST", "/chat/completions", json=payload) as response:
-                    response.raise_for_status()
-                    async for line in response.aiter_lines():
-                        if not line.startswith("data: "):
-                            continue
-                        data = line[6:]
-                        if data.strip() == "[DONE]":
-                            break
-                        try:
-                            chunk = json.loads(data)
-                        except json.JSONDecodeError:
-                            continue
-                        token = self._try_extract_chat_token(chunk)
-                        if token:
-                            yield token
-            except Exception as e:
-                logger.error("OpenAI-compatible streaming failed", error=str(e))
-                raise
+            async for chunk in pydantic_ai_stream(self.config, request):
+                yield chunk
 
 
 # ============================================================================
