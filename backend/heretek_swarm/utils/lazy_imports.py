@@ -80,15 +80,15 @@ class LazyModule(dict[str, Any]):
 
     Example:
         # Instead of:
-        # from heretek_swarm.llm.providers import factory
+        # from heretek_swarm.embeddings.providers import factory
 
         # Use:
         factory = LazyModule({
-            'create_llm_provider': LazyImport('heretek_swarm.llm.providers.factory', 'create_llm_provider'),  # noqa: E501
-            'get_provider_class': LazyImport('heretek_swarm.llm.providers.factory', 'get_provider_class'),  # noqa: E501
+            'create_embedding_provider': LazyImport('heretek_swarm.embeddings.providers.factory', 'create_embedding_provider'),  # noqa: E501
+            'get_provider_class': LazyImport('heretek_swarm.embeddings.providers.factory', 'get_provider_class'),  # noqa: E501
         })
 
-        # Then use: factory.create_llm_provider(...)
+        # Then use: factory.create_embedding_provider(...)
     """
 
     def __init__(self, attrs: dict[str, str | LazyImport | Callable] | None = None):
@@ -107,7 +107,7 @@ def lazy_import(import_path: str) -> Callable[[Callable[..., T]], Callable[..., 
     The actual import is deferred until the decorated function is called.
 
     Example:
-        @lazy_import('heretek_swarm.llm.providers.factory')
+        @lazy_import('heretek_swarm.embeddings.providers.factory')
         def create_provider(config):
             return create_provider(config)
     """
