@@ -82,7 +82,10 @@ def build_final_verdict(
         charlie_veto_confidence=charlie_veto_confidence,
         unanimous_floor=unanimous_floor,
     )
-    if state.get("round", 0) >= max_rounds and decision == "needs-revision":
+    # `max_rounds` is the number of rounds allowed total. After the final
+    # round (0-indexed: round == max_rounds - 1), unresolved verdicts
+    # collapse to no-consensus.
+    if state.get("round", 0) + 1 >= max_rounds and decision == "needs-revision":
         decision = "no-consensus"
     summary = _summarize(votes, decision)
     return FinalVerdict(
