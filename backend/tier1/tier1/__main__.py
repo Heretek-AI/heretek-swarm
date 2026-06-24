@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+from pathlib import Path
 
 import uvicorn
 
@@ -16,6 +17,12 @@ def main() -> int:
     serve.add_argument("--host", default=None)
     serve.add_argument("--port", type=int, default=None)
     serve.add_argument("--reload", action="store_true")
+    serve.add_argument(
+        "--dashboard-path",
+        type=Path,
+        default=None,
+        help="Path to the built dashboard directory (mounts under /dashboard)",
+    )
     args = parser.parse_args()
 
     if args.cmd != "serve":
@@ -23,7 +30,10 @@ def main() -> int:
         return 2
 
     settings = get_settings()
-    app = create_app()
+    dashboard_path = args.dashboard_path or (
+        Path(settings.dashboard_path) if settings.dashboard_path else None
+    )
+    app = create_app(dashboard_path=dashboard_path)
     uvicorn.run(
         app,
         host=args.host or settings.api_host,
