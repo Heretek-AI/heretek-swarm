@@ -33,3 +33,25 @@ See `docs/superpowers/specs/2026-06-24-tier-1-core-triad-rebuild-design.md`.
 - This module is greenfield — separate from the legacy 180k LoC `heretek_swarm/` package.
 - We preserve the doctrinal infrastructure (NATS/Postgres/Redis/Qdrant/cognee/mem0).
 - We do NOT carry over the other 19 agents, consciousness layers, or wizard code.
+
+## Limitations
+
+**`_stream_from_provider` in `tier1/llm/garage.py` is currently a stub.**
+The method raises `NotImplementedError("provider {provider!r} not yet wired — see Task 3.5")`
+for every provider in the chain (`minimax`, `anthropic`, `openai`, `local`).
+
+Without a real provider wired (follow-up Task 3.5+), **no deliberation
+can complete against a live LLM.** Calling `POST /api/deliberations`
+will start the LangGraph run, the Steward will finalize on a real LLM
+absence, and the deliberation will be marked `failed` in `/api/deliberations`.
+
+The infrastructure layer is fully wired:
+- `/health` probes postgres, redis, nats, qdrant (hard-required) plus
+  cognee and mem0 (advisory — see `tier1/api/routes/health.py`).
+- NATS event publishing, Postgres state persistence, Redis hot cache,
+  and Qdrant collection wiring are all in place.
+- The Steward, consensus, and Tribunal graph are deterministic and
+  testable without an LLM.
+
+Wire a real provider (Task 3.5+) before relying on end-to-end
+deliberation.
