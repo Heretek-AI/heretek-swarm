@@ -10,7 +10,6 @@ LLMUnavailable.
 
 from __future__ import annotations
 
-import asyncio
 import time
 from collections import deque
 from dataclasses import dataclass
@@ -20,7 +19,10 @@ import structlog
 
 from tier1.config import Settings
 from tier1.deliberation.state import AgentName
-from tier1.llm.errors import LLMTimeout, LLMUnavailable
+from tier1.llm.errors import (
+    LLMTimeout,
+    LLMUnavailable,
+)  # LLMTimeout: part of the provider contract; see _stream_from_provider docstring.
 
 log = structlog.get_logger(__name__)
 
@@ -69,7 +71,6 @@ class ModelGarage:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
         self.circuits: dict[str, _Circuit] = {name: _Circuit(name) for name in PROVIDER_NAMES}
-        self._lock = asyncio.Lock()
 
     def provider_order(self) -> list[str]:
         """Return provider names in priority order, skipping open circuits."""
@@ -81,23 +82,58 @@ class ModelGarage:
         *,
         agent: AgentName,
     ) -> AsyncIterator[StreamChunk]:
-        """Yield token chunks. Tries providers in chain until one succeeds."""
+        """Yield token chunks. Tries providers in chain until one succeeds.
+
+        Failure semantics:
+        - `LLMTimeout` / `LLMUnavailable` raised before any chunk: recorded as
+          a failure, falls through to the next provider.
+        - Any other exception (or a recognized exception) raised AFTER one or
+          more chunks were yielded (mid-stream failure): recorded as a failure
+          for the active provider, then wrapped as `LLMUnavailable` and
+          propagated to the caller. Mid-stream partial output is treated as
+          unrecoverable for the current call — falling through to another
+          provider would double-emit tokens. The next call to `stream_chat`
+          will start the chain from the top, skipping the now-open circuit
+          if it tripped.
+        """
         order = self.provider_order()
         if not order:
             raise LLMUnavailable("all providers down (circuit open)")
 
         last_exc: Exception | None = None
         for provider in order:
+            yielded = 0
             try:
                 async for chunk in self._stream_from_provider(provider, prompt, agent):
                     yield chunk
+                    yielded += 1
                 self.circuits[provider].record_success()
                 return
-            except (LLMTimeout, LLMUnavailable) as exc:
+            except Exception as exc:  # noqa: BLE001 — see failure semantics
                 self.circuits[provider].record_failure()
                 last_exc = exc
-                log.warning("provider_failed", provider=provider, error=str(exc))
-                continue
+                if yielded == 0:
+                    log.warning(
+                        "provider_failed",
+                        provider=provider,
+                        error=str(exc),
+                        error_type=type(exc).__name__,
+                    )
+                    continue
+                # Mid-stream failure: partial output already yielded to the
+                # caller. Wrap as LLMUnavailable and propagate — the caller
+                # has already seen the partial response and we cannot safely
+                # resume or fall through without producing a confusing mix.
+                log.warning(
+                    "provider_midstream_failure",
+                    provider=provider,
+                    chunks_yielded=yielded,
+                    error=str(exc),
+                    error_type=type(exc).__name__,
+                )
+                raise LLMUnavailable(
+                    f"provider {provider} raised mid-stream after {yielded} chunks: {exc}"
+                ) from exc
 
         raise LLMUnavailable(f"all providers failed: {last_exc}")
 
