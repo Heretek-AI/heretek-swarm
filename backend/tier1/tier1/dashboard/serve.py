@@ -19,11 +19,11 @@ def mount_static(app: FastAPI, path: str | Path) -> None:
     if not p.exists():
         return
 
-    @app.get("/dashboard", include_in_schema=False)
+    @app.api_route("/dashboard", methods=["GET", "HEAD"], include_in_schema=False)
     async def dashboard_index():
         return FileResponse(p / "index.html")
 
-    @app.get("/dashboard/{full_path:path}", include_in_schema=False)
+    @app.api_route("/dashboard/{full_path:path}", methods=["GET", "HEAD"], include_in_schema=False)
     async def dashboard_assets(full_path: str):
         # Try the literal path first; fall back to index.html for SPA routing.
         candidate = p / full_path
