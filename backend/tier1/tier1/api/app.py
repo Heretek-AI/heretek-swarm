@@ -22,9 +22,23 @@ async def lifespan(app: FastAPI):
     nats = NatsClient(settings.nats_url)
     garage = ModelGarage(settings)
 
-    await pg.connect()
-    await redis.connect()
-    await nats.connect()
+    # Connect in order; if any later connect fails, close the ones that
+    # succeeded so we don't leak resources.
+    connected: list[tuple[str, object]] = []
+    try:
+        await pg.connect()
+        connected.append(("pg", pg))
+        await redis.connect()
+        connected.append(("redis", redis))
+        await nats.connect()
+        connected.append(("nats", nats))
+    except Exception:
+        for name, client in reversed(connected):
+            try:
+                await client.close()
+            except Exception:  # noqa: BLE001
+                pass
+        raise
 
     app.state.pg = pg
     app.state.redis = redis

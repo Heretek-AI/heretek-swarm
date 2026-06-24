@@ -1,7 +1,10 @@
 """WS broadcast bridge — connects LangGraph sink to NATS publish.
 
 This helper wraps the Tribunal so that every event emitted by an agent
-node is also published to NATS JetStream on the per-deliberation subject.
+node is also published to NATS JetStream on the per-deliberation subject,
+and persisted to Postgres `deliberation_events` so the WS replay path
+sees the same events the live NATS stream sees.
+
 The same callback is used by the API WebSocket endpoint to forward
 events to the connected client.
 """
@@ -13,6 +16,7 @@ from collections.abc import Awaitable, Callable
 from tier1.deliberation.state import DeliberationEvent
 from tier1.events.channels import subject_for
 from tier1.events.nats_client import NatsClient
+from tier1.persistence.postgres import PostgresPool
 
 EventSink = Callable[[DeliberationEvent], Awaitable[None]]
 
@@ -38,12 +42,23 @@ def make_nats_sink(nats_client: NatsClient) -> EventSink:
     return sink
 
 
-def make_nats_sink_for(nats_client: NatsClient, deliberation_id: str) -> EventSink:
-    """Build a NATS sink bound to a specific deliberation id."""
+def make_nats_sink_for(
+    nats_client: NatsClient,
+    deliberation_id: str,
+    pg: PostgresPool | None = None,
+) -> EventSink:
+    """Build a NATS sink bound to a specific deliberation id.
+
+    When `pg` is supplied, each event is also appended to Postgres
+    `deliberation_events` so the WS replay path can deliver it to
+    clients that connect after the event was emitted.
+    """
     subject = subject_for(deliberation_id)
 
     async def sink(event: DeliberationEvent) -> None:
         payload = event.model_dump_json().encode()
         await nats_client.publish(subject, payload)
+        if pg is not None:
+            await pg.append_event(deliberation_id, event)
 
     return sink

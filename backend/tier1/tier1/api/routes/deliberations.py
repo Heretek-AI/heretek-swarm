@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 
-from fastapi import APIRouter, HTTPException, Request, status
+from fastapi import APIRouter, HTTPException, Query, Request, status
 
 from tier1.api.deps import GarageDep, NatsDep, PgDep, RedisDep
 from tier1.api.schemas import (
@@ -24,6 +25,8 @@ from tier1.deliberation.state import (
 )
 from tier1.events.channels import subject_for
 from tier1.llm.errors import LLMUnavailable
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/deliberations")
 
@@ -45,12 +48,14 @@ async def create_deliberation(
     )
     await pg.save_deliberation(state)
     await redis.put_state(state)
-    # Publish the started event to NATS.
+    # Publish the started event to NATS AND persist it to Postgres so the
+    # WS replay path can deliver it to late-arriving clients.
     started = state["events"][0]
     await nats.publish(subject_for(did), started.model_dump_json().encode())
+    await pg.append_event(did, started)
 
     # Run the tribunal in the background.
-    nats_sink = make_nats_sink_for(nats, did)
+    nats_sink = make_nats_sink_for(nats, did, pg=pg)
     tribunal = Tribunal(request.app.state.settings, garage, sink=nats_sink)
 
     async def run_and_persist():
@@ -59,19 +64,21 @@ async def create_deliberation(
             await pg.save_deliberation(result)
             await redis.put_state(result)
         except LLMUnavailable as exc:
+            logger.exception("tribunal failed: LLM unavailable for %s", did)
             failed_state = {**state, "status": "failed", "failure_reason": str(exc)}
             failed_state["events"] = list(state.get("events", []))
-            failed_state["events"].append(
-                DeliberationEvent(
-                    seq=next_seq(failed_state["events"]),
-                    ts=now_ts(),
-                    kind="consensus_failed",
-                    payload={"reason": "llm_unavailable"},
-                )
+            failed_event = DeliberationEvent(
+                seq=next_seq(failed_state["events"]),
+                ts=now_ts(),
+                kind="consensus_failed",
+                payload={"reason": "llm_unavailable"},
             )
+            failed_state["events"].append(failed_event)
             await pg.save_deliberation(failed_state)
+            await pg.append_event(did, failed_event)
             await redis.put_state(failed_state)
         except Exception as exc:  # noqa: BLE001
+            logger.exception("tribunal failed: unexpected error for %s", did)
             failed_state = {**state, "status": "failed", "failure_reason": str(exc)}
             await pg.save_deliberation(failed_state)
             await redis.put_state(failed_state)
@@ -98,7 +105,13 @@ async def get_deliberation(deliberation_id: str, pg: PgDep):
 
 
 @router.post("/{deliberation_id}/interject", status_code=204)
-async def interject(deliberation_id: str, body: InterjectRequest, pg: PgDep, redis: RedisDep):
+async def interject(
+    deliberation_id: str,
+    body: InterjectRequest,
+    pg: PgDep,
+    redis: RedisDep,
+    nats: NatsDep,
+):
     state = await pg.load_deliberation(deliberation_id)
     if state is None:
         raise HTTPException(status_code=404, detail="deliberation not found")
@@ -108,25 +121,24 @@ async def interject(deliberation_id: str, body: InterjectRequest, pg: PgDep, red
     feedback.append(body.text)
     state["feedback"] = feedback
     state["events"] = list(state.get("events", []))
-    state["events"].append(
-        DeliberationEvent(
-            seq=next_seq(state["events"]),
-            ts=now_ts(),
-            kind="user_interjection",
-            payload={"text": body.text, "deliberation_id": deliberation_id},
-        )
+    interjection_event = DeliberationEvent(
+        seq=next_seq(state["events"]),
+        ts=now_ts(),
+        kind="user_interjection",
+        payload={"text": body.text, "deliberation_id": deliberation_id},
     )
+    state["events"].append(interjection_event)
     await pg.save_deliberation(state)
-    await pg.append_event(
-        deliberation_id,
-        state["events"][-1],
-    )
+    await pg.append_event(deliberation_id, interjection_event)
+    # Publish to NATS so live WS clients (and the running Tribunal sink)
+    # see the interjection.
+    await nats.publish(subject_for(deliberation_id), interjection_event.model_dump_json().encode())
     await redis.put_state(state)
 
 
 @router.get("", response_model=DeliberationListResponse)
-async def list_deliberations(pg: PgDep, limit: int = 20):
-    if limit < 1 or limit > 100:
-        limit = 20
+async def list_deliberations(
+    pg: PgDep, limit: int = Query(20, ge=1, le=100)
+) -> DeliberationListResponse:
     summaries = await pg.list_deliberations(limit)
     return DeliberationListResponse(items=summaries)

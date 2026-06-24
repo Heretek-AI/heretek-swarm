@@ -7,15 +7,18 @@ import json
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from tier1.api.deps import PgDep
 from tier1.events.channels import subject_for
 
 router = APIRouter()
 
 
 @router.websocket("/ws/deliberations/{deliberation_id}")
-async def deliberation_socket(websocket: WebSocket, deliberation_id: str, pg: PgDep):
+async def deliberation_socket(websocket: WebSocket, deliberation_id: str):
     await websocket.accept()
+
+    # Resolve clients from app.state so we work the same in tests and prod.
+    pg = websocket.app.state.pg
+    nats = websocket.app.state.nats
 
     # Replay persisted events.
     events = await pg.get_events(deliberation_id)
@@ -24,7 +27,6 @@ async def deliberation_socket(websocket: WebSocket, deliberation_id: str, pg: Pg
     await websocket.send_json({"kind": "replay_done", "count": len(events)})
 
     # Subscribe to NATS for new events.
-    nats = websocket.app.state.nats
     subject = subject_for(deliberation_id)
 
     queue: asyncio.Queue[bytes | None] = asyncio.Queue()
