@@ -47,22 +47,21 @@ async def steward_node(
     # Decide: finalize or feedback
     if final.decision in ("approved", "rejected", "no-consensus"):
         new_state["final_verdict"] = final
-        # Finalize.
-        for kind in (
+        # Finalize. Per spec §4: approved/rejected are both definitive
+        # verdicts (consensus_reached); only no-consensus is a failure.
+        kind = (
             "consensus_reached"
-            if final.decision == "approved"
+            if final.decision in ("approved", "rejected")
             else "consensus_failed"
-            if final.decision in ("rejected", "no-consensus")
-            else "consensus_failed",
-        ):
-            events.append(
-                DeliberationEvent(
-                    seq=next_seq(events),
-                    ts=now_ts(),
-                    kind=kind,
-                    payload={"decision": final.decision, "summary": final.summary},
-                )
+        )
+        events.append(
+            DeliberationEvent(
+                seq=next_seq(events),
+                ts=now_ts(),
+                kind=kind,
+                payload={"decision": final.decision, "summary": final.summary},
             )
+        )
         if sink is not None:
             await sink(events[-1])
         events.append(

@@ -44,6 +44,26 @@ async def test_steward_finalizes_rejection():
     assert result["final_verdict"].decision == "rejected"
 
 
+async def test_steward_rejection_emits_consensus_reached():
+    """Per spec §4: rejected is a definitive answer -> consensus_reached."""
+    state = _state_with_votes(alpha_pos="reject", beta_pos="reject", charlie_pos="reject")
+    result = await steward_node(state, _settings())
+    kinds = [e.kind for e in result["events"]]
+    assert "consensus_reached" in kinds
+    assert "consensus_failed" not in kinds
+
+
+async def test_steward_no_consensus_emits_consensus_failed():
+    """Per spec §4: no-consensus -> consensus_failed (distinct from rejection)."""
+    state = _state_with_votes(alpha_pos="approve", beta_pos="reject", charlie_pos="challenge")
+    state["round"] = 3  # at max_rounds
+    result = await steward_node(state, _settings(max_rounds=3))
+    assert result["final_verdict"].decision == "no-consensus"
+    kinds = [e.kind for e in result["events"]]
+    assert "consensus_failed" in kinds
+    assert "consensus_reached" not in kinds
+
+
 async def test_steward_emits_feedback_on_no_consensus():
     state = _state_with_votes(alpha_pos="approve", beta_pos="reject", charlie_pos="challenge")
     state["round"] = 1
