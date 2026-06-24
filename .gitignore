@@ -119,6 +119,9 @@ coverage.cobertura.xml
 jacoco.xml
 coverage.json
 coverage-final.json
+
+# Desloppify runtime state (config files in .desloppify.toml are tracked)
+.desloppify/
 .kilocode/*
 .github/agents/*
 .github/copilot-instructions.md

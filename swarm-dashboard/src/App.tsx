@@ -1,9 +1,9 @@
 /**
  * Heretek Swarm Dashboard - Main Application
- * 
+ *
  * Central control panel for deploying, monitoring, and configuring
  * the Heretek Swarm application.
- * 
+ *
  * Health check pattern (M005/S01): `checkSystemHealth()` reads the top-level
  * `data.status === 'healthy'` as primary signal. Service-level status lives
  * under `data.services.*.status` and is only consulted for 'degraded' detection.
@@ -12,6 +12,10 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { MemoryRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { HomePage as NewHomePage } from './pages/home-page';
+import { DeliberationListPage as NewDeliberationListPage } from './pages/deliberation-list-page';
+import { DeliberationPage as NewDeliberationPage } from './pages/deliberation-page';
 
 /**
  * Validates that a URL is safe for use in client-side requests.
@@ -80,14 +84,10 @@ function DashboardContent() {
   const [currentView, setCurrentView] = useState<View>('home');
   const [systemStatus, setSystemStatus] = useState<'healthy' | 'degraded' | 'offline'>('healthy');
   const toast = useToast();
-  
+
   // Setup store integration
-  const { 
-    config,
-    setRerunning,
-    resetSetup,
-  } = useSetupStore();
-  
+  const { config, setRerunning, resetSetup } = useSetupStore();
+
   const [showSetup, setShowSetup] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -149,19 +149,21 @@ function DashboardContent() {
   const checkSystemHealth = useCallback(async () => {
     try {
       // Use stored API host or fall back to environment variable
-      const apiHost = _safeUrl(localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_HOST || '');
+      const apiHost = _safeUrl(
+        localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_HOST || '',
+      );
       if (!apiHost) {
         setSystemStatus('offline');
         return;
       }
-      
+
       const response = await fetch(`${apiHost}/api/health`);
       if (!response.ok) {
         setSystemStatus('offline');
         return;
       }
       const data = await response.json();
-      
+
       // Primary signal: top-level status from the API.
       // In --no-infra mode, the API returns { status: 'healthy' } even when
       // infra services are unavailable — this is correct behavior.
@@ -246,6 +248,20 @@ function DashboardContent() {
     }
   };
 
+  // Tier-1 routes take precedence over the legacy view switcher.
+  const location = useLocation();
+  const isTier1Route =
+    location.pathname === '/' ||
+    location.pathname === '/deliberations' ||
+    location.pathname.startsWith('/deliberations/');
+
+  const renderTier1 = () => {
+    if (location.pathname === '/') return <NewHomePage />;
+    if (location.pathname === '/deliberations') return <NewDeliberationListPage />;
+    if (location.pathname.startsWith('/deliberations/')) return <NewDeliberationPage />;
+    return null;
+  };
+
   // Don't render until we've checked configuration
   if (!isInitialized) {
     return (
@@ -269,9 +285,7 @@ function DashboardContent() {
           navItems={navItems}
           systemStatus={systemStatus}
         >
-          <ErrorBoundary>
-            {renderView()}
-          </ErrorBoundary>
+          <ErrorBoundary>{isTier1Route ? renderTier1() : renderView()}</ErrorBoundary>
         </DashboardLayout>
       )}
       <CommandPalette
@@ -290,7 +304,9 @@ function DashboardContent() {
 function App() {
   return (
     <ToastProvider>
-      <DashboardContent />
+      <MemoryRouter>
+        <DashboardContent />
+      </MemoryRouter>
       {/* Debug features - only visible when Developer Mode is enabled */}
       <DebugPanel />
       <PerformanceOverlay position="top-right" />
