@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 
 class HealthComponent(BaseModel):
-    status: Literal["ok", "degraded", "down"]
+    status: Literal["ok", "degraded", "down", "not_probed"]
     detail: str | None = None
 
 

@@ -13,6 +13,7 @@ from tier1.dashboard.serve import mount_static
 from tier1.events.nats_client import NatsClient
 from tier1.llm.garage import ModelGarage
 from tier1.persistence.postgres import PostgresPool
+from tier1.persistence.qdrant import QdrantStore
 from tier1.persistence.redis import RedisCache
 
 
@@ -22,6 +23,7 @@ async def lifespan(app: FastAPI):
     pg = PostgresPool(settings.postgres_dsn)
     redis = RedisCache(settings.redis_url, settings.redis_ttl_s)
     nats = NatsClient(settings.nats_url)
+    qdrant = QdrantStore(settings.qdrant_url, settings.qdrant_collection)
     garage = ModelGarage(settings)
 
     # Connect in order; if any later connect fails, close the ones that
@@ -34,6 +36,8 @@ async def lifespan(app: FastAPI):
         connected.append(("redis", redis))
         await nats.connect()
         connected.append(("nats", nats))
+        qdrant.connect()
+        connected.append(("qdrant", qdrant))
     except Exception:
         for name, client in reversed(connected):
             try:
@@ -45,11 +49,13 @@ async def lifespan(app: FastAPI):
     app.state.pg = pg
     app.state.redis = redis
     app.state.nats = nats
+    app.state.qdrant = qdrant
     app.state.garage = garage
 
     try:
         yield
     finally:
+        qdrant.close()
         await nats.close()
         await redis.close()
         await pg.close()

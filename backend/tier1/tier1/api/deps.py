@@ -9,6 +9,7 @@ from fastapi import Depends, Request
 from tier1.events.nats_client import NatsClient
 from tier1.llm.garage import ModelGarage
 from tier1.persistence.postgres import PostgresPool
+from tier1.persistence.qdrant import QdrantStore
 from tier1.persistence.redis import RedisCache
 
 
@@ -24,6 +25,10 @@ def _nats(request: Request) -> NatsClient:
     return request.app.state.nats
 
 
+def _qdrant(request: Request) -> QdrantStore:
+    return request.app.state.qdrant
+
+
 def _garage(request: Request) -> ModelGarage:
     return request.app.state.garage
 
@@ -31,4 +36,5 @@ def _garage(request: Request) -> ModelGarage:
 PgDep = Annotated[PostgresPool, Depends(_pg)]
 RedisDep = Annotated[RedisCache, Depends(_redis)]
 NatsDep = Annotated[NatsClient, Depends(_nats)]
+QdrantDep = Annotated[QdrantStore, Depends(_qdrant)]
 GarageDep = Annotated[ModelGarage, Depends(_garage)]
