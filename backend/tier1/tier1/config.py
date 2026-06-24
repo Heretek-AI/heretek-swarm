@@ -16,9 +16,13 @@ class Settings(BaseSettings):
     # LLM
     minimax_api_key: str = ""
     minimax_base_url: str = "https://api.minimaxi.com/v1"
+    minimax_model: str = "MiniMax-M1-80k"
     anthropic_api_key: str = ""
+    anthropic_model: str = "claude-sonnet-4-20250514"
     openai_api_key: str = ""
+    openai_model: str = "gpt-4o"
     ollama_base_url: str = ""
+    local_model: str = "llama3.1:8b"
     llm_timeout_s: float = 60.0
 
     # Consensus

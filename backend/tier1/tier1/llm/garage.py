@@ -143,17 +143,107 @@ class ModelGarage:
         prompt: str,
         agent: AgentName,
     ) -> AsyncIterator[StreamChunk]:
-        """Provider-specific streaming. Wraps pydantic-ai model.
+        """Provider-specific streaming using native SDKs.
 
-        For Task 3 we provide the structural skeleton. Real provider
-        implementations are wired in subsequent substeps once each
-        provider's pydantic-ai Model class is configured.
+        MiniMax/OpenAI/Local (Ollama): openai SDK with custom base_url.
+        Anthropic: anthropic SDK.
 
         This method MUST raise LLMTimeout for timeout, or yield
         StreamChunk instances for each token. It MUST NOT raise any
         other exception type.
         """
-        raise NotImplementedError(f"provider {provider!r} not yet wired — see Task 3.5")
+        dispatch = {
+            "minimax": self._stream_openai_provider,
+            "anthropic": self._stream_anthropic_provider,
+            "openai": self._stream_openai_provider,
+            "local": self._stream_openai_provider,
+        }
+        fn = dispatch.get(provider)
+        if fn is None:
+            raise LLMUnavailable(f"unknown provider: {provider!r}")
+        async for chunk in fn(prompt, agent, provider):
+            yield chunk
+
+    async def _stream_openai_provider(
+        self,
+        prompt: str,
+        agent: AgentName,
+        provider_name: str,
+    ) -> AsyncIterator[StreamChunk]:
+        """Stream using the openai SDK (MiniMax, OpenAI, Ollama)."""
+        try:
+            from openai import AsyncOpenAI
+        except ImportError as exc:
+            raise LLMUnavailable(f"openai package not installed: {exc}") from exc
+
+        if provider_name == "minimax":
+            key = self.settings.minimax_api_key
+            base = self.settings.minimax_base_url
+            model = self.settings.minimax_model
+        elif provider_name == "openai":
+            key = self.settings.openai_api_key
+            base = None
+            model = self.settings.openai_model
+        elif provider_name == "local":
+            key = "ollama"
+            base = self.settings.ollama_base_url
+            model = self.settings.local_model
+        else:
+            raise LLMUnavailable(f"unknown openai-type provider: {provider_name!r}")
+
+        if not key:
+            raise LLMUnavailable(f"no API key for {provider_name}")
+
+        client = AsyncOpenAI(api_key=key, base_url=base, timeout=self.settings.llm_timeout_s)
+        try:
+            response = await client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                stream=True,
+            )
+            seq = 0
+            async for chunk in response:  # type: ignore[union-attr]
+                delta = chunk.choices[0].delta if chunk.choices else None
+                if delta and delta.content:
+                    yield StreamChunk(token=delta.content, agent=agent, seq=seq)
+                    seq += 1
+        except Exception as exc:
+            if "timeout" in str(exc).lower() or "timed out" in str(exc).lower():
+                raise LLMTimeout(str(exc)) from exc
+            raise
+
+    async def _stream_anthropic_provider(
+        self,
+        prompt: str,
+        agent: AgentName,
+    ) -> AsyncIterator[StreamChunk]:
+        """Stream using the anthropic SDK."""
+        try:
+            import anthropic
+        except ImportError as exc:
+            raise LLMUnavailable(f"anthropic package not installed: {exc}") from exc
+
+        if not self.settings.anthropic_api_key:
+            raise LLMUnavailable("no API key for anthropic")
+
+        client = anthropic.AsyncAnthropic(
+            api_key=self.settings.anthropic_api_key,
+            timeout=self.settings.llm_timeout_s,
+        )
+        try:
+            async with client.messages.stream(
+                model=self.settings.anthropic_model,
+                max_tokens=4096,
+                messages=[{"role": "user", "content": prompt}],
+            ) as stream:
+                seq = 0
+                async for text in stream.text_stream:
+                    yield StreamChunk(token=text, agent=agent, seq=seq)
+                    seq += 1
+        except Exception as exc:
+            if "timeout" in str(exc).lower() or "timed out" in str(exc).lower():
+                raise LLMTimeout(str(exc)) from exc
+            raise
 
     async def chat(self, prompt: str, *, agent: AgentName) -> str:
         """Non-streaming convenience: collect all tokens into one string."""
