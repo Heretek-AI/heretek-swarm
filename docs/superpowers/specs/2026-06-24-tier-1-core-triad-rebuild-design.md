@@ -110,27 +110,27 @@ Code calls them "actors", doctrine calls them "agents". MVP uses **agents** — 
 
 ### Core agents (4)
 
-**Steward** — orchestrator, owner of the Tribunal loop.
+**Steward** — orchestrator, owner of the Tribunal loop. Deterministic (no LLM call).
 - Receives problem from API/WS.
-- Dispatches Alpha first; then Beta and Charlie in parallel (both see Alpha's reasoning; Charlie sees Beta's too).
+- Dispatches Alpha → Beta → Charlie sequentially. Each sees all prior reasoning in the round.
 - Tallies verdicts, decides consensus.
 - On no consensus: emits `steward_feedback` event with concrete feedback and starts another round (max 3).
 - Emits final verdict or `no-consensus`.
 - Persists state after every node transition.
 - Publishes every event on NATS for audit + WS broadcast.
 
-**Alpha** — analysis. Logical deconstruction.
+**Alpha** — analysis. Logical deconstruction. LLM-call node.
 - Input: problem + prior round context (if any) + user interjections.
 - Calls MiniMax (via `ModelGarage`) with Alpha system prompt.
 - Streams reasoning tokens to dashboard in real time.
 - Emits structured `AgentVerdict`.
 
-**Beta** — validation. Reality-check + blast-radius.
-- Input: problem + Alpha's reasoning + Beta's prior-round context.
+**Beta** — validation. Reality-check + blast-radius. LLM-call node.
+- Input: problem + Alpha's reasoning + prior-round context + user interjections.
 - Calls MiniMax, streams reasoning, emits `AgentVerdict`.
 
-**Charlie** — challenge. Adversarial review + defense counsel.
-- Input: problem + Alpha's reasoning + Beta's reasoning + prior-round context.
+**Charlie** — challenge. Adversarial review + defense counsel. LLM-call node.
+- Input: problem + Alpha's reasoning + Beta's reasoning + prior-round context + user interjections.
 - Calls MiniMax, streams reasoning, emits `AgentVerdict`.
 
 ### Core types
@@ -232,10 +232,13 @@ Alpha ─alpha_thinking event────────────> NATS ──�
 Alpha ─[token events]──────────────────> NATS ────────────────> WS ────> USER
 Alpha ─alpha_verdict───────────────────> NATS ────────────────> WS ────> USER
 LangGraph ─persist─────────────────────> Postgres
-LangGraph ─[beta ‖ charlie parallel]──> Beta, Charlie  (same shape)
-LangGraph ─steward_tally───────────────> Steward
+LangGraph ─beta node───────────────────> Beta (sees Alpha's reasoning)
+Beta  ─[same shape: thinking → tokens → verdict]──> NATS ──> WS ──> USER
+LangGraph ─charlie node────────────────> Charlie (sees Alpha + Beta)
+Charlie ─[same shape]────────> NATS ──> WS ──> USER
+LangGraph ─steward_tally───────────────> Steward (deterministic)
   ├── consensus → consensus_reached + completed + FinalVerdict
-  ├── no consensus, round < max → steward_feedback → round+1 → loop
+  ├── no consensus, round < max → steward_feedback → round+1 → loop (back to Alpha)
   └── round == max → consensus_failed + completed + no-consensus
 
 USER ─POST /api/deliberations/{id}/interject {text}─> API
@@ -264,7 +267,7 @@ All events conform to `DeliberationEvent`. Sequence numbers monotonic per delibe
 | `consensus_failed` | `{reason}` | No agreement after max rounds |
 | `completed` | `FinalVerdict` | Deliberation done |
 
-`token` events are batched on WS at 30fps; NATS gets them raw for audit.
+`token` events are batched on the WS at ~30 Hz (one batched frame every ~33 ms, max 50 tokens per frame). NATS gets each token event raw for audit. WS batching drops intermediate tokens when a frame fills; the next frame carries whatever has accumulated.
 
 ### HTTP protocol
 
@@ -304,7 +307,8 @@ On connect, server replays persisted events from Postgres in seq order, then liv
 ### Consensus rule
 
 ```
-if all 3 approve → approved (high confidence)
+if all 3 approve AND min(confidence_alpha, confidence_beta, confidence_charlie) >= 0.7
+  → approved (FinalVerdict.decision = "approved", summary written by Steward from verdicts)
 if 2-of-3 approve AND charlie position != "challenge" → approved
 if 2-of-3 reject → rejected
 if charlie "challenge" with confidence > 0.7 → always needs-revision
@@ -312,7 +316,7 @@ if round >= max_rounds → no-consensus
 else → feedback loop (Steward writes concrete feedback, next round)
 ```
 
-Max rounds = 3, configurable via env.
+Max rounds = 3, configurable via env. The first rule (unanimous high-confidence approval) is the "gold path"; the 2-of-3 rule handles partial agreement; Charlie's challenge is a hard veto at high confidence.
 
 ---
 
@@ -457,7 +461,7 @@ TDD from scratch on the greenfield module. Target 80%+ line, 70%+ branch on `bac
 | 8 | desloppify as CI gate | Catches dead code during the cut. |
 | 9 | Reference repos surveyed | 17 surveyed; desloppify/lobehub/thClaws/kweaver folded into workflow. PraisonAI/openclaude/oh-my-agent/mateclaw as fallback substrates if picks fail. RedBox/altimate-code/datachain/holaOS/Autonomous-Agents skipped (wrong domain). |
 | 10 | Naming: "agents" not "actors" | Doctrinal term. What users see. |
-| 11 | Consensus rule: 2-of-3 with Charlie override | Maps to doctrine ("Challenge = defense counsel"). Charlie high-confidence challenge always blocks approval. |
+| 11 | Consensus rule: unanimous high-confidence OR 2-of-3 with Charlie override | Maps to doctrine ("Challenge = defense counsel"). Unanimous approval at >=0.7 confidence is the gold path; otherwise 2-of-3 with Charlie high-confidence challenge as hard veto. |
 | 12 | Max rounds = 3 | Configurable. Bounds feedback-loop cost. |
 
 ---
