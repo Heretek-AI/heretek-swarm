@@ -14,7 +14,14 @@ otherwise; the graph loops back to alpha with the new feedback list.
 from __future__ import annotations
 
 import asyncio
+import time
 from typing import AsyncIterator, Awaitable, Callable
+
+from tier1.observability import get_tracer
+from tier1.observability.metrics import (
+    record_deliberation_latency,
+    record_deliberation_rounds,
+)
 
 from langgraph.graph import END, START, StateGraph
 
@@ -80,8 +87,17 @@ class Tribunal:
 
     async def run(self, state: DeliberationState) -> DeliberationState:
         """Run the tribunal to completion. Returns final state."""
-        result = await self._compiled.ainvoke(state)
-        return DeliberationState(result)
+        tracer = get_tracer("tier1.tribunal")
+        with tracer.start_as_current_span("tribunal.run") as span:
+            span.set_attribute("deliberation.id", state.get("deliberation_id", ""))
+            t0 = time.monotonic()
+            result = await self._compiled.ainvoke(state)
+            elapsed = time.monotonic() - t0
+            rounds = result.get("round", 0) + 1
+            span.set_attribute("deliberation.rounds", rounds)
+            record_deliberation_latency(elapsed)
+            record_deliberation_rounds(rounds)
+            return DeliberationState(result)
 
     async def stream(self, state: DeliberationState) -> AsyncIterator[DeliberationEvent]:
         """Yield events as they happen during the run.

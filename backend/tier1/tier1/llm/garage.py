@@ -18,6 +18,8 @@ from typing import AsyncIterator, Deque
 import structlog
 
 from tier1.config import Settings
+from tier1.observability import get_tracer
+from tier1.observability.metrics import record_provider_call
 from tier1.deliberation.state import AgentName
 from tier1.llm.errors import (
     LLMTimeout,
@@ -56,10 +58,16 @@ class _Circuit:
         if len(self.failures) >= CIRCUIT_THRESHOLD:
             self.open_until = now + CIRCUIT_OPEN_S
             log.warning("circuit_open", provider=self.name, until=self.open_until)
+            from tier1.observability.metrics import toggle_circuit_state
+
+            toggle_circuit_state(self.name, +1)
 
     def record_success(self) -> None:
         self.failures.clear()
         self.open_until = 0.0
+        from tier1.observability.metrics import toggle_circuit_state
+
+        toggle_circuit_state(self.name, -1)
 
     def is_open(self) -> bool:
         return time.time() < self.open_until
@@ -195,30 +203,37 @@ class ModelGarage:
             raise LLMUnavailable(f"no API key for {provider_name}")
 
         client = AsyncOpenAI(api_key=key, base_url=base, timeout=self.settings.llm_timeout_s)
-        try:
-            response = await client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": prompt}],
-                stream=True,
-            )
-            seq = 0
-            async for chunk in response:  # type: ignore[union-attr]
-                delta = chunk.choices[0].delta if chunk.choices else None
-                if delta and delta.content:
-                    yield StreamChunk(token=delta.content, agent=agent, seq=seq)
-                    seq += 1
-        except Exception as exc:
-            if "timeout" in str(exc).lower() or "timed out" in str(exc).lower():
-                raise LLMTimeout(str(exc)) from exc
-            # Wrap SDK-level errors (auth, rate-limit, etc.) as LLMUnavailable
-            # so callers see a uniform provider-failure type.
+        tracer = get_tracer("tier1.llm")
+        t0 = time.monotonic()
+        with tracer.start_as_current_span(f"llm.{provider_name}") as span:
+            span.set_attribute("provider", provider_name)
+            span.set_attribute("model", model)
             try:
-                from openai import OpenAIError
-            except ImportError:
-                OpenAIError = None  # type: ignore[assignment,misc]
-            if OpenAIError is not None and isinstance(exc, OpenAIError):
-                raise LLMUnavailable(str(exc)) from exc
-            raise
+                response = await client.chat.completions.create(
+                    model=model,
+                    messages=[{"role": "user", "content": prompt}],
+                    stream=True,
+                )
+                seq = 0
+                async for chunk in response:  # type: ignore[union-attr]
+                    delta = chunk.choices[0].delta if chunk.choices else None
+                    if delta and delta.content:
+                        yield StreamChunk(token=delta.content, agent=agent, seq=seq)
+                        seq += 1
+            except Exception as exc:
+                if "timeout" in str(exc).lower() or "timed out" in str(exc).lower():
+                    raise LLMTimeout(str(exc)) from exc
+                # Wrap SDK-level errors (auth, rate-limit, etc.) as LLMUnavailable
+                # so callers see a uniform provider-failure type.
+                try:
+                    from openai import OpenAIError
+                except ImportError:
+                    OpenAIError = None  # type: ignore[assignment,misc]
+                if OpenAIError is not None and isinstance(exc, OpenAIError):
+                    raise LLMUnavailable(str(exc)) from exc
+                raise
+            finally:
+                record_provider_call(provider_name, time.monotonic() - t0)
 
     async def _stream_anthropic_provider(
         self,
@@ -238,27 +253,34 @@ class ModelGarage:
             api_key=self.settings.anthropic_api_key,
             timeout=self.settings.llm_timeout_s,
         )
-        try:
-            async with client.messages.stream(
-                model=self.settings.anthropic_model,
-                max_tokens=4096,
-                messages=[{"role": "user", "content": prompt}],
-            ) as stream:
-                seq = 0
-                async for text in stream.text_stream:
-                    yield StreamChunk(token=text, agent=agent, seq=seq)
-                    seq += 1
-        except Exception as exc:
-            if "timeout" in str(exc).lower() or "timed out" in str(exc).lower():
-                raise LLMTimeout(str(exc)) from exc
-            # Wrap SDK-level errors as LLMUnavailable for uniform error type.
+        tracer = get_tracer("tier1.llm")
+        t0 = time.monotonic()
+        with tracer.start_as_current_span("llm.anthropic") as span:
+            span.set_attribute("provider", "anthropic")
+            span.set_attribute("model", self.settings.anthropic_model)
             try:
-                from anthropic import AnthropicError
-            except ImportError:
-                AnthropicError = None  # type: ignore[assignment,misc]
-            if AnthropicError is not None and isinstance(exc, AnthropicError):
-                raise LLMUnavailable(str(exc)) from exc
-            raise
+                async with client.messages.stream(
+                    model=self.settings.anthropic_model,
+                    max_tokens=4096,
+                    messages=[{"role": "user", "content": prompt}],
+                ) as stream:
+                    seq = 0
+                    async for text in stream.text_stream:
+                        yield StreamChunk(token=text, agent=agent, seq=seq)
+                        seq += 1
+            except Exception as exc:
+                if "timeout" in str(exc).lower() or "timed out" in str(exc).lower():
+                    raise LLMTimeout(str(exc)) from exc
+                # Wrap SDK-level errors as LLMUnavailable for uniform error type.
+                try:
+                    from anthropic import AnthropicError
+                except ImportError:
+                    AnthropicError = None  # type: ignore[assignment,misc]
+                if AnthropicError is not None and isinstance(exc, AnthropicError):
+                    raise LLMUnavailable(str(exc)) from exc
+                raise
+            finally:
+                record_provider_call("anthropic", time.monotonic() - t0)
 
     async def chat(self, prompt: str, *, agent: AgentName) -> str:
         """Non-streaming convenience: collect all tokens into one string."""
