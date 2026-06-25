@@ -22,6 +22,7 @@ def garage(require_minimax_key: str) -> ModelGarage:
     return ModelGarage(_settings(require_minimax_key))
 
 
+@pytest.mark.integration
 async def test_smoke_returns_tokens(garage: ModelGarage):
     """A trivial prompt yields at least one token chunk with the expected shape."""
     chunks = []
@@ -36,6 +37,7 @@ async def test_smoke_returns_tokens(garage: ModelGarage):
     assert all(c.seq == i for i, c in enumerate(chunks))
 
 
+@pytest.mark.integration
 async def test_smoke_uses_minimax_url(garage: ModelGarage):
     """Verify base_url in the live client matches the configured MiniMax URL."""
     # Patch AsyncOpenAI to capture the constructed client and inspect its base_url.
