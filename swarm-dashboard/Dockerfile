@@ -4,7 +4,7 @@
 # =============================================================================
 # Stage 1: Builder — compile TypeScript and Vite assets inside Docker
 # =============================================================================
-FROM node:26.2.0-alpine AS builder
+FROM node:26.3.1-alpine AS builder
 
 # Accept build-time env vars for Vite
 ARG VITE_API_URL
