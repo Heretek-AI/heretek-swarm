@@ -111,6 +111,7 @@ class _FakeApp:
         self.state.nats = nats
 
 
+@pytest.mark.integration
 async def test_ws_replay_then_live():
     """Drive the WS handler with a fake WebSocket and assert frame order."""
     _require_infra()

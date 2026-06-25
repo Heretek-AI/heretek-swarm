@@ -43,6 +43,7 @@ def _garage_capturing_prompts(captured: list) -> ModelGarage:
     return g
 
 
+@pytest.mark.integration
 async def test_interjection_appears_in_next_round_prompt():
     captured: list = []
     garage = _garage_capturing_prompts(captured)
@@ -58,6 +59,7 @@ async def test_interjection_appears_in_next_round_prompt():
     assert any("please consider the safety implications" in p for p in round1_prompts)
 
 
+@pytest.mark.integration
 async def test_interjection_event_recorded_when_added_via_api_path(monkeypatch):
     # Smoke: simulating the API path: append a user_interjection event,
     # then run the tribunal.

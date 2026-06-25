@@ -33,6 +33,7 @@ def _garage_with_per_round_responses(round_responses: list[dict[str, str]]) -> M
     return g
 
 
+@pytest.mark.integration
 async def test_three_rounds_with_split_votes_ends_no_consensus():
     # Every round produces split verdicts (alpha approve, beta reject, charlie challenge).
     split_round = {
@@ -50,6 +51,7 @@ async def test_three_rounds_with_split_votes_ends_no_consensus():
     assert result["final_verdict"].decision == "no-consensus"
 
 
+@pytest.mark.integration
 async def test_three_rounds_emits_two_feedback_events():
     split_round = {
         "alpha": '{"position": "approve", "confidence": 0.7, "concerns": ["a"], "reasoning": "a"}',
@@ -66,6 +68,7 @@ async def test_three_rounds_emits_two_feedback_events():
     assert len(feedback_events) == 2
 
 
+@pytest.mark.integration
 async def test_consensus_reached_on_round_2_after_feedback():
     round1 = {
         "alpha": '{"position": "approve", "confidence": 0.7, "concerns": ["a"], "reasoning": "a"}',

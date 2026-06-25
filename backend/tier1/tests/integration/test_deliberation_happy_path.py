@@ -36,6 +36,7 @@ def unanimous_responses() -> dict[str, str]:
     }
 
 
+@pytest.mark.integration
 async def test_unanimous_approval_finishes_in_one_round(unanimous_responses):
     garage = _garage_with_responses(unanimous_responses)
     tribunal = Tribunal(_settings(), garage)
@@ -47,6 +48,7 @@ async def test_unanimous_approval_finishes_in_one_round(unanimous_responses):
     assert result["round"] == 0  # No feedback round
 
 
+@pytest.mark.integration
 async def test_unanimous_emits_started_thinking_verdict_completed(unanimous_responses):
     garage = _garage_with_responses(unanimous_responses)
     tribunal = Tribunal(_settings(), garage)
@@ -61,6 +63,7 @@ async def test_unanimous_emits_started_thinking_verdict_completed(unanimous_resp
     assert "completed" in kinds
 
 
+@pytest.mark.integration
 async def test_alpha_runs_before_beta_runs_before_charlie(unanimous_responses):
     garage = _garage_with_responses(unanimous_responses)
     tribunal = Tribunal(_settings(), garage)
@@ -73,6 +76,7 @@ async def test_alpha_runs_before_beta_runs_before_charlie(unanimous_responses):
     assert a < b < c
 
 
+@pytest.mark.integration
 async def test_stream_yields_events_as_they_happen(unanimous_responses):
     garage = _garage_with_responses(unanimous_responses)
     tribunal = Tribunal(_settings(), garage)
