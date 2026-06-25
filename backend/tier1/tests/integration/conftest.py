@@ -1,6 +1,6 @@
 """Shared fixtures for integration tests.
 
-Skips smoke tests when MINIMAX_API_KEY is unset. Behavior tests are not
+Skips smoke tests when TIER1_MINIMAX_API_KEY is unset. Behavior tests are not
 skipped here — they replay cassettes and always run.
 """
 
