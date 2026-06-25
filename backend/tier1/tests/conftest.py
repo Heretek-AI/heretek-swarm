@@ -12,7 +12,10 @@ from tier1.api.app import create_app
 
 @pytest.fixture(scope="session")
 def app():
-    return create_app()
+    from unittest.mock import patch
+
+    with patch("tier1.observability._init_otel"):
+        return create_app()
 
 
 @pytest.fixture()

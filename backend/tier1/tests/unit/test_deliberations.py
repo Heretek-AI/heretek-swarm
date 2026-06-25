@@ -23,7 +23,10 @@ async def _noop_lifespan(app):
 
 @pytest.fixture()
 def deliberation_client():
-    app = create_app()
+    from unittest.mock import patch
+
+    with patch("tier1.observability._init_otel"):
+        app = create_app()
     # Replace lifespan so TestClient doesn't try to connect to real Postgres/Redis/NATS.
     app.router.lifespan_context = _noop_lifespan
     pg = AsyncMock()

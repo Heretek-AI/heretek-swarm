@@ -65,6 +65,10 @@ def create_app(settings: Settings | None = None, dashboard_path: Path | None = N
     settings = settings or get_settings()
     app = FastAPI(title="Tier 1 Core Triad", version="0.1.0", lifespan=lifespan)
     app.state.settings = settings
+    # Wire observability (OTel traces + metrics + logging)
+    from tier1.observability import init_telemetry
+
+    init_telemetry(app)
     app.include_router(health.router)
     app.include_router(deliberations.router)
     app.include_router(ws.router)
