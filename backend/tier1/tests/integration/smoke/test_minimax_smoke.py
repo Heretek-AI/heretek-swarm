@@ -61,4 +61,4 @@ async def test_smoke_uses_minimax_url(garage: ModelGarage):
     settings = garage.settings
     assert captured.get("api_key") == settings.minimax_api_key
     assert captured.get("base_url") == settings.minimax_base_url
-    assert "minimaxi.com" in str(captured.get("base_url"))
+    assert "minimax.io" in str(captured.get("base_url"))
