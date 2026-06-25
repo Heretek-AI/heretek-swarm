@@ -32,7 +32,7 @@ def record_mode() -> str:
     Replay-only mode means missing cassettes fail loudly in CI rather than
     silently auto-recording against a real API.
     """
-    return "record" if os.environ.get("RECORD_MINIMAX") == "1" else "none"
+    return "once" if os.environ.get("RECORD_MINIMAX") == "1" else "none"
 
 
 @pytest.fixture(scope="session")

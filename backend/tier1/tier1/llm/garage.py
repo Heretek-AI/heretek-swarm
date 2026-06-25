@@ -210,6 +210,14 @@ class ModelGarage:
         except Exception as exc:
             if "timeout" in str(exc).lower() or "timed out" in str(exc).lower():
                 raise LLMTimeout(str(exc)) from exc
+            # Wrap SDK-level errors (auth, rate-limit, etc.) as LLMUnavailable
+            # so callers see a uniform provider-failure type.
+            try:
+                from openai import OpenAIError
+            except ImportError:
+                OpenAIError = None  # type: ignore[assignment,misc]
+            if OpenAIError is not None and isinstance(exc, OpenAIError):
+                raise LLMUnavailable(str(exc)) from exc
             raise
 
     async def _stream_anthropic_provider(
@@ -243,6 +251,13 @@ class ModelGarage:
         except Exception as exc:
             if "timeout" in str(exc).lower() or "timed out" in str(exc).lower():
                 raise LLMTimeout(str(exc)) from exc
+            # Wrap SDK-level errors as LLMUnavailable for uniform error type.
+            try:
+                from anthropic import AnthropicError
+            except ImportError:
+                AnthropicError = None  # type: ignore[assignment,misc]
+            if AnthropicError is not None and isinstance(exc, AnthropicError):
+                raise LLMUnavailable(str(exc)) from exc
             raise
 
     async def chat(self, prompt: str, *, agent: AgentName) -> str:
