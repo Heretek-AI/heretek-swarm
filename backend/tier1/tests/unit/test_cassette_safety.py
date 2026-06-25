@@ -25,7 +25,10 @@ LIVE_KEY_PATTERNS = [
 ]
 
 # Bearer header that is NOT the safe "REDACTED" placeholder.
-BEARER_LIVE = re.compile(r"[Aa]uthorization:\s*Bearer\s+(?!REDACTED$)[A-Za-z0-9_\-\.]{8,}")
+BEARER_LIVE = re.compile(
+    r"[Aa]uthorization:\s*Bearer\s+(?!REDACTED\s*$)[A-Za-z0-9_\-\.]{8,}",
+    re.MULTILINE,
+)
 
 
 @pytest.fixture(scope="module")
