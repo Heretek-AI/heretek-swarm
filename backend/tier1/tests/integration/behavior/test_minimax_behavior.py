@@ -18,6 +18,7 @@ def garage() -> ModelGarage:
     return ModelGarage(_settings())
 
 
+@pytest.mark.integration
 async def test_minimax_stream_tokens(garage: ModelGarage, vcr_cassette):
     """Smoke shape: at least one token comes back, has agent + seq."""
     with vcr_cassette:
@@ -30,6 +31,7 @@ async def test_minimax_stream_tokens(garage: ModelGarage, vcr_cassette):
     assert all(c.seq == i for i, c in enumerate(chunks))
 
 
+@pytest.mark.integration
 async def test_minimax_monotonic_seq(garage: ModelGarage, vcr_cassette):
     """seq counter increments 0, 1, 2, ... across the stream."""
     with vcr_cassette:
@@ -40,6 +42,7 @@ async def test_minimax_monotonic_seq(garage: ModelGarage, vcr_cassette):
     assert len(seqs) >= 1
 
 
+@pytest.mark.integration
 async def test_minimax_empty_stream(garage: ModelGarage, vcr_cassette):
     """A response with no content chunks yields no StreamChunks."""
     with vcr_cassette:
@@ -49,6 +52,7 @@ async def test_minimax_empty_stream(garage: ModelGarage, vcr_cassette):
     assert chunks == []
 
 
+@pytest.mark.integration
 async def test_minimax_error_response(garage: ModelGarage, vcr_cassette):
     """A 401 from MiniMax raises LLMUnavailable, not a generic exception."""
     from tier1.llm.errors import LLMUnavailable
