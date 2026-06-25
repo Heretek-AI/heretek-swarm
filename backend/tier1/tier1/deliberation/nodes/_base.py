@@ -23,6 +23,7 @@ from tier1.deliberation.state import (
     now_ts,
 )
 from tier1.llm.garage import ModelGarage, StreamChunk
+from tier1.observability.metrics import record_agent_tokens
 from tier1.llm.prompts import SYSTEM_PROMPTS
 
 EventSink = Callable[[DeliberationEvent], Awaitable[None]]
@@ -101,6 +102,7 @@ async def run_agent(
             await sink(events[-1])
 
     raw = "".join(accumulated)
+    record_agent_tokens(agent, len(accumulated))
     verdict = parse_verdict(agent, raw)
 
     # Emit verdict event

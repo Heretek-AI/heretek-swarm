@@ -11,6 +11,7 @@ from typing import Awaitable, Callable
 
 from tier1.config import Settings
 from tier1.deliberation.nodes.consensus import build_final_verdict
+from tier1.observability.metrics import record_consensus_outcome
 from tier1.deliberation.state import (
     DeliberationEvent,
     DeliberationState,
@@ -41,6 +42,8 @@ async def steward_node(
         unanimous_floor=settings.unanimous_confidence_floor,
         max_rounds=settings.max_rounds,
     )
+
+    record_consensus_outcome(final.decision)
 
     new_state: DeliberationState = {**state, "events": events}
 
