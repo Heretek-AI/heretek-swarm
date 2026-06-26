@@ -12,7 +12,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { MemoryRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { MemoryRouter, Routes, Route, useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { HomePage as NewHomePage } from './pages/home-page';
 import { DeliberationListPage as NewDeliberationListPage } from './pages/deliberation-list-page';
 import { DeliberationPage as NewDeliberationPage } from './pages/deliberation-page';
@@ -34,7 +34,6 @@ import { ConsciousnessPage } from './components/Consciousness/ConsciousnessPage'
 import { AutonomousPage } from './components/Autonomous/AutonomousPage';
 import { ObservabilityPage } from './components/Observability/ObservabilityPage';
 import { MessageList } from './components/Chat/MessageList';
-import { AnalysisHistory } from './components/Autonomous/AnalysisHistory';
 import { EnhancedCanvas } from './components/Canvas/EnhancedCanvas';
 import { SettingsPage } from './components/Settings/SettingsPage';
 import { LogsPage } from './components/Logs/LogsPage';
@@ -49,20 +48,10 @@ import { setToastInstance } from './api/client';
 import { WorkflowBuilder } from './components/WorkflowBuilder/WorkflowBuilder';
 import { CommandPalette, CommandItem } from './components/UI/CommandPalette';
 
-type View =
-  | 'agents'
-  | 'consciousness'
-  | 'autonomous'
-  | 'workflows'
-  | 'logs'
-  | 'settings'
-  | 'observability'
-  | 'chat'
-  | 'memory'
-  | 'canvas';
-
 const navItems: NavItem[] = [
+  { id: 'home', label: 'Home', icon: '🏠' },
   { id: 'agents', label: 'Agents', icon: '🤖' },
+  { id: 'deliberations', label: 'Deliberations', icon: '💬' },
   { id: 'consciousness', label: 'Consciousness', icon: '🧠' },
   { id: 'autonomous', label: 'Autonomous', icon: '🔄' },
   { id: 'observability', label: 'Observability', icon: '🔍' },
@@ -74,8 +63,58 @@ const navItems: NavItem[] = [
   { id: 'settings', label: 'Settings', icon: '⚙️' },
 ];
 
+function DashboardLayoutWrapper({
+  systemStatus,
+  onRerunSetup,
+}: {
+  systemStatus: 'healthy' | 'degraded' | 'offline';
+  onRerunSetup: () => void;
+}) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Map pathname to nav ID
+  const pathToNav: Record<string, string> = {
+    '/': 'home',
+    '/agents': 'agents',
+    '/consciousness': 'consciousness',
+    '/deliberations': 'deliberations',
+    '/autonomous': 'autonomous',
+    '/observability': 'observability',
+    '/chat': 'chat',
+    '/canvas': 'canvas',
+    '/workflows': 'workflows',
+    '/logs': 'logs',
+    '/settings': 'settings',
+  };
+
+  const activeNav =
+    pathToNav[location.pathname] ||
+    (location.pathname.startsWith('/deliberations') ? 'deliberations' : 'home');
+
+  const handleNavClick = useCallback(
+    (navId: string) => {
+      const path = Object.entries(pathToNav).find(([, id]) => id === navId)?.[0] || '/';
+      navigate(path);
+    },
+    [navigate],
+  );
+
+  return (
+    <DashboardLayout
+      activeNav={activeNav}
+      onNavClick={handleNavClick}
+      navItems={navItems}
+      systemStatus={systemStatus}
+    >
+      <ErrorBoundary>
+        <Outlet />
+      </ErrorBoundary>
+    </DashboardLayout>
+  );
+}
+
 function DashboardContent() {
-  const [currentView, setCurrentView] = useState<View>('agents');
   const [systemStatus, setSystemStatus] = useState<'healthy' | 'degraded' | 'offline'>('healthy');
   const toast = useToast();
 
@@ -91,32 +130,23 @@ function DashboardContent() {
       const storedConfigured = localStorage.getItem('swarm_configured') === 'true';
       const storedApiHost = localStorage.getItem('swarm_api_host');
 
-      // Check for VITE environment variables first (set by docker-compose)
       const envApiKey = import.meta.env.VITE_API_KEY;
       const envApiHost = import.meta.env.VITE_API_HOST;
 
       if (!storedConfigured || !storedApiHost) {
-        // Not configured or no stored API host - check env vars
-        // Only auto-skip wizard if BOTH host AND key are set via env
-        // Having only envApiHost means the user still needs to enter the key interactively
         if (envApiKey && envApiHost) {
-          // Both env vars present — pre-populate and skip wizard
           localStorage.setItem('swarm_api_host', envApiHost);
           localStorage.setItem('swarm_configured', 'true');
-
           useSetupStore.getState().setConfig({
             apiHost: envApiHost,
             apiKey: envApiKey,
             wsHost: '',
           });
-
           setShowSetup(false);
         } else {
-          // No env vars or missing key — show wizard so user can enter credentials
           setShowSetup(true);
         }
       } else {
-        // Restore config from localStorage if not in store
         if (!config.apiHost) {
           useSetupStore.getState().setConfig({
             apiHost: storedApiHost,
@@ -142,7 +172,6 @@ function DashboardContent() {
   // Check system health periodically
   const checkSystemHealth = useCallback(async () => {
     try {
-      // Use stored API host or fall back to environment variable
       const apiHost = _safeUrl(
         localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_HOST || '',
       );
@@ -158,16 +187,11 @@ function DashboardContent() {
       }
       const data = await response.json();
 
-      // Primary signal: top-level status from the API.
-      // In --no-infra mode, the API returns { status: 'healthy' } even when
-      // infra services are unavailable — this is correct behavior.
       if (data.status === 'healthy') {
         setSystemStatus('healthy');
         return;
       }
 
-      // Secondary: if the API responded but top-level status isn't 'healthy',
-      // check individual services for the 'degraded' state.
       const svc = data.services || {};
       const anyServiceHealthy =
         svc.gateway?.status === 'healthy' ||
@@ -182,75 +206,23 @@ function DashboardContent() {
   }, []);
 
   useEffect(() => {
-    // Only check health if not showing setup
     if (!showSetup && isInitialized) {
       checkSystemHealth();
-      const interval = setInterval(checkSystemHealth, 30000); // Check every 30 seconds
+      const interval = setInterval(checkSystemHealth, 30000);
       return () => clearInterval(interval);
     }
   }, [checkSystemHealth, showSetup, isInitialized]);
 
-  const handleNavClick = useCallback((navId: string) => {
-    setCurrentView(navId as View);
-  }, []);
-
-  // Handle setup completion
   const handleSetupComplete = useCallback(() => {
     setShowSetup(false);
-    // Trigger health check after setup
     setTimeout(checkSystemHealth, 1000);
   }, [checkSystemHealth]);
 
-  // Handle re-running setup from settings
   const handleRerunSetup = useCallback(() => {
     resetSetup();
     setRerunning(true);
     setShowSetup(true);
   }, [resetSetup, setRerunning]);
-
-  const renderView = () => {
-    // Tier 3: a real router drives the view via <Routes> below; this
-    // function is kept only as a fallback for legacy callers. The
-    // router is now the source of truth.
-    switch (currentView) {
-      case 'agents':
-        return <AgentsPage />;
-      case 'consciousness':
-        return <ConsciousnessPage />;
-      case 'autonomous':
-        return <AutonomousPage />;
-      case 'observability':
-        return <ObservabilityPage />;
-      case 'chat':
-        return <MessageList />;
-      case 'memory':
-        return <AnalysisHistory />;
-      case 'canvas':
-        return <EnhancedCanvas />;
-      case 'workflows':
-        return <WorkflowBuilder />;
-      case 'logs':
-        return <LogsPage />;
-      case 'settings':
-        return <SettingsPage onRerunSetup={handleRerunSetup} />;
-      default:
-        return <NewHomePage />;
-    }
-  };
-
-  // Tier-1 routes take precedence over the legacy view switcher.
-  const location = useLocation();
-  const isTier1Route =
-    location.pathname === '/' ||
-    location.pathname === '/deliberations' ||
-    location.pathname.startsWith('/deliberations/');
-
-  const renderTier1 = () => {
-    if (location.pathname === '/') return <NewHomePage />;
-    if (location.pathname === '/deliberations') return <NewDeliberationListPage />;
-    if (location.pathname.startsWith('/deliberations/')) return <NewDeliberationPage />;
-    return null;
-  };
 
   // Don't render until we've checked configuration
   if (!isInitialized) {
@@ -269,14 +241,29 @@ function DashboardContent() {
       {showSetup ? (
         <SetupWizard onComplete={handleSetupComplete} />
       ) : (
-        <DashboardLayout
-          activeNav={currentView}
-          onNavClick={handleNavClick}
-          navItems={navItems}
-          systemStatus={systemStatus}
-        >
-          <ErrorBoundary>{isTier1Route ? renderTier1() : renderView()}</ErrorBoundary>
-        </DashboardLayout>
+        <Routes>
+          <Route
+            element={
+              <DashboardLayoutWrapper systemStatus={systemStatus} onRerunSetup={handleRerunSetup} />
+            }
+          >
+            {/* Tier-1 routes */}
+            <Route path="/" element={<NewHomePage />} />
+            <Route path="/deliberations" element={<NewDeliberationListPage />} />
+            <Route path="/deliberations/:id" element={<NewDeliberationPage />} />
+
+            {/* Legacy routes */}
+            <Route path="/agents" element={<AgentsPage />} />
+            <Route path="/consciousness" element={<ConsciousnessPage />} />
+            <Route path="/autonomous" element={<AutonomousPage />} />
+            <Route path="/observability" element={<ObservabilityPage />} />
+            <Route path="/chat" element={<MessageList />} />
+            <Route path="/canvas" element={<EnhancedCanvas />} />
+            <Route path="/workflows" element={<WorkflowBuilder />} />
+            <Route path="/logs" element={<LogsPage />} />
+            <Route path="/settings" element={<SettingsPage onRerunSetup={handleRerunSetup} />} />
+          </Route>
+        </Routes>
       )}
       <CommandPalette
         items={navItems.map<CommandItem>((item) => ({
