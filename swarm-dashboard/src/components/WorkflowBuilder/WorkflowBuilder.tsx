@@ -49,7 +49,7 @@ import {
   WorkflowExportFormat,
 } from './types';
 
-import 'reactflow/dist/style.css';
+import '@xyflow/react/dist/style.css';
 import { AgentNode, ToolNode, MemoryNode, DecisionNode, ConnectorNode, LLMNode } from './index';
 import { NodeConfigPanel } from '../Workflow/NodeConfigPanel';
 import type { AgentConfig } from '../Workflow/NodeConfigPanel';
