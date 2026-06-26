@@ -1,10 +1,10 @@
 /**
  * Type definitions for ReactFlow
- * 
+ *
  * Provides type safety for ReactFlow components
  */
 
-import { Node } from 'reactflow';
+import { Node } from '@xyflow/react';
 
 // =============================================================================
 // Custom Node Types
@@ -13,7 +13,22 @@ import { Node } from 'reactflow';
 export interface AgentNode extends Node {
   data: {
     agentId: string;
-    agentType: 'alpha' | 'beta' | 'charlie' | 'steward' | 'historian' | 'coder' | 'dreamer' | 'explorer' | 'examiner' | 'empath' | 'metis' | 'nexus' | 'perceiver' | 'sentinel' | 'sentinel-prime';
+    agentType:
+      | 'alpha'
+      | 'beta'
+      | 'charlie'
+      | 'steward'
+      | 'historian'
+      | 'coder'
+      | 'dreamer'
+      | 'explorer'
+      | 'examiner'
+      | 'empath'
+      | 'metis'
+      | 'nexus'
+      | 'perceiver'
+      | 'sentinel'
+      | 'sentinel-prime';
     status: 'idle' | 'thinking' | 'acting' | 'error';
     lastActivity?: string;
   };

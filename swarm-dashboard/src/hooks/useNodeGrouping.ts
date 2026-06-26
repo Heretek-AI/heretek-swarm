@@ -1,9 +1,9 @@
 /**
  * Node Grouping Hook
- * 
+ *
  * Provides functionality for grouping, organizing, and managing
  * collections of nodes in the workflow builder.
- * 
+ *
  * Features:
  * - Create/delete groups from selected nodes
  * - Named groups with collapsible headers
@@ -11,12 +11,12 @@
  * - Color-coded groups by function
  * - Drag nodes in/out of groups
  * - Group statistics (agent count, total load, average Phi)
- * 
+ *
  * Inspired by XYFlow node grouping patterns.
  */
 
 import { useCallback, useState } from 'react';
-import { Node } from 'reactflow';
+import { Node } from '@xyflow/react';
 
 // ============================================================================
 // Types
@@ -123,11 +123,7 @@ export interface UseNodeGroupingReturn {
   /** All groups */
   groups: NodeGroup[];
   /** Create a new group from selected nodes */
-  createGroup: (
-    nodeIds: string[],
-    name: string,
-    func?: GroupFunction
-  ) => NodeGroup | null;
+  createGroup: (nodeIds: string[], name: string, func?: GroupFunction) => NodeGroup | null;
   /** Delete a group */
   deleteGroup: (groupId: string) => void;
   /** Update group properties */
@@ -143,7 +139,10 @@ export interface UseNodeGroupingReturn {
   /** Get group containing a node */
   getGroupForNode: (nodeId: string) => NodeGroup | undefined;
   /** Calculate bounds for nodes */
-  calculateGroupBounds: (nodeIds: string[], nodes: Node[]) => {
+  calculateGroupBounds: (
+    nodeIds: string[],
+    nodes: Node[],
+  ) => {
     position: { x: number; y: number };
     size: { width: number; height: number };
   };
@@ -157,14 +156,16 @@ export interface UseNodeGroupingReturn {
 
 /**
  * Generate a unique group ID
- * 
+ *
  * Uses crypto.getRandomValues for better randomness than Math.random().
  * This is NOT security-critical - group IDs are for UI organization only.
  */
 function generateGroupId(): string {
   const array = new Uint8Array(9);
   crypto.getRandomValues(array);
-  return `group-${Date.now()}-${Array.from(array, (b) => b.toString(36).padStart(2, '0')).join('').slice(0, 9)}`;
+  return `group-${Date.now()}-${Array.from(array, (b) => b.toString(36).padStart(2, '0'))
+    .join('')
+    .slice(0, 9)}`;
 }
 
 /**
@@ -173,35 +174,35 @@ function generateGroupId(): string {
 function calculateBounds(
   nodeIds: string[],
   nodes: Node[],
-  padding: number = 40
+  padding: number = 40,
 ): { position: { x: number; y: number }; size: { width: number; height: number } } {
   const groupNodes = nodes.filter((n) => nodeIds.includes(n.id));
-  
+
   if (groupNodes.length === 0) {
     return {
       position: { x: 0, y: 0 },
       size: { width: 0, height: 0 },
     };
   }
-  
+
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
-  
+
   for (const node of groupNodes) {
     const x = node.position.x;
     const y = node.position.y;
     // Assume standard node dimensions if not available
     const width = (node.width as number) || 200;
     const height = (node.height as number) || 100;
-    
+
     minX = Math.min(minX, x);
     minY = Math.min(minY, y);
     maxX = Math.max(maxX, x + width);
     maxY = Math.max(maxY, y + height);
   }
-  
+
   return {
     position: {
       x: minX - padding,
@@ -217,38 +218,41 @@ function calculateBounds(
 /**
  * Calculate group statistics from nodes
  */
-export function calculateGroupStatistics(nodeIds: string[], nodes: Node[]): {
+export function calculateGroupStatistics(
+  nodeIds: string[],
+  nodes: Node[],
+): {
   agentCount: number;
   totalLoad: number;
   averagePhi: number;
 } {
   const groupNodes = nodes.filter((n) => nodeIds.includes(n.id));
-  
+
   let agentCount = 0;
   let totalLoad = 0;
   let totalPhi = 0;
   let phiCount = 0;
-  
+
   for (const node of groupNodes) {
     const data = node.data as Record<string, any>;
-    
+
     // Count agents
     if (node.type === 'agent' || data?.agentType) {
       agentCount++;
     }
-    
+
     // Sum load
     if (data?.load !== undefined) {
       totalLoad += data.load;
     }
-    
+
     // Sum Phi
     if (data?.phi !== undefined) {
       totalPhi += data.phi;
       phiCount++;
     }
   }
-  
+
   return {
     agentCount,
     totalLoad,
@@ -262,10 +266,10 @@ export function calculateGroupStatistics(nodeIds: string[], nodes: Node[]): {
 
 /**
  * Hook for managing node groups
- * 
+ *
  * @param options - Configuration options
  * @returns Group management functions and state
- * 
+ *
  * @example
  * ```typescript
  * const {
@@ -279,40 +283,36 @@ export function calculateGroupStatistics(nodeIds: string[], nodes: Node[]): {
  * });
  * ```
  */
-export function useNodeGrouping(
-  options: UseNodeGroupingOptions = {}
-): UseNodeGroupingReturn {
-  const {
-    defaultGroupWidth = 400,
-    defaultGroupHeight = 300,
-    groupPadding = 40,
-  } = options;
-  
+export function useNodeGrouping(options: UseNodeGroupingOptions = {}): UseNodeGroupingReturn {
+  const { defaultGroupWidth = 400, defaultGroupHeight = 300, groupPadding = 40 } = options;
+
   // State
   const [groups, setGroups] = useState<NodeGroup[]>([]);
-  
+
   /**
    * Create a new group from selected nodes
    */
   const createGroup = useCallback(
-    (nodeIds: string[], name: string, func: GroupFunction = GroupFunction.CUSTOM): NodeGroup | null => {
+    (
+      nodeIds: string[],
+      name: string,
+      func: GroupFunction = GroupFunction.CUSTOM,
+    ): NodeGroup | null => {
       if (nodeIds.length === 0) {
         return null;
       }
-      
+
       // Check if any node is already in a group
-      const alreadyGrouped = nodeIds.some((nodeId) =>
-        groups.some((g) => g.nodes.includes(nodeId))
-      );
-      
+      const alreadyGrouped = nodeIds.some((nodeId) => groups.some((g) => g.nodes.includes(nodeId)));
+
       if (alreadyGrouped) {
         console.warn('Cannot create group: some nodes are already in a group');
         return null;
       }
-      
+
       const groupId = generateGroupId();
       const color = GROUP_COLOR_SCHEMES[func].border;
-      
+
       // Create group (bounds will be calculated when nodes are available)
       const newGroup: NodeGroup = {
         id: groupId,
@@ -328,43 +328,37 @@ export function useNodeGrouping(
           averagePhi: 0,
         },
       };
-      
+
       setGroups((prev) => [...prev, newGroup]);
-      
+
       return newGroup;
     },
-    [groups, defaultGroupWidth, defaultGroupHeight]
+    [groups, defaultGroupWidth, defaultGroupHeight],
   );
-  
+
   /**
    * Delete a group
    */
   const deleteGroup = useCallback((groupId: string) => {
     setGroups((prev) => prev.filter((g) => g.id !== groupId));
   }, []);
-  
+
   /**
    * Update group properties
    */
   const updateGroup = useCallback((groupId: string, updates: Partial<NodeGroup>) => {
-    setGroups((prev) =>
-      prev.map((g) =>
-        g.id === groupId ? { ...g, ...updates } : g
-      )
-    );
+    setGroups((prev) => prev.map((g) => (g.id === groupId ? { ...g, ...updates } : g)));
   }, []);
-  
+
   /**
    * Toggle group collapsed state
    */
   const toggleGroup = useCallback((groupId: string) => {
     setGroups((prev) =>
-      prev.map((g) =>
-        g.id === groupId ? { ...g, collapsed: !g.collapsed } : g
-      )
+      prev.map((g) => (g.id === groupId ? { ...g, collapsed: !g.collapsed } : g)),
     );
   }, []);
-  
+
   /**
    * Add node to group
    */
@@ -372,45 +366,48 @@ export function useNodeGrouping(
     setGroups((prev) =>
       prev.map((g) => {
         if (g.id !== groupId) return g;
-        
+
         // Check if node is already in another group
         const inOtherGroup = prev.some(
-          (other) => other.id !== groupId && other.nodes.includes(nodeId)
+          (other) => other.id !== groupId && other.nodes.includes(nodeId),
         );
-        
+
         if (inOtherGroup) {
           console.warn('Node is already in another group');
           return g;
         }
-        
+
         // Check if node is already in this group
         if (g.nodes.includes(nodeId)) {
           return g;
         }
-        
+
         return {
           ...g,
           nodes: [...g.nodes, nodeId],
         };
-      })
+      }),
     );
   }, []);
-  
+
   /**
    * Remove node from group
    */
   const removeNodeFromGroup = useCallback((groupId: string, nodeId: string) => {
-    setGroups((prev) =>
-      prev.map((g) => {
-        if (g.id !== groupId) return g;
-        return {
-          ...g,
-          nodes: g.nodes.filter((id) => id !== nodeId),
-        };
-      }).filter((g) => g.nodes.length > 0) // Remove empty groups
+    setGroups(
+      (prev) =>
+        prev
+          .map((g) => {
+            if (g.id !== groupId) return g;
+            return {
+              ...g,
+              nodes: g.nodes.filter((id) => id !== nodeId),
+            };
+          })
+          .filter((g) => g.nodes.length > 0), // Remove empty groups
     );
   }, []);
-  
+
   /**
    * Get group by ID
    */
@@ -418,9 +415,9 @@ export function useNodeGrouping(
     (groupId: string): NodeGroup | undefined => {
       return groups.find((g) => g.id === groupId);
     },
-    [groups]
+    [groups],
   );
-  
+
   /**
    * Get group containing a node
    */
@@ -428,9 +425,9 @@ export function useNodeGrouping(
     (nodeId: string): NodeGroup | undefined => {
       return groups.find((g) => g.nodes.includes(nodeId));
     },
-    [groups]
+    [groups],
   );
-  
+
   /**
    * Calculate group bounds
    */
@@ -438,9 +435,9 @@ export function useNodeGrouping(
     (nodeIds: string[], nodes: Node[]) => {
       return calculateBounds(nodeIds, nodes, groupPadding);
     },
-    [groupPadding]
+    [groupPadding],
   );
-  
+
   /**
    * Check if node is in any group
    */
@@ -448,9 +445,9 @@ export function useNodeGrouping(
     (nodeId: string): boolean => {
       return groups.some((g) => g.nodes.includes(nodeId));
     },
-    [groups]
+    [groups],
   );
-  
+
   return {
     groups,
     createGroup,

@@ -5,7 +5,7 @@
  * Based on Flowise and ReactFlow patterns.
  */
 
-import type { Edge, Position } from 'reactflow';
+import type { Edge, Position } from '@xyflow/react';
 
 // ============================================================================
 // Node Types
@@ -25,20 +25,20 @@ export interface BaseNodeData {
  */
 export enum NodeType {
   // Agent nodes
-  AGENT = 'agent',  
+  AGENT = 'agent',
   // Tool nodes
-  TOOL = 'tool',  
+  TOOL = 'tool',
   // Memory nodes
-  MEMORY = 'memory',  
+  MEMORY = 'memory',
   // Decision nodes
-  DECISION = 'decision',  
+  DECISION = 'decision',
   // Connector nodes
-  CONNECTOR = 'connector',  
+  CONNECTOR = 'connector',
   // Input/Output nodes
   INPUT = 'input',
-  OUTPUT = 'output',  
+  OUTPUT = 'output',
   // LLM nodes
-  LLM = 'llm',  
+  LLM = 'llm',
   // Template nodes
   TEMPLATE = 'template',
 }
@@ -60,68 +60,68 @@ export interface AgentNodeData {
 // ============================================================================
 
 /**
-    * Complete list of 23 Heretek Swarm agents
-    * Organized by tier:
-    * - Tier 1 (Core Triad): Steward, Alpha, Beta, Charlie
-    * - Tier 2 (Support): Historian, Metis, Empath, Perceiver, Echo
-    * - Tier 3 (Exploration): Explorer, Examiner, Dreamer, Coder
-    * - Tier 4 (Safety & Security): Sentinel, Sentinel-Prime, Arbiter
-    * - Tier 5 (Coordination): Coordinator, Nexus, Catalyst, Chronos
-    * - Tier 6 (Enhancement): Prism, Habit-Forge, Perceiver+
-    */
+ * Complete list of 23 Heretek Swarm agents
+ * Organized by tier:
+ * - Tier 1 (Core Triad): Steward, Alpha, Beta, Charlie
+ * - Tier 2 (Support): Historian, Metis, Empath, Perceiver, Echo
+ * - Tier 3 (Exploration): Explorer, Examiner, Dreamer, Coder
+ * - Tier 4 (Safety & Security): Sentinel, Sentinel-Prime, Arbiter
+ * - Tier 5 (Coordination): Coordinator, Nexus, Catalyst, Chronos
+ * - Tier 6 (Enhancement): Prism, Habit-Forge, Perceiver+
+ */
 export enum AgentType {
-    // Tier 1 - Core Triad
-    STEWARD = 'steward',
-    ALPHA = 'alpha',
-    BETA = 'beta',
-    CHARLIE = 'charlie',
-    // Tier 2 - Support
-    HISTORIAN = 'historian',
-    METIS = 'metis',
-    EMPATH = 'empath',
-    PERCEIVER = 'perceiver',
-    ECHO = 'echo',
-    // Tier 3 - Exploration
-    EXPLORER = 'explorer',
-    EXAMINER = 'examiner',
-    DREAMER = 'dreamer',
-    CODER = 'coder',
-    // Tier 4 - Safety & Security
-    SENTINEL = 'sentinel',
-    SENTINEL_PRIME = 'sentinel_prime',
-    ARBITER = 'arbiter',
-    // Tier 5 - Coordination
-    COORDINATOR = 'coordinator',
-    NEXUS = 'nexus',
-    CATALYST = 'catalyst',
-    CHRONOS = 'chronos',
-    // Tier 6 - Enhancement
-    PRISM = 'prism',
-    HABIT_FORGE = 'habit_forge',
-    PERCEIVER_PLUS = 'perceiver_plus',
-    // Legacy
-    CUSTOM = 'custom',
+  // Tier 1 - Core Triad
+  STEWARD = 'steward',
+  ALPHA = 'alpha',
+  BETA = 'beta',
+  CHARLIE = 'charlie',
+  // Tier 2 - Support
+  HISTORIAN = 'historian',
+  METIS = 'metis',
+  EMPATH = 'empath',
+  PERCEIVER = 'perceiver',
+  ECHO = 'echo',
+  // Tier 3 - Exploration
+  EXPLORER = 'explorer',
+  EXAMINER = 'examiner',
+  DREAMER = 'dreamer',
+  CODER = 'coder',
+  // Tier 4 - Safety & Security
+  SENTINEL = 'sentinel',
+  SENTINEL_PRIME = 'sentinel_prime',
+  ARBITER = 'arbiter',
+  // Tier 5 - Coordination
+  COORDINATOR = 'coordinator',
+  NEXUS = 'nexus',
+  CATALYST = 'catalyst',
+  CHRONOS = 'chronos',
+  // Tier 6 - Enhancement
+  PRISM = 'prism',
+  HABIT_FORGE = 'habit_forge',
+  PERCEIVER_PLUS = 'perceiver_plus',
+  // Legacy
+  CUSTOM = 'custom',
 }
 
 /**
-    * Agent metadata for UI display
-    */
+ * Agent metadata for UI display
+ */
 export interface AgentMetadata {
-    type: AgentType;
-    name: string;
-    tier: number;
-    tierName: string;
-    icon: string;
-    description: string;
-    capabilities: string[];
-    color: string;
+  type: AgentType;
+  name: string;
+  tier: number;
+  tierName: string;
+  icon: string;
+  description: string;
+  capabilities: string[];
+  color: string;
 }
 
 /**
-    * Complete agent registry with metadata
-    */
+ * Complete agent registry with metadata
+ */
 export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
-    [AgentType.STEWARD]: {
+  [AgentType.STEWARD]: {
     type: AgentType.STEWARD,
     name: 'Steward',
     tier: 1,
@@ -130,8 +130,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Central coordination and task orchestration',
     capabilities: ['task_distribution', 'workflow_management', 'resource_allocation'],
     color: '#F59E0B',
-    },
-    [AgentType.ALPHA]: {
+  },
+  [AgentType.ALPHA]: {
     type: AgentType.ALPHA,
     name: 'Alpha',
     tier: 1,
@@ -140,8 +140,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Primary reasoning and decision making',
     capabilities: ['logical_reasoning', 'decision_making', 'strategy'],
     color: '#3B82F6',
-    },
-    [AgentType.BETA]: {
+  },
+  [AgentType.BETA]: {
     type: AgentType.BETA,
     name: 'Beta',
     tier: 1,
@@ -150,8 +150,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Verification and validation',
     capabilities: ['validation', 'quality_assurance', 'testing'],
     color: '#10B981',
-    },
-    [AgentType.CHARLIE]: {
+  },
+  [AgentType.CHARLIE]: {
     type: AgentType.CHARLIE,
     tier: 1,
     name: 'Charlie',
@@ -160,8 +160,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Analysis and pattern recognition',
     capabilities: ['analysis', 'pattern_recognition', 'data_processing'],
     color: '#8B5CF6',
-    },
-    [AgentType.HISTORIAN]: {
+  },
+  [AgentType.HISTORIAN]: {
     type: AgentType.HISTORIAN,
     name: 'Historian',
     tier: 2,
@@ -170,8 +170,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Memory and knowledge management',
     capabilities: ['memory', 'knowledge_retrieval', 'context_preservation'],
     color: '#6366F1',
-    },
-    [AgentType.METIS]: {
+  },
+  [AgentType.METIS]: {
     type: AgentType.METIS,
     name: 'Metis',
     tier: 2,
@@ -180,8 +180,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Strategic planning and introspection',
     capabilities: ['strategic_planning', 'reflection', 'self_optimization'],
     color: '#EC4899',
-    },
-    [AgentType.EMPATH]: {
+  },
+  [AgentType.EMPATH]: {
     type: AgentType.EMPATH,
     name: 'Empath',
     tier: 2,
@@ -190,8 +190,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Emotional intelligence and rapport',
     capabilities: ['emotional_understanding', 'relationship_building', 'tone_analysis'],
     color: '#F472B6',
-    },
-    [AgentType.PERCEIVER]: {
+  },
+  [AgentType.PERCEIVER]: {
     type: AgentType.PERCEIVER,
     name: 'Perceiver',
     tier: 2,
@@ -200,8 +200,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Sensory input and data gathering',
     capabilities: ['sensing', 'data_collection', 'observation'],
     color: '#14B8A6',
-    },
-    [AgentType.ECHO]: {
+  },
+  [AgentType.ECHO]: {
     type: AgentType.ECHO,
     name: 'Echo',
     tier: 2,
@@ -210,8 +210,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Communication and message relay',
     capabilities: ['messaging', 'broadcasting', 'routing'],
     color: '#F97316',
-    },
-    [AgentType.EXPLORER]: {
+  },
+  [AgentType.EXPLORER]: {
     type: AgentType.EXPLORER,
     name: 'Explorer',
     tier: 3,
@@ -220,8 +220,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Discovery and exploration',
     capabilities: ['exploration', 'discovery', 'pathfinding'],
     color: '#06B6D4',
-    },
-    [AgentType.EXAMINER]: {
+  },
+  [AgentType.EXAMINER]: {
     type: AgentType.EXAMINER,
     name: 'Examiner',
     tier: 3,
@@ -230,8 +230,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Deep analysis and investigation',
     capabilities: ['investigation', 'deep_analysis', 'research'],
     color: '#84CC16',
-    },
-    [AgentType.DREAMER]: {
+  },
+  [AgentType.DREAMER]: {
     type: AgentType.DREAMER,
     name: 'Dreamer',
     tier: 3,
@@ -240,8 +240,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Creative generation and imagination',
     capabilities: ['creative_generation', 'brainstorming', 'ideation'],
     color: '#A855F7',
-    },
-    [AgentType.CODER]: {
+  },
+  [AgentType.CODER]: {
     type: AgentType.CODER,
     name: 'Coder',
     tier: 3,
@@ -250,8 +250,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Code generation and technical tasks',
     capabilities: ['code_generation', 'technical_tasks', 'programming'],
     color: '#22D3EE',
-    },
-    [AgentType.SENTINEL]: {
+  },
+  [AgentType.SENTINEL]: {
     type: AgentType.SENTINEL,
     name: 'Sentinel',
     tier: 4,
@@ -260,8 +260,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Safety monitoring and guardrails',
     capabilities: ['safety_monitoring', 'guardrails', 'content_filtering'],
     color: '#EF4444',
-    },
-    [AgentType.SENTINEL_PRIME]: {
+  },
+  [AgentType.SENTINEL_PRIME]: {
     type: AgentType.SENTINEL_PRIME,
     name: 'Sentinel-Prime',
     tier: 4,
@@ -270,8 +270,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Enhanced security and threat detection',
     capabilities: ['threat_detection', 'security_enforcement', 'access_control'],
     color: '#DC2626',
-    },
-    [AgentType.ARBITER]: {
+  },
+  [AgentType.ARBITER]: {
     type: AgentType.ARBITER,
     name: 'Arbiter',
     tier: 4,
@@ -280,8 +280,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Conflict resolution and decision arbitration',
     capabilities: ['conflict_resolution', 'arbitration', 'fair_decisions'],
     color: '#B91C1C',
-    },
-    [AgentType.COORDINATOR]: {
+  },
+  [AgentType.COORDINATOR]: {
     type: AgentType.COORDINATOR,
     name: 'Coordinator',
     tier: 5,
@@ -290,8 +290,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Multi-agent coordination and synchronization',
     capabilities: ['coordination', 'synchronization', 'task_scheduling'],
     color: '#0EA5E9',
-    },
-    [AgentType.NEXUS]: {
+  },
+  [AgentType.NEXUS]: {
     type: AgentType.NEXUS,
     name: 'Nexus',
     tier: 5,
@@ -300,8 +300,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'External integration and API management',
     capabilities: ['external_integration', 'api_management', 'connector_services'],
     color: '#8B5CF6',
-    },
-    [AgentType.CATALYST]: {
+  },
+  [AgentType.CATALYST]: {
     type: AgentType.CATALYST,
     name: 'Catalyst',
     tier: 5,
@@ -310,8 +310,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Change management and transformation',
     capabilities: ['change_management', 'transformation', 'process_improvement'],
     color: '#D946EF',
-    },
-    [AgentType.CHRONOS]: {
+  },
+  [AgentType.CHRONOS]: {
     type: AgentType.CHRONOS,
     name: 'Chronos',
     tier: 5,
@@ -320,8 +320,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Scheduling and temporal management',
     capabilities: ['scheduling', 'time_management', 'deadline_tracking'],
     color: '#F59E0B',
-    },
-    [AgentType.PRISM]: {
+  },
+  [AgentType.PRISM]: {
     type: AgentType.PRISM,
     name: 'Prism',
     tier: 6,
@@ -330,8 +330,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Multi-perspective analysis',
     capabilities: ['multi_perspective', 'viewpoint_synthesis', 'perspective_analysis'],
     color: '#E879F9',
-    },
-    [AgentType.HABIT_FORGE]: {
+  },
+  [AgentType.HABIT_FORGE]: {
     type: AgentType.HABIT_FORGE,
     name: 'Habit-Forge',
     tier: 6,
@@ -340,8 +340,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Behavior optimization and pattern formation',
     capabilities: ['habit_formation', 'behavior_optimization', 'pattern_learning'],
     color: '#4ADE80',
-    },
-    [AgentType.PERCEIVER_PLUS]: {
+  },
+  [AgentType.PERCEIVER_PLUS]: {
     type: AgentType.PERCEIVER_PLUS,
     name: 'Perceiver+',
     tier: 6,
@@ -350,8 +350,8 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'Advanced analytics and predictive modeling',
     capabilities: ['advanced_analytics', 'prediction', 'trend_analysis'],
     color: '#2DD4BF',
-    },
-    [AgentType.CUSTOM]: {
+  },
+  [AgentType.CUSTOM]: {
     type: AgentType.CUSTOM,
     name: 'Custom Agent',
     tier: 0,
@@ -360,7 +360,7 @@ export const AGENT_METADATA: Record<AgentType, AgentMetadata> = {
     description: 'User-defined custom agent',
     capabilities: [],
     color: '#6B7280',
-    },
+  },
 };
 
 /**

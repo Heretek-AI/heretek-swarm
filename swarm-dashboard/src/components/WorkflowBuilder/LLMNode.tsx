@@ -1,12 +1,12 @@
 /**
  * LLM Node Component for Workflow Builder
- * 
+ *
  * Displays an LLM node in visual workflow builder.
  * Handles LLM model configuration.
  */
 
 import React, { memo } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 
 interface LLMData {
   model: string;
@@ -39,13 +39,13 @@ const providerIcons: Record<LLMData['provider'], string> = {
 function LLMNode({ data, selected }: NodeProps<LLMData>) {
   const colors = statusColors[data.status] || statusColors.idle;
   const icon = providerIcons[data.provider] || '🎯';
-  
+
   // Derive visual state: execution status overrides model status when present
   const execStatus = data.executionStatus;
   const isRunning = execStatus === 'running';
   const isCompleted = execStatus === 'completed';
   const isFailed = execStatus === 'failed';
-  
+
   const executionBorder = isRunning
     ? 'shadow-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.5)]'
     : isCompleted
@@ -53,18 +53,18 @@ function LLMNode({ data, selected }: NodeProps<LLMData>) {
       : isFailed
         ? 'shadow-red-500/30'
         : '';
-  
+
   const timeAgo = (timestamp: string) => {
     const now = new Date();
     const past = new Date(timestamp);
     const diff = Math.floor((now.getTime() - past.getTime()) / 1000);
-    
+
     if (diff < 60) return 'just now';
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
     return `${Math.floor(diff / 86400)}d ago`;
   };
-  
+
   return (
     <div
       className={`
@@ -74,7 +74,13 @@ function LLMNode({ data, selected }: NodeProps<LLMData>) {
       `}
       style={{
         backgroundColor: colors.bg,
-        borderColor: isRunning ? '#3B82F6' : isCompleted ? '#22C55E' : isFailed ? '#EF4444' : colors.border,
+        borderColor: isRunning
+          ? '#3B82F6'
+          : isCompleted
+            ? '#22C55E'
+            : isFailed
+              ? '#EF4444'
+              : colors.border,
         minWidth: '220px',
         maxWidth: '280px',
         ...(isRunning ? { animation: 'pulse 2s ease-in-out infinite' } : {}),
@@ -87,7 +93,7 @@ function LLMNode({ data, selected }: NodeProps<LLMData>) {
         position={Position.Top}
         className="!bg-gray-600 !border-2 !border-gray-500"
       />
-      
+
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-2xl">{icon}</span>
@@ -95,11 +101,23 @@ function LLMNode({ data, selected }: NodeProps<LLMData>) {
           <span
             className="text-xs font-semibold px-2 py-1 rounded uppercase"
             style={{
-              backgroundColor: isRunning ? '#3B82F6' : isCompleted ? '#22C55E' : isFailed ? '#EF4444' : '#6B7280',
+              backgroundColor: isRunning
+                ? '#3B82F6'
+                : isCompleted
+                  ? '#22C55E'
+                  : isFailed
+                    ? '#EF4444'
+                    : '#6B7280',
               color: '#FFFFFF',
             }}
           >
-            {execStatus === 'running' ? '⏳ Running' : execStatus === 'completed' ? '✓ Done' : execStatus === 'failed' ? '✗ Failed' : execStatus}
+            {execStatus === 'running'
+              ? '⏳ Running'
+              : execStatus === 'completed'
+                ? '✓ Done'
+                : execStatus === 'failed'
+                  ? '✗ Failed'
+                  : execStatus}
           </span>
         ) : (
           <span
@@ -113,25 +131,19 @@ function LLMNode({ data, selected }: NodeProps<LLMData>) {
           </span>
         )}
       </div>
-      
+
       {/* LLM Info */}
       <div className="space-y-1">
         <div className="text-sm font-medium text-gray-900">
           {data.provider.charAt(0).toUpperCase() + data.provider.slice(1)}
         </div>
-        <div className="text-xs text-gray-600">
-          Model: {data.model}
-        </div>
+        <div className="text-xs text-gray-600">Model: {data.model}</div>
         {data.lastActivity && (
-          <div className="text-xs text-gray-500">
-            {timeAgo(data.lastActivity)}
-          </div>
+          <div className="text-xs text-gray-500">{timeAgo(data.lastActivity)}</div>
         )}
         {/* Execution results */}
         {isCompleted && data.executionDuration !== undefined && (
-          <div className="text-xs text-green-400">
-            ✓ {data.executionDuration}ms
-          </div>
+          <div className="text-xs text-green-400">✓ {data.executionDuration}ms</div>
         )}
         {isFailed && data.executionError && (
           <div className="text-xs text-red-400 truncate max-w-[200px]" title={data.executionError}>
@@ -139,7 +151,7 @@ function LLMNode({ data, selected }: NodeProps<LLMData>) {
           </div>
         )}
       </div>
-      
+
       {/* Source Handle (output) */}
       <Handle
         type="source"

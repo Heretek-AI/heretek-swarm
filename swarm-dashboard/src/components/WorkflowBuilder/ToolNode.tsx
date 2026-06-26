@@ -1,18 +1,25 @@
 /**
  * Tool Node Component for Workflow Builder
- * 
+ *
  * Displays a tool node in the visual workflow builder.
  * Handles tool configuration and execution.
  */
 
 import React, { memo } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 import type { ToolType } from './types';
 
 interface ToolData {
   toolId: string;
   toolName: string;
-  toolType: 'code_execution' | 'web_browser' | 'file_operations' | 'api_connector' | 'database' | 'vector_search' | 'custom';
+  toolType:
+    | 'code_execution'
+    | 'web_browser'
+    | 'file_operations'
+    | 'api_connector'
+    | 'database'
+    | 'vector_search'
+    | 'custom';
   status: 'idle' | 'thinking' | 'acting' | 'error';
   lastActivity?: string;
 }
@@ -37,18 +44,18 @@ const toolIcons: Record<ToolData['toolType'], string> = {
 function ToolNode({ data, selected }: NodeProps<ToolData>) {
   const colors = statusColors[data.status] || statusColors.idle;
   const icon = toolIcons[data.toolType] || '🔧';
-  
+
   const timeAgo = (timestamp: string) => {
     const now = new Date();
     const past = new Date(timestamp);
     const diff = Math.floor((now.getTime() - past.getTime()) / 1000);
-    
+
     if (diff < 60) return 'just now';
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
     return `${Math.floor(diff / 86400)}d ago`;
   };
-  
+
   return (
     <div
       className={`
@@ -68,7 +75,7 @@ function ToolNode({ data, selected }: NodeProps<ToolData>) {
         position={Position.Top}
         className="!bg-gray-600 !border-2 !border-gray-500"
       />
-      
+
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-2xl">{icon}</span>
@@ -82,27 +89,19 @@ function ToolNode({ data, selected }: NodeProps<ToolData>) {
           {data.status}
         </span>
       </div>
-      
+
       {/* Tool Info */}
       <div className="space-y-1">
         <div className="text-sm font-medium text-gray-900">
           {data.toolType.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}
         </div>
-        <div className="text-xs text-gray-600">
-          ID: {data.toolId}
-        </div>
-        {data.toolName && (
-          <div className="text-xs text-gray-600">
-            Name: {data.toolName}
-          </div>
-        )}
+        <div className="text-xs text-gray-600">ID: {data.toolId}</div>
+        {data.toolName && <div className="text-xs text-gray-600">Name: {data.toolName}</div>}
         {data.lastActivity && (
-          <div className="text-xs text-gray-500">
-            {timeAgo(data.lastActivity)}
-          </div>
+          <div className="text-xs text-gray-500">{timeAgo(data.lastActivity)}</div>
         )}
       </div>
-      
+
       {/* Source Handle (output) */}
       <Handle
         type="source"

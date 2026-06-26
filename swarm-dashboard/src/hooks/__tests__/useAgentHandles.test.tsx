@@ -14,11 +14,11 @@
 import { vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 
-// reactflow Position enum used directly in test assertions — mock it
-vi.mock('reactflow', () => ({
+// @xyflow/react Position enum used directly in test assertions — mock it
+vi.mock('@xyflow/react', () => ({
   Position: { Top: 'top', Bottom: 'bottom', Left: 'left', Right: 'right' },
 }));
-import { Position } from 'reactflow';
+import { Position } from '@xyflow/react';
 
 import {
   getHandleColor,
@@ -119,8 +119,8 @@ describe('useAgentHandles', () => {
       }),
     });
 
-    const { result } = renderHook(() => 
-      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 })
+    const { result } = renderHook(() =>
+      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 }),
     );
 
     // Wait for fetch to complete
@@ -143,8 +143,8 @@ describe('useAgentHandles', () => {
       }),
     });
 
-    const { result } = renderHook(() => 
-      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 })
+    const { result } = renderHook(() =>
+      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 }),
     );
 
     await waitFor(() => {
@@ -161,8 +161,8 @@ describe('useAgentHandles', () => {
       status: 404,
     });
 
-    const { result } = renderHook(() => 
-      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 })
+    const { result } = renderHook(() =>
+      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 }),
     );
 
     await waitFor(() => {
@@ -176,8 +176,8 @@ describe('useAgentHandles', () => {
   it('should handle fetch error', async () => {
     mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
-    const { result } = renderHook(() => 
-      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 })
+    const { result } = renderHook(() =>
+      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 }),
     );
 
     await waitFor(() => {
@@ -215,8 +215,8 @@ describe('useAgentHandles', () => {
       }),
     });
 
-    const { result } = renderHook(() => 
-      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 })
+    const { result } = renderHook(() =>
+      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 }),
     );
 
     await waitFor(() => {
@@ -225,11 +225,11 @@ describe('useAgentHandles', () => {
 
     // Should have 4 handles: 1 input + 1 output + 2 bidirectional (input + output)
     expect(result.current.handles).toHaveLength(4);
-    
+
     // Check handle types
     const inputHandles = result.current.handles.filter((h: AgentHandle) => h.type === 'target');
     const outputHandles = result.current.handles.filter((h: AgentHandle) => h.type === 'source');
-    
+
     expect(inputHandles).toHaveLength(2); // input.channel + bi.channel
     expect(outputHandles).toHaveLength(2); // output.channel + bi.channel
   });
@@ -246,8 +246,8 @@ describe('useAgentHandles', () => {
       })
       .mockResolvedValueOnce({ ok: true });
 
-    const { result } = renderHook(() => 
-      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 })
+    const { result } = renderHook(() =>
+      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 }),
     );
 
     await waitFor(() => {
@@ -266,7 +266,7 @@ describe('useAgentHandles', () => {
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-      })
+      }),
     );
   });
 
@@ -282,8 +282,8 @@ describe('useAgentHandles', () => {
       })
       .mockResolvedValueOnce({ ok: true });
 
-    const { result } = renderHook(() => 
-      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 })
+    const { result } = renderHook(() =>
+      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 }),
     );
 
     await waitFor(() => {
@@ -295,7 +295,7 @@ describe('useAgentHandles', () => {
     // Verify DELETE was called
     expect(mockFetch).toHaveBeenCalledWith(
       '/api/agents/agent-123/channels/old.channel',
-      expect.objectContaining({ method: 'DELETE' })
+      expect.objectContaining({ method: 'DELETE' }),
     );
   });
 
@@ -326,12 +326,12 @@ describe('useAgentHandles', () => {
         }),
       });
 
-    const { result } = renderHook(() => 
-      useAgentHandles({ 
-        agentId: 'agent-123', 
-        enabled: true, 
-        pollingInterval: 100 // Fast polling for test
-      })
+    const { result } = renderHook(() =>
+      useAgentHandles({
+        agentId: 'agent-123',
+        enabled: true,
+        pollingInterval: 100, // Fast polling for test
+      }),
     );
 
     // Wait for initial fetch
@@ -349,9 +349,7 @@ describe('useAgentHandles', () => {
   });
 
   it('should not fetch when enabled is false', () => {
-    const { result } = renderHook(() => 
-      useAgentHandles({ agentId: 'agent-123', enabled: false })
-    );
+    const { result } = renderHook(() => useAgentHandles({ agentId: 'agent-123', enabled: false }));
 
     expect(mockFetch).not.toHaveBeenCalled();
     expect(result.current.subscriptions).toHaveLength(0);

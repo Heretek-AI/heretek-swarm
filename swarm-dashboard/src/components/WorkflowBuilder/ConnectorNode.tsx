@@ -1,16 +1,22 @@
 /**
  * Connector Node Component for Workflow Builder
- * 
+ *
  * Displays a connector node in visual workflow builder.
  * Handles connections between different node types.
  */
 
 import React, { memo } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 import type { ConnectorType } from './types';
 
 interface ConnectorData {
-  connectorType: 'agent_to_agent' | 'agent_to_tool' | 'agent_to_memory' | 'tool_to_memory' | 'memory_to_agent' | 'custom';
+  connectorType:
+    | 'agent_to_agent'
+    | 'agent_to_tool'
+    | 'agent_to_memory'
+    | 'tool_to_memory'
+    | 'memory_to_agent'
+    | 'custom';
   status: 'idle' | 'thinking' | 'acting' | 'error';
   lastActivity?: string;
 }
@@ -34,18 +40,18 @@ const connectorIcons: Record<ConnectorData['connectorType'], string> = {
 function ConnectorNode({ data, selected }: NodeProps<ConnectorData>) {
   const colors = statusColors[data.status] || statusColors.idle;
   const icon = connectorIcons[data.connectorType] || '🔗';
-  
+
   const timeAgo = (timestamp: string) => {
     const now = new Date();
     const past = new Date(timestamp);
     const diff = Math.floor((now.getTime() - past.getTime()) / 1000);
-    
+
     if (diff < 60) return 'just now';
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
     return `${Math.floor(diff / 86400)}d ago`;
   };
-  
+
   return (
     <div
       className={`
@@ -65,7 +71,7 @@ function ConnectorNode({ data, selected }: NodeProps<ConnectorData>) {
         position={Position.Top}
         className="!bg-gray-600 !border-2 !border-gray-500"
       />
-      
+
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-2xl">{icon}</span>
@@ -79,19 +85,17 @@ function ConnectorNode({ data, selected }: NodeProps<ConnectorData>) {
           {data.status}
         </span>
       </div>
-      
+
       {/* Connector Info */}
       <div className="space-y-1">
         <div className="text-sm font-medium text-gray-900">
           {data.connectorType.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}
         </div>
         {data.lastActivity && (
-          <div className="text-xs text-gray-500">
-            {timeAgo(data.lastActivity)}
-          </div>
+          <div className="text-xs text-gray-500">{timeAgo(data.lastActivity)}</div>
         )}
       </div>
-      
+
       {/* Source Handle (output) */}
       <Handle
         type="source"

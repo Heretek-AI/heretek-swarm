@@ -1,12 +1,12 @@
 /**
  * Memory Node Component for Workflow Builder
- * 
+ *
  * Displays a memory node in the visual workflow builder.
  * Handles memory configuration and retrieval.
  */
 
 import React, { memo } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 import type { MemoryType } from './types';
 
 interface MemoryData {
@@ -33,18 +33,18 @@ const memoryIcons: Record<MemoryData['memoryType'], string> = {
 function MemoryNode({ data, selected }: NodeProps<MemoryData>) {
   const colors = statusColors[data.status] || statusColors.idle;
   const icon = memoryIcons[data.memoryType] || '📝';
-  
+
   const timeAgo = (timestamp: string) => {
     const now = new Date();
     const past = new Date(timestamp);
     const diff = Math.floor((now.getTime() - past.getTime()) / 1000);
-    
+
     if (diff < 60) return 'just now';
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
     return `${Math.floor(diff / 86400)}d ago`;
   };
-  
+
   return (
     <div
       className={`
@@ -64,7 +64,7 @@ function MemoryNode({ data, selected }: NodeProps<MemoryData>) {
         position={Position.Top}
         className="!bg-gray-600 !border-2 !border-gray-500"
       />
-      
+
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-2xl">{icon}</span>
@@ -78,22 +78,18 @@ function MemoryNode({ data, selected }: NodeProps<MemoryData>) {
           {data.status}
         </span>
       </div>
-      
+
       {/* Memory Info */}
       <div className="space-y-1">
         <div className="text-sm font-medium text-gray-900">
           {data.memoryType.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}
         </div>
-        <div className="text-xs text-gray-600">
-          ID: {data.memoryId}
-        </div>
+        <div className="text-xs text-gray-600">ID: {data.memoryId}</div>
         {data.lastActivity && (
-          <div className="text-xs text-gray-500">
-            {timeAgo(data.lastActivity)}
-          </div>
+          <div className="text-xs text-gray-500">{timeAgo(data.lastActivity)}</div>
         )}
       </div>
-      
+
       {/* Source Handle (output) */}
       <Handle
         type="source"

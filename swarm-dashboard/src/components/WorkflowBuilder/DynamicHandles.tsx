@@ -13,7 +13,7 @@
  */
 
 import React, { memo, useMemo } from 'react';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position } from '@xyflow/react';
 import type { AgentHandle, ChannelType } from '../../hooks/useAgentHandles';
 import { getHandleColor } from '../../hooks/useAgentHandles';
 
@@ -32,23 +32,15 @@ function HandleTooltip({ channelName, channelType, dataType, description }: Hand
     <div className="handle-tooltip">
       <div className="handle-tooltip-header">
         <span className="handle-tooltip-channel">{channelName}</span>
-        <span 
+        <span
           className="handle-tooltip-type"
           style={{ backgroundColor: getHandleColor(channelType) }}
         >
           {channelType}
         </span>
       </div>
-      {dataType && (
-        <div className="handle-tooltip-datatype">
-          Type: {dataType}
-        </div>
-      )}
-      {description && (
-        <div className="handle-tooltip-description">
-          {description}
-        </div>
-      )}
+      {dataType && <div className="handle-tooltip-datatype">Type: {dataType}</div>}
+      {description && <div className="handle-tooltip-description">{description}</div>}
     </div>
   );
 }
@@ -67,24 +59,24 @@ interface DynamicHandleProps {
 /**
  * Single dynamic handle component
  */
-function DynamicHandleComponent({ 
-  handle, 
-  index, 
+function DynamicHandleComponent({
+  handle,
+  index,
   total,
   isSelected = false,
-  onClick 
+  onClick,
 }: DynamicHandleProps) {
   const color = getHandleColor(handle.channelType);
   const isInput = handle.type === 'target';
-  
+
   // Calculate position offset for multiple handles
   const getPositionStyle = () => {
     if (total === 1) {
-      return isInput 
+      return isInput
         ? { left: '50%', transform: 'translateX(-50%)' }
         : { left: '50%', transform: 'translateX(-50%)' };
     }
-    
+
     // Distribute handles horizontally
     const offset = total === 1 ? 50 : (index / (total - 1)) * 100;
     return {
@@ -125,7 +117,7 @@ function DynamicHandleComponent({
             onClick?.(handle.id);
           }}
         />
-        
+
         {/* Tooltip - shown on hover */}
         <div className="handle-tooltip-container">
           <HandleTooltip
@@ -153,16 +145,12 @@ interface DynamicHandlesGroupProps {
 /**
  * Main DynamicHandles component that renders all handles
  */
-function DynamicHandles({ 
-  handles, 
-  selectedHandleId,
-  onHandleClick,
-}: DynamicHandlesGroupProps) {
+function DynamicHandles({ handles, selectedHandleId, onHandleClick }: DynamicHandlesGroupProps) {
   // Separate input and output handles
   const { inputHandles, outputHandles } = useMemo(() => {
     return {
-      inputHandles: handles.filter(h => h.type === 'target'),
-      outputHandles: handles.filter(h => h.type === 'source'),
+      inputHandles: handles.filter((h) => h.type === 'target'),
+      outputHandles: handles.filter((h) => h.type === 'source'),
     };
   }, [handles]);
 
@@ -197,7 +185,7 @@ function DynamicHandles({
           onClick={onHandleClick}
         />
       ))}
-      
+
       {/* Output handles */}
       {outputHandles.map((handle, index) => (
         <DynamicHandleComponent
@@ -209,7 +197,7 @@ function DynamicHandles({
           onClick={onHandleClick}
         />
       ))}
-      
+
       {/* CSS for tooltips */}
       <style>{`
         .handle-tooltip-container {

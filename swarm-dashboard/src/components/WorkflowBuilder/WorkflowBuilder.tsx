@@ -1,9 +1,9 @@
 /**
  * Workflow Builder - Visual Workflow Editor
- * 
+ *
  * Flowise-like visual workflow builder for Heretek Swarm.
  * Based on ReactFlow for drag-and-drop node-based workflow design.
- * 
+ *
  * NOTE: Math.random() is used for random node positioning in the UI canvas.
  * This is non-security-critical - random positions are for UI aesthetics only,
  * not for any cryptographic or authentication purposes. See
@@ -11,7 +11,8 @@
  */
 
 import React, { useCallback, useState, useMemo, useRef, useEffect } from 'react';
-import ReactFlow, {
+import {
+  ReactFlow,
   Background,
   BackgroundVariant,
   Controls,
@@ -28,9 +29,13 @@ import ReactFlow, {
   Connection,
   NodeTypes,
   useReactFlow,
-} from 'reactflow';
+} from '@xyflow/react';
 import { api } from '../../api/client';
-import { useWorkflowProgress, type NodeResult, type ExecutionState as WsExecutionState } from '../../hooks/useWorkflowProgress';
+import {
+  useWorkflowProgress,
+  type NodeResult,
+  type ExecutionState as WsExecutionState,
+} from '../../hooks/useWorkflowProgress';
 
 import {
   BaseNodeData,
@@ -45,14 +50,7 @@ import {
 } from './types';
 
 import 'reactflow/dist/style.css';
-import {
-  AgentNode,
-  ToolNode,
-  MemoryNode,
-  DecisionNode,
-  ConnectorNode,
-  LLMNode,
-} from './index';
+import { AgentNode, ToolNode, MemoryNode, DecisionNode, ConnectorNode, LLMNode } from './index';
 import { NodeConfigPanel } from '../Workflow/NodeConfigPanel';
 import type { AgentConfig } from '../Workflow/NodeConfigPanel';
 import { WorkflowList } from './WorkflowList';
@@ -65,7 +63,7 @@ async function authFetch(url: string, init?: RequestInit): Promise<Response> {
   const apiKey = localStorage.getItem('api_key');
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(init?.headers as Record<string, string> || {}),
+    ...((init?.headers as Record<string, string>) || {}),
   };
   if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
   return fetch(url, { ...init, headers });
@@ -85,7 +83,11 @@ interface CanvasFlowProps {
   onPaneClick: () => void;
   nodeTypes: NodeTypes;
   onDrop: (type: string, position: { x: number; y: number }) => void;
-  configPanelNode: { id: string; type: string; data: { agentId?: string; agentType?: string; config?: Record<string, any> } } | null;
+  configPanelNode: {
+    id: string;
+    type: string;
+    data: { agentId?: string; agentType?: string; config?: Record<string, any> };
+  } | null;
   configPanelOpen: boolean;
   handleCloseConfig: () => void;
   handleSaveConfig: (config: AgentConfig) => Promise<void>;
@@ -220,7 +222,9 @@ function CanvasFlow({
         <div className="absolute top-4 right-4 w-80 bg-white border border-gray-300 rounded-lg shadow-lg p-4 z-50 max-h-[70vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-gray-800">Workflow Execution</h3>
-            <span className={`text-xs px-2 py-1 rounded ${getStatusBadgeClass(executionState.status)}`}>
+            <span
+              className={`text-xs px-2 py-1 rounded ${getStatusBadgeClass(executionState.status)}`}
+            >
               {executionState.status}
             </span>
           </div>
@@ -258,9 +262,7 @@ function CanvasFlow({
 
           {/* Error Message */}
           {wsError && (
-            <div className="mb-2 text-sm text-red-600 bg-red-50 rounded p-2">
-              {wsError}
-            </div>
+            <div className="mb-2 text-sm text-red-600 bg-red-50 rounded p-2">{wsError}</div>
           )}
 
           {/* Per-Node Results */}
@@ -272,43 +274,60 @@ function CanvasFlow({
                   <div
                     key={nodeId}
                     className={`p-2 rounded text-xs border ${
-                      result.status === 'completed' ? 'bg-green-50 border-green-200' :
-                      result.status === 'failed' ? 'bg-red-50 border-red-200' :
-                      result.status === 'running' ? 'bg-blue-50 border-blue-200' :
-                      'bg-gray-50 border-gray-200'
+                      result.status === 'completed'
+                        ? 'bg-green-50 border-green-200'
+                        : result.status === 'failed'
+                          ? 'bg-red-50 border-red-200'
+                          : result.status === 'running'
+                            ? 'bg-blue-50 border-blue-200'
+                            : 'bg-gray-50 border-gray-200'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-gray-800 truncate max-w-[140px]" title={nodeId}>
+                      <span
+                        className="font-medium text-gray-800 truncate max-w-[140px]"
+                        title={nodeId}
+                      >
                         {nodeId}
                       </span>
-                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
-                        result.status === 'completed' ? 'bg-green-100 text-green-800' :
-                        result.status === 'failed' ? 'bg-red-100 text-red-800' :
-                        result.status === 'running' ? 'bg-blue-100 text-blue-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                          result.status === 'completed'
+                            ? 'bg-green-100 text-green-800'
+                            : result.status === 'failed'
+                              ? 'bg-red-100 text-red-800'
+                              : result.status === 'running'
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
                         {result.status}
                       </span>
                     </div>
                     {result.duration !== undefined && (
-                      <div className="text-gray-500">
-                        Duration: {result.duration}ms
-                      </div>
+                      <div className="text-gray-500">Duration: {result.duration}ms</div>
                     )}
                     {result.output !== undefined && result.output !== null && (
-                      <div className="text-gray-600 mt-1 truncate" title={typeof result.output === 'string' ? result.output : JSON.stringify(result.output)}>
-                        Output: {String(typeof result.output === 'string'
-                          ? result.output.slice(0, 80)
-                          : JSON.stringify(result.output).slice(0, 80))}
-                        {((typeof result.output === 'string' ? result.output.length : JSON.stringify(result.output).length) > 80) && '…'}
+                      <div
+                        className="text-gray-600 mt-1 truncate"
+                        title={
+                          typeof result.output === 'string'
+                            ? result.output
+                            : JSON.stringify(result.output)
+                        }
+                      >
+                        Output:{' '}
+                        {String(
+                          typeof result.output === 'string'
+                            ? result.output.slice(0, 80)
+                            : JSON.stringify(result.output).slice(0, 80),
+                        )}
+                        {(typeof result.output === 'string'
+                          ? result.output.length
+                          : JSON.stringify(result.output).length) > 80 && '…'}
                       </div>
                     )}
-                    {result.error && (
-                      <div className="text-red-600 mt-1">
-                        Error: {result.error}
-                      </div>
-                    )}
+                    {result.error && <div className="text-red-600 mt-1">Error: {result.error}</div>}
                   </div>
                 ))}
               </div>
@@ -317,9 +336,7 @@ function CanvasFlow({
 
           {/* Execution ID */}
           {currentWorkflowId && (
-            <div className="mt-3 text-xs text-gray-400">
-              Workflow: {currentWorkflowId}
-            </div>
+            <div className="mt-3 text-xs text-gray-400">Workflow: {currentWorkflowId}</div>
           )}
         </div>
       )}
@@ -339,7 +356,11 @@ export function WorkflowBuilder() {
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [selectedNode, setSelectedNode] = useState<BaseNodeData | null>(null);
   const [nodeConfig, setNodeConfig] = useState<Record<string, Record<string, any>>>({});
-  const [validation, setValidation] = useState<WorkflowValidation>({ valid: true, errors: [], warnings: [] });
+  const [validation, setValidation] = useState<WorkflowValidation>({
+    valid: true,
+    errors: [],
+    warnings: [],
+  });
   const [isExecuting, setIsExecuting] = useState(false);
   const [savedWorkflows, setSavedWorkflows] = useState<Workflow[]>([]);
   const [currentWorkflowId, setCurrentWorkflowId] = useState<string | null>(null);
@@ -360,35 +381,44 @@ export function WorkflowBuilder() {
 
   // Derive display state from WebSocket hook
   const executionState = {
-    status: wsExecutionState === 'idle' && !wsConnected
-      ? 'idle' as const
-      : wsConnected && wsExecutionState === 'idle'
-        ? 'connected' as const
-        : wsExecutionState,
+    status:
+      wsExecutionState === 'idle' && !wsConnected
+        ? ('idle' as const)
+        : wsConnected && wsExecutionState === 'idle'
+          ? ('connected' as const)
+          : wsExecutionState,
     progress: wsProgress,
     currentNode: wsCurrentNode,
     message: wsError || '',
     executionId: currentWorkflowId || '',
   };
-  
+
   // Helper to get status badge CSS classes — avoids nested ternary chains (S3358)
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case 'connected': return 'bg-blue-100 text-blue-800';
-      case 'running': return 'bg-yellow-100 text-yellow-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'connected':
+        return 'bg-blue-100 text-blue-800';
+      case 'running':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
   const getProgressBarClass = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-500';
-      case 'failed': return 'bg-red-500';
-      default: return 'bg-blue-500';
+      case 'completed':
+        return 'bg-green-500';
+      case 'failed':
+        return 'bg-red-500';
+      default:
+        return 'bg-blue-500';
     }
   };
-  
+
   // NodeConfigPanel state
   const [configPanelOpen, setConfigPanelOpen] = useState(false);
   const [configPanelNode, setConfigPanelNode] = useState<{
@@ -404,182 +434,194 @@ export function WorkflowBuilder() {
   /**
    * Node palette - organized by category
    */
-  const nodePalette: NodePaletteItem[] = useMemo(() => [
-    // Agents
-    {
-      type: NodeType.AGENT,
-      label: 'Steward',
-      icon: '👥',
-      category: NodeCategory.AGENTS,
-      description: 'Orchestrator agent for coordinating swarm operations',
-      defaultConfig: {
-        agentType: 'steward',
+  const nodePalette: NodePaletteItem[] = useMemo(
+    () => [
+      // Agents
+      {
+        type: NodeType.AGENT,
+        label: 'Steward',
+        icon: '👥',
+        category: NodeCategory.AGENTS,
+        description: 'Orchestrator agent for coordinating swarm operations',
+        defaultConfig: {
+          agentType: 'steward',
+        },
       },
-    },
-    {
-      type: NodeType.AGENT,
-      label: 'Alpha',
-      icon: '🧠',
-      category: NodeCategory.AGENTS,
-      description: 'Primary analyst agent in Triad',
-      defaultConfig: {
-        agentType: 'alpha',
+      {
+        type: NodeType.AGENT,
+        label: 'Alpha',
+        icon: '🧠',
+        category: NodeCategory.AGENTS,
+        description: 'Primary analyst agent in Triad',
+        defaultConfig: {
+          agentType: 'alpha',
+        },
       },
-    },
-    // Tools
-    {
-      type: NodeType.TOOL,
-      label: 'Code Execution',
-      icon: '⚡',
-      category: NodeCategory.TOOLS,
-      description: 'Execute code in a secure environment',
-      defaultConfig: {
-        toolType: 'code_execution',
+      // Tools
+      {
+        type: NodeType.TOOL,
+        label: 'Code Execution',
+        icon: '⚡',
+        category: NodeCategory.TOOLS,
+        description: 'Execute code in a secure environment',
+        defaultConfig: {
+          toolType: 'code_execution',
+        },
       },
-    },
-    {
-      type: NodeType.TOOL,
-      label: 'Web Browser',
-      icon: '🌐',
-      category: NodeCategory.TOOLS,
-      description: 'Browse and interact with web pages',
-      defaultConfig: {
-        toolType: 'web_browser',
+      {
+        type: NodeType.TOOL,
+        label: 'Web Browser',
+        icon: '🌐',
+        category: NodeCategory.TOOLS,
+        description: 'Browse and interact with web pages',
+        defaultConfig: {
+          toolType: 'web_browser',
+        },
       },
-    },
-    // Memory
-    {
-      type: NodeType.MEMORY,
-      label: 'Ephemeral Memory',
-      icon: '⚡',
-      category: NodeCategory.MEMORY,
-      description: 'Short-term in-memory storage',
-      defaultConfig: {
-        memoryType: 'ephemeral',
+      // Memory
+      {
+        type: NodeType.MEMORY,
+        label: 'Ephemeral Memory',
+        icon: '⚡',
+        category: NodeCategory.MEMORY,
+        description: 'Short-term in-memory storage',
+        defaultConfig: {
+          memoryType: 'ephemeral',
+        },
       },
-    },
-    {
-      type: NodeType.MEMORY,
-      label: 'Persistent Memory',
-      icon: '💾',
-      category: NodeCategory.MEMORY,
-      description: 'Long-term database storage',
-      defaultConfig: {
-        memoryType: 'persistent',
+      {
+        type: NodeType.MEMORY,
+        label: 'Persistent Memory',
+        icon: '💾',
+        category: NodeCategory.MEMORY,
+        description: 'Long-term database storage',
+        defaultConfig: {
+          memoryType: 'persistent',
+        },
       },
-    },
-    {
-      type: NodeType.MEMORY,
-      label: 'mem0 Memory',
-      icon: '🧠',
-      category: NodeCategory.MEMORY,
-      description: 'AI-powered memory with mem0',
-      defaultConfig: {
-        memoryType: 'mem0',
+      {
+        type: NodeType.MEMORY,
+        label: 'mem0 Memory',
+        icon: '🧠',
+        category: NodeCategory.MEMORY,
+        description: 'AI-powered memory with mem0',
+        defaultConfig: {
+          memoryType: 'mem0',
+        },
       },
-    },
-    // Decision
-    {
-      type: NodeType.DECISION,
-      label: 'Conditional Branch',
-      icon: '🔀',
-      category: NodeCategory.LOGIC,
-      description: 'Branch workflow based on conditions',
-      defaultConfig: {
-        condition: 'true',
-        branches: [
-          { id: 'true', label: 'True', condition: 'true' },
-          { id: 'false', label: 'False', condition: 'false' },
-        ],
+      // Decision
+      {
+        type: NodeType.DECISION,
+        label: 'Conditional Branch',
+        icon: '🔀',
+        category: NodeCategory.LOGIC,
+        description: 'Branch workflow based on conditions',
+        defaultConfig: {
+          condition: 'true',
+          branches: [
+            { id: 'true', label: 'True', condition: 'true' },
+            { id: 'false', label: 'False', condition: 'false' },
+          ],
+        },
       },
-    },
-    // Connector
-    {
-      type: NodeType.CONNECTOR,
-      label: 'Agent to Agent',
-      icon: '🤝',
-      category: NodeCategory.CONNECTORS,
-      description: 'Connect agents for collaboration',
-      defaultConfig: {
-        connectorType: 'agent_to_agent',
+      // Connector
+      {
+        type: NodeType.CONNECTOR,
+        label: 'Agent to Agent',
+        icon: '🤝',
+        category: NodeCategory.CONNECTORS,
+        description: 'Connect agents for collaboration',
+        defaultConfig: {
+          connectorType: 'agent_to_agent',
+        },
       },
-    },
-    // LLM
-    {
-      type: NodeType.LLM,
-      label: 'OpenAI GPT-4',
-      icon: '🤖',
-      category: NodeCategory.LLM,
-      description: 'OpenAI GPT-4 model',
-      defaultConfig: {
-        model: 'gpt-4',
-        provider: 'openai',
-        temperature: 0.7,
-        maxTokens: 4096,
+      // LLM
+      {
+        type: NodeType.LLM,
+        label: 'OpenAI GPT-4',
+        icon: '🤖',
+        category: NodeCategory.LLM,
+        description: 'OpenAI GPT-4 model',
+        defaultConfig: {
+          model: 'gpt-4',
+          provider: 'openai',
+          temperature: 0.7,
+          maxTokens: 4096,
+        },
       },
-    },
-  ], []);
+    ],
+    [],
+  );
 
   /**
    * Register custom node types
    */
-  const nodeTypes: NodeTypes = useMemo(() => ({
-    [NodeType.AGENT]: AgentNode,
-    [NodeType.TOOL]: ToolNode,
-    [NodeType.MEMORY]: MemoryNode,
-    [NodeType.DECISION]: DecisionNode,
-    [NodeType.CONNECTOR]: ConnectorNode,
-    [NodeType.LLM]: LLMNode,
-  }), []);
+  const nodeTypes: NodeTypes = useMemo(
+    () => ({
+      [NodeType.AGENT]: AgentNode,
+      [NodeType.TOOL]: ToolNode,
+      [NodeType.MEMORY]: MemoryNode,
+      [NodeType.DECISION]: DecisionNode,
+      [NodeType.CONNECTOR]: ConnectorNode,
+      [NodeType.LLM]: LLMNode,
+    }),
+    [],
+  );
 
   /**
    * Add node to canvas. Accepts optional position for drag-and-drop placement;
    * falls back to random position for click-to-add from palette.
    */
-  const addNode = useCallback((type: string, position?: { x: number; y: number }) => {
-    const paletteItem = nodePalette.find((item) => item.type === type);
-    if (!paletteItem) return;
+  const addNode = useCallback(
+    (type: string, position?: { x: number; y: number }) => {
+      const paletteItem = nodePalette.find((item) => item.type === type);
+      if (!paletteItem) return;
 
-    const nodeId = `node-${Date.now()}`;
-    const newNode: Node<BaseNodeData> = {
-      id: nodeId,
-      type: paletteItem.type,
-      position: position || { x: 100 + Math.random() * 200, y: 100 + Math.random() * 200 },
-      data: {
+      const nodeId = `node-${Date.now()}`;
+      const newNode: Node<BaseNodeData> = {
         id: nodeId,
         type: paletteItem.type,
-        ...paletteItem.defaultConfig,
-        config: paletteItem.defaultConfig || {},
-        // Add callback for opening config panel
-        onOpenConfig: handleOpenConfig,
-      } as any,
-    };
+        position: position || { x: 100 + Math.random() * 200, y: 100 + Math.random() * 200 },
+        data: {
+          id: nodeId,
+          type: paletteItem.type,
+          ...paletteItem.defaultConfig,
+          config: paletteItem.defaultConfig || {},
+          // Add callback for opening config panel
+          onOpenConfig: handleOpenConfig,
+        } as any,
+      };
 
-    setNodes((nds) => [...nds, newNode]);
-    setNodeConfig((prev) => ({
-      ...prev,
-      [newNode.id]: paletteItem.defaultConfig || {},
-    }));
-  }, [nodePalette]);
+      setNodes((nds) => [...nds, newNode]);
+      setNodeConfig((prev) => ({
+        ...prev,
+        [newNode.id]: paletteItem.defaultConfig || {},
+      }));
+    },
+    [nodePalette],
+  );
 
   /**
    * Handle opening configuration panel
    */
-  const handleOpenConfig = useCallback((nodeId: string) => {
-    const node = nodes.find((n) => n.id === nodeId);
-    if (node) {
-      setConfigPanelNode({
-        id: node.id,
-        type: node.type || 'agent',
-        data: {
-          agentId: (node.data as any).agentId || node.id,
-          agentType: (node.data as any).agentType || 'steward',
-          config: (node.data as any).config || {},
-        },
-      });
-      setConfigPanelOpen(true);
-    }
-  }, [nodes]);
+  const handleOpenConfig = useCallback(
+    (nodeId: string) => {
+      const node = nodes.find((n) => n.id === nodeId);
+      if (node) {
+        setConfigPanelNode({
+          id: node.id,
+          type: node.type || 'agent',
+          data: {
+            agentId: (node.data as any).agentId || node.id,
+            agentType: (node.data as any).agentType || 'steward',
+            config: (node.data as any).config || {},
+          },
+        });
+        setConfigPanelOpen(true);
+      }
+    },
+    [nodes],
+  );
 
   /**
    * Handle closing configuration panel
@@ -592,94 +634,100 @@ export function WorkflowBuilder() {
   /**
    * Handle saving configuration via API
    */
-  const handleSaveConfig = useCallback(async (config: AgentConfig) => {
-    try {
-      const response = await authFetch(`${API_URL}/api/agent-config`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          agent_id: config.agentId,
-          agent_type: config.agentType,
-          config: {
-            llmProvider: config.llmProvider,
-            model: config.model,
-            temperature: config.temperature,
-            maxTokens: config.maxTokens,
-            // Arbiter-specific
-            decisionThreshold: config.decisionThreshold,
-            quorumSize: config.quorumSize,
-            timeout: config.timeout,
-            // Prism-specific
-            analysisDepth: config.analysisDepth,
-            perspectiveCount: config.perspectiveCount,
-            confidenceThreshold: config.confidenceThreshold,
-            // Habit-Forge-specific
-            repetitionThreshold: config.repetitionThreshold,
-            rewardSchedule: config.rewardSchedule,
-            extinctionCriteria: config.extinctionCriteria,
-          },
-        }),
-      });
-      
-      if (!response.ok) throw new Error('Failed to save configuration');
-      
-      // Update local node config
-      if (configPanelNode) {
-        setNodeConfig((prev) => ({
-          ...prev,
-          [configPanelNode.id]: {
-            ...prev[configPanelNode.id],
-            agentType: config.agentType,
-            llmProvider: config.llmProvider,
-            model: config.model,
-            temperature: config.temperature,
-            maxTokens: config.maxTokens,
-          },
-        }));
-        
-        // Update node data in ReactFlow
-        setNodes((nds) =>
-          nds.map((node) =>
-            node.id === configPanelNode.id
-              ? {
-                  ...node,
-                  data: {
-                    ...(node.data as any),
-                    agentType: config.agentType,
-                    config: {
-                      ...((node.data as any).config || {}),
-                      llmProvider: config.llmProvider,
-                      model: config.model,
-                      temperature: config.temperature,
-                      maxTokens: config.maxTokens,
+  const handleSaveConfig = useCallback(
+    async (config: AgentConfig) => {
+      try {
+        const response = await authFetch(`${API_URL}/api/agent-config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            agent_id: config.agentId,
+            agent_type: config.agentType,
+            config: {
+              llmProvider: config.llmProvider,
+              model: config.model,
+              temperature: config.temperature,
+              maxTokens: config.maxTokens,
+              // Arbiter-specific
+              decisionThreshold: config.decisionThreshold,
+              quorumSize: config.quorumSize,
+              timeout: config.timeout,
+              // Prism-specific
+              analysisDepth: config.analysisDepth,
+              perspectiveCount: config.perspectiveCount,
+              confidenceThreshold: config.confidenceThreshold,
+              // Habit-Forge-specific
+              repetitionThreshold: config.repetitionThreshold,
+              rewardSchedule: config.rewardSchedule,
+              extinctionCriteria: config.extinctionCriteria,
+            },
+          }),
+        });
+
+        if (!response.ok) throw new Error('Failed to save configuration');
+
+        // Update local node config
+        if (configPanelNode) {
+          setNodeConfig((prev) => ({
+            ...prev,
+            [configPanelNode.id]: {
+              ...prev[configPanelNode.id],
+              agentType: config.agentType,
+              llmProvider: config.llmProvider,
+              model: config.model,
+              temperature: config.temperature,
+              maxTokens: config.maxTokens,
+            },
+          }));
+
+          // Update node data in ReactFlow
+          setNodes((nds) =>
+            nds.map((node) =>
+              node.id === configPanelNode.id
+                ? {
+                    ...node,
+                    data: {
+                      ...(node.data as any),
+                      agentType: config.agentType,
+                      config: {
+                        ...((node.data as any).config || {}),
+                        llmProvider: config.llmProvider,
+                        model: config.model,
+                        temperature: config.temperature,
+                        maxTokens: config.maxTokens,
+                      },
                     },
-                  },
-                }
-              : node
-          )
-        );
+                  }
+                : node,
+            ),
+          );
+        }
+      } catch (error) {
+        console.error('Failed to save agent configuration:', error);
+        throw error;
       }
-    } catch (error) {
-      console.error('Failed to save agent configuration:', error);
-      throw error;
-    }
-  }, [configPanelNode, setNodes]);
+    },
+    [configPanelNode, setNodes],
+  );
 
   /**
    * Delete node
    */
-  const deleteNode = useCallback((nodeId: string) => {
-    setNodes((nds) => nds.filter((node) => node.id !== nodeId));
-    setEdges((eds) => eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId));
-    setNodeConfig((prev) => {
-      const newConfig = { ...prev };
-      delete newConfig[nodeId];
-      return newConfig;
-    });
-    if (selectedNode?.id === nodeId) {
-      setSelectedNode(null);
-    }
-  }, [selectedNode]);
+  const deleteNode = useCallback(
+    (nodeId: string) => {
+      setNodes((nds) => nds.filter((node) => node.id !== nodeId));
+      setEdges((eds) => eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId));
+      setNodeConfig((prev) => {
+        const newConfig = { ...prev };
+        delete newConfig[nodeId];
+        return newConfig;
+      });
+      if (selectedNode?.id === nodeId) {
+        setSelectedNode(null);
+      }
+    },
+    [selectedNode],
+  );
 
   /**
    * Handle connection
@@ -710,13 +758,18 @@ export function WorkflowBuilder() {
    * Validate workflow
    */
   const validateWorkflow = useCallback(() => {
-    const errors: { nodeId: string; field: string; message: string; severity: 'error' | 'warning' }[] = [];
+    const errors: {
+      nodeId: string;
+      field: string;
+      message: string;
+      severity: 'error' | 'warning';
+    }[] = [];
     const warnings: { nodeId: string; message: string; suggestion?: string }[] = [];
-    
+
     // Check for nodes without connections
     nodes.forEach((node) => {
       const hasConnections = edges.some(
-        (edge) => edge.source === node.id || edge.target === node.id
+        (edge) => edge.source === node.id || edge.target === node.id,
       );
       if (!hasConnections && nodes.length > 1) {
         warnings.push({
@@ -761,46 +814,49 @@ export function WorkflowBuilder() {
   /**
    * Export workflow
    */
-  const exportWorkflow = useCallback((format: WorkflowExportFormat) => {
-    const workflow: Workflow = {
-      id: 'custom',
-      name: workflowName,
-      description: 'Custom workflow created in Workflow Builder',
-      nodes: nodes.map((n) => n.data as BaseNodeData),
-      edges: edges,
-      version: 1,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+  const exportWorkflow = useCallback(
+    (format: WorkflowExportFormat) => {
+      const workflow: Workflow = {
+        id: 'custom',
+        name: workflowName,
+        description: 'Custom workflow created in Workflow Builder',
+        nodes: nodes.map((n) => n.data as BaseNodeData),
+        edges: edges,
+        version: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
-    let content = '';
-    if (format === 'json') {
-      content = JSON.stringify(workflow, null, 2);
-    } else if (format === 'yaml') {
-      content = `name: ${workflow.name}\n`;
-      content += `description: ${workflow.description}\n`;
-      content += `nodes:\n`;
-      nodes.forEach((node) => {
-        content += `  - id: ${node.id}\n`;
-        content += `    type: ${node.type}\n`;
-      });
-      content += `edges:\n`;
-      edges.forEach((edge) => {
-        content += `  - source: ${edge.source}\n`;
-        content += `    target: ${edge.target}\n`;
-      });
-    }
+      let content = '';
+      if (format === 'json') {
+        content = JSON.stringify(workflow, null, 2);
+      } else if (format === 'yaml') {
+        content = `name: ${workflow.name}\n`;
+        content += `description: ${workflow.description}\n`;
+        content += `nodes:\n`;
+        nodes.forEach((node) => {
+          content += `  - id: ${node.id}\n`;
+          content += `    type: ${node.type}\n`;
+        });
+        content += `edges:\n`;
+        edges.forEach((edge) => {
+          content += `  - source: ${edge.source}\n`;
+          content += `    target: ${edge.target}\n`;
+        });
+      }
 
-    // Create download link
-    const blob = new Blob([content], {
-      type: format === 'yaml' ? 'text/yaml' : 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `workflow.${format}`;
-    a.click();
-  }, [nodes, edges, workflowName]);
+      // Create download link
+      const blob = new Blob([content], {
+        type: format === 'yaml' ? 'text/yaml' : 'application/json',
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `workflow.${format}`;
+      a.click();
+    },
+    [nodes, edges, workflowName],
+  );
 
   /**
    * Save workflow to backend. Uses workflowName state for the name field.
@@ -814,16 +870,16 @@ export function WorkflowBuilder() {
           id: currentWorkflowId || `workflow-${Date.now()}`,
           name: workflowName || 'Untitled Workflow',
           description: 'Workflow created in Workflow Builder',
-          nodes: nodes.map(n => ({ id: n.id, type: n.type, position: n.position, data: n.data })),
+          nodes: nodes.map((n) => ({ id: n.id, type: n.type, position: n.position, data: n.data })),
           edges: edges,
           version: 1,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         }),
       });
-      
+
       if (!response.ok) throw new Error('Failed to save workflow');
-      
+
       const saved = await response.json();
       setCurrentWorkflowId(saved.id);
 
@@ -842,7 +898,7 @@ export function WorkflowBuilder() {
     try {
       const response = await authFetch(`${API_URL}/api/workflows`);
       if (!response.ok) throw new Error('Failed to load workflows');
-      
+
       const data = await response.json();
       setSavedWorkflows(data.workflows || []);
     } catch (error) {
@@ -857,14 +913,16 @@ export function WorkflowBuilder() {
     try {
       const response = await authFetch(`${API_URL}/api/workflows/${workflowId}`);
       if (!response.ok) throw new Error('Failed to load workflow');
-      
+
       const data = await response.json();
-      setNodes(data.nodes.map((n: any) => ({
-        id: n.id,
-        type: n.type,
-        position: n.position || { x: 0, y: 0 },
-        data: n.data,
-      })));
+      setNodes(
+        data.nodes.map((n: any) => ({
+          id: n.id,
+          type: n.type,
+          position: n.position || { x: 0, y: 0 },
+          data: n.data,
+        })),
+      );
       setEdges(data.edges || []);
       setCurrentWorkflowId(workflowId);
       setWorkflowName(data.name || 'Untitled Workflow');
@@ -883,10 +941,10 @@ export function WorkflowBuilder() {
       alert('Please fix validation errors before executing');
       return;
     }
-    
+
     try {
       setIsExecuting(true);
-      
+
       // First, save the workflow
       const saveResponse = await authFetch(`${API_URL}/api/workflows`, {
         method: 'POST',
@@ -895,7 +953,7 @@ export function WorkflowBuilder() {
           id: currentWorkflowId || `workflow-${Date.now()}`,
           name: workflowName || 'Untitled Workflow',
           description: 'Workflow created in Workflow Builder',
-          nodes: nodes.map(n => ({ id: n.id, type: n.type, position: n.position, data: n.data })),
+          nodes: nodes.map((n) => ({ id: n.id, type: n.type, position: n.position, data: n.data })),
           edges: edges,
           version: 1,
           created_at: new Date().toISOString(),
@@ -909,7 +967,6 @@ export function WorkflowBuilder() {
 
       // Execute via WebSocket hook (connects + POSTs to execute endpoint)
       await wsExecuteWorkflow(saved.id);
-
     } catch (error) {
       console.error('Failed to execute workflow:', error);
       setIsExecuting(false);
@@ -928,14 +985,17 @@ export function WorkflowBuilder() {
    * Re-execute a specific workflow from the WorkflowList sidebar.
    * Loads the workflow first, then executes.
    */
-  const handleReExecuteFromList = useCallback(async (workflowId: string) => {
-    await loadWorkflow(workflowId);
-    setIsExecuting(true);
-    // Small delay to let canvas populate before triggering execution
-    setTimeout(async () => {
-      await wsExecuteWorkflow(workflowId);
-    }, 100);
-  }, [loadWorkflow, wsExecuteWorkflow]);
+  const handleReExecuteFromList = useCallback(
+    async (workflowId: string) => {
+      await loadWorkflow(workflowId);
+      setIsExecuting(true);
+      // Small delay to let canvas populate before triggering execution
+      setTimeout(async () => {
+        await wsExecuteWorkflow(workflowId);
+      }, 100);
+    },
+    [loadWorkflow, wsExecuteWorkflow],
+  );
 
   // Sync isExecuting with WebSocket execution state
   useEffect(() => {
@@ -951,7 +1011,7 @@ export function WorkflowBuilder() {
    */
   useEffect(() => {
     if (wsNodeResults.size === 0) return;
-    
+
     setNodes((nds) =>
       nds.map((node) => {
         const result = wsNodeResults.get(node.id);
@@ -966,7 +1026,7 @@ export function WorkflowBuilder() {
             executionDuration: result.duration,
           },
         };
-      })
+      }),
     );
   }, [wsNodeResults, setNodes]);
 
@@ -1012,11 +1072,7 @@ export function WorkflowBuilder() {
           >
             Validate
           </button>
-          <button
-            onClick={saveWorkflow}
-            className="btn btn-primary"
-            disabled={nodes.length === 0}
-          >
+          <button onClick={saveWorkflow} className="btn btn-primary" disabled={nodes.length === 0}>
             Save Workflow
           </button>
           <div className="export-buttons">
@@ -1075,7 +1131,9 @@ export function WorkflowBuilder() {
       {isExecuting && (
         <div className="px-5 py-2 bg-white border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <span className={`text-xs px-2 py-1 rounded font-medium ${getStatusBadgeClass(executionState.status)}`}>
+            <span
+              className={`text-xs px-2 py-1 rounded font-medium ${getStatusBadgeClass(executionState.status)}`}
+            >
               {executionState.status === 'running' ? 'Executing...' : executionState.status}
             </span>
             <div className="flex-1 bg-gray-200 rounded-full h-2">
@@ -1095,9 +1153,7 @@ export function WorkflowBuilder() {
             {!wsConnected && wsExecutionState === 'running' && (
               <span className="text-xs text-red-500">🔴 Disconnected</span>
             )}
-            {wsConnected && (
-              <span className="text-xs text-green-500">🟢 Connected</span>
-            )}
+            {wsConnected && <span className="text-xs text-green-500">🟢 Connected</span>}
           </div>
         </div>
       )}
@@ -1186,21 +1242,11 @@ export function WorkflowBuilder() {
           <h3>Node Properties</h3>
           <div className="property-group">
             <label>Node ID:</label>
-            <input
-              type="text"
-              value={selectedNode.id}
-              readOnly
-              className="property-input"
-            />
+            <input type="text" value={selectedNode.id} readOnly className="property-input" />
           </div>
           <div className="property-group">
             <label>Node Type:</label>
-            <input
-              type="text"
-              value={selectedNode.type}
-              readOnly
-              className="property-input"
-            />
+            <input type="text" value={selectedNode.type} readOnly className="property-input" />
           </div>
           {Object.keys(nodeConfig[selectedNode.id] || {}).map((key) => (
             <div key={key} className="property-group">
@@ -1234,10 +1280,7 @@ export function WorkflowBuilder() {
             </div>
           ))}
           <div className="property-actions">
-            <button
-              onClick={() => deleteNode(selectedNode.id)}
-              className="btn btn-danger"
-            >
+            <button onClick={() => deleteNode(selectedNode.id)} className="btn btn-danger">
               Delete Node
             </button>
           </div>

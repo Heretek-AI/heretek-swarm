@@ -12,7 +12,8 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
-import ReactFlow, {
+import {
+  ReactFlow,
   Node,
   Edge,
   Controls,
@@ -24,8 +25,8 @@ import ReactFlow, {
   addEdge,
   Panel,
   XYPosition,
-} from 'reactflow';
-import 'reactflow/dist/style.css';
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 
 import AgentNode, { AgentData } from './AgentNode';
 
@@ -89,7 +90,6 @@ interface ExecutionState {
 // =============================================================================
 // Node Types Configuration
 // =============================================================================
-
 
 const NODE_COLORS = {
   agent: '#6B7280',
@@ -164,11 +164,13 @@ export function EnhancedCanvas() {
   const [showPalette, setShowPalette] = useState(true);
   const [savedWorkflows, setSavedWorkflows] = useState<Workflow[]>([]);
   const [showExecution, setShowExecution] = useState(false);
-  
+
   // Metrics overlay state
   const [showMetrics, setShowMetrics] = useState(false);
   const [swarmHealth, setSwarmHealth] = useState<SwarmHealthMetrics | null>(null);
-  const [consciousnessMetrics, setConsciousnessMetrics] = useState<ConsciousnessMetrics | null>(null);
+  const [consciousnessMetrics, setConsciousnessMetrics] = useState<ConsciousnessMetrics | null>(
+    null,
+  );
   const [metricsLoading, setMetricsLoading] = useState(false);
 
   // Fetch agents
@@ -176,9 +178,9 @@ export function EnhancedCanvas() {
     try {
       const response = await fetch(`${API_URL}/api/agents`);
       if (!response.ok) throw new Error('Failed to fetch agents');
-      
+
       const data = await response.json();
-      
+
       const agentNodes: Node<AgentData>[] = data.agents.map(
         (agent: AgentApiResponse, index: number) => ({
           id: agent.id,
@@ -193,9 +195,9 @@ export function EnhancedCanvas() {
             status: agent.status as AgentData['status'],
             lastActivity: agent.lastActivity || new Date().toISOString(),
           },
-        })
+        }),
       );
-      
+
       setNodes(agentNodes);
     } catch (err) {
       console.error('Failed to fetch agents:', err);
@@ -203,43 +205,49 @@ export function EnhancedCanvas() {
   }, [setNodes]);
 
   // Save workflow
-  const saveWorkflow = useCallback(async (workflow: Workflow) => {
-    try {
-      const response = await fetch(`${API_URL}/api/workflows`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(workflow),
-      });
-      
-      if (!response.ok) throw new Error('Failed to save workflow');
-      
-      const saved = await response.json();
-      setSavedWorkflows([...savedWorkflows, saved]);
-      setCurrentWorkflow(saved);
-    } catch (err) {
-      console.error('Failed to save workflow:', err);
-    }
-  }, [savedWorkflows, setCurrentWorkflow]);
+  const saveWorkflow = useCallback(
+    async (workflow: Workflow) => {
+      try {
+        const response = await fetch(`${API_URL}/api/workflows`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(workflow),
+        });
+
+        if (!response.ok) throw new Error('Failed to save workflow');
+
+        const saved = await response.json();
+        setSavedWorkflows([...savedWorkflows, saved]);
+        setCurrentWorkflow(saved);
+      } catch (err) {
+        console.error('Failed to save workflow:', err);
+      }
+    },
+    [savedWorkflows, setCurrentWorkflow],
+  );
 
   // Load workflow
-  const loadWorkflow = useCallback(async (workflowId: string) => {
-    try {
-      const response = await fetch(`${API_URL}/api/workflows/${workflowId}`);
-      if (!response.ok) throw new Error('Failed to load workflow');
-      
-      const workflow = await response.json();
-      setCurrentWorkflow(workflow);
-      setNodes(workflow.nodes);
-      setEdges(workflow.edges);
-    } catch (err) {
-      console.error('Failed to load workflow:', err);
-    }
-  }, [setCurrentWorkflow, setNodes, setEdges]);
+  const loadWorkflow = useCallback(
+    async (workflowId: string) => {
+      try {
+        const response = await fetch(`${API_URL}/api/workflows/${workflowId}`);
+        if (!response.ok) throw new Error('Failed to load workflow');
+
+        const workflow = await response.json();
+        setCurrentWorkflow(workflow);
+        setNodes(workflow.nodes);
+        setEdges(workflow.edges);
+      } catch (err) {
+        console.error('Failed to load workflow:', err);
+      }
+    },
+    [setCurrentWorkflow, setNodes, setEdges],
+  );
 
   // Execute workflow
   const executeWorkflow = useCallback(async () => {
     if (!currentWorkflow) return;
-    
+
     setExecutionState({ status: 'running', progress: 0 });
 
     try {
@@ -253,14 +261,14 @@ export function EnhancedCanvas() {
       });
 
       if (!response.ok) throw new Error('Failed to execute workflow');
-      
+
       // Simulate execution with progress updates
       for (let i = 0; i < currentWorkflow.nodes.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         setExecutionState({
           status: 'running',
           currentNode: currentWorkflow.nodes[i].id,
-          progress: (i + 1) / currentWorkflow.nodes.length * 100,
+          progress: ((i + 1) / currentWorkflow.nodes.length) * 100,
           message: `Executing node ${currentWorkflow.nodes[i].id}`,
         });
       }
@@ -282,24 +290,27 @@ export function EnhancedCanvas() {
   }, [currentWorkflow, setExecutionState, setShowExecution]);
 
   // Create node from palette
-  const addNode = useCallback((type: string, position: XYPosition) => {
-    const newNode: Node = {
-      id: `node-${Date.now()}`,
-      type,
-      position,
-      data: { isNew: true },
-    };
-    
-    setNodes((nds) => [...nds, newNode]);
-    return newNode;
-  }, [setNodes]);
+  const addNode = useCallback(
+    (type: string, position: XYPosition) => {
+      const newNode: Node = {
+        id: `node-${Date.now()}`,
+        type,
+        position,
+        data: { isNew: true },
+      };
+
+      setNodes((nds) => [...nds, newNode]);
+      return newNode;
+    },
+    [setNodes],
+  );
 
   // Handle node connections
   const onConnect = useCallback(
     (params: Connection) => {
       setEdges((eds) => addEdge(params, eds));
     },
-    [setEdges]
+    [setEdges],
   );
 
   // Handle node selection
@@ -310,7 +321,7 @@ export function EnhancedCanvas() {
   // Fetch metrics
   const fetchMetrics = useCallback(async () => {
     if (!showMetrics) return;
-    
+
     setMetricsLoading(true);
     try {
       const [healthResponse, consciousnessResponse] = await Promise.all([
@@ -321,12 +332,12 @@ export function EnhancedCanvas() {
           headers: { Authorization: `Bearer ${localStorage.getItem('api_key')}` },
         }),
       ]);
-      
+
       if (healthResponse.ok) {
         const healthData = await healthResponse.json();
         setSwarmHealth(healthData);
       }
-      
+
       if (consciousnessResponse.ok) {
         const consciousnessData = await consciousnessResponse.json();
         setConsciousnessMetrics(consciousnessData);
@@ -389,32 +400,37 @@ export function EnhancedCanvas() {
               ✕
             </button>
           </div>
-          
+
           {metricsLoading && !swarmHealth && (
             <div className="text-center text-gray-400 py-4">Loading metrics...</div>
           )}
-          
+
           {swarmHealth && (
             <div className="space-y-4">
               {/* Overall Health */}
               <div className="bg-gray-900 rounded-lg p-3">
                 <div className="text-gray-400 text-xs uppercase mb-1">Overall Health</div>
-                <div className={`text-3xl font-bold ${getHealthColor(swarmHealth.overall_health_score)}`}>
+                <div
+                  className={`text-3xl font-bold ${getHealthColor(swarmHealth.overall_health_score)}`}
+                >
                   {swarmHealth.overall_health_score.toFixed(1)}
                 </div>
                 <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
                   <div
                     className={`h-2 rounded-full ${
-                      swarmHealth.overall_health_score >= 80 ? 'bg-green-500' :
-                      swarmHealth.overall_health_score >= 60 ? 'bg-blue-500' :
-                      swarmHealth.overall_health_score >= 40 ? 'bg-yellow-500' :
-                      'bg-red-500'
+                      swarmHealth.overall_health_score >= 80
+                        ? 'bg-green-500'
+                        : swarmHealth.overall_health_score >= 60
+                          ? 'bg-blue-500'
+                          : swarmHealth.overall_health_score >= 40
+                            ? 'bg-yellow-500'
+                            : 'bg-red-500'
                     }`}
                     style={{ width: `${swarmHealth.overall_health_score}%` }}
                   />
                 </div>
               </div>
-              
+
               {/* Agent Stats */}
               <div className="grid grid-cols-2 gap-2">
                 <div className="bg-gray-900 rounded-lg p-2">
@@ -426,7 +442,7 @@ export function EnhancedCanvas() {
                   <div className="text-green-400 font-bold">{swarmHealth.active_agents}</div>
                 </div>
               </div>
-              
+
               {/* Task Stats */}
               <div className="bg-gray-900 rounded-lg p-3">
                 <div className="flex justify-between items-center">
@@ -440,7 +456,7 @@ export function EnhancedCanvas() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Consciousness Metrics */}
               {consciousnessMetrics && (
                 <>
@@ -448,7 +464,9 @@ export function EnhancedCanvas() {
                     <div className="text-gray-400 text-xs uppercase mb-2">Consciousness</div>
                     <div className="bg-gray-900 rounded-lg p-3">
                       <div className="text-gray-400 text-xs mb-1">Avg Phi (IIT)</div>
-                      <div className={`text-2xl font-bold ${getPhiColor(consciousnessMetrics.phi_avg)}`}>
+                      <div
+                        className={`text-2xl font-bold ${getPhiColor(consciousnessMetrics.phi_avg)}`}
+                      >
                         {consciousnessMetrics.phi_avg.toFixed(4)}
                       </div>
                     </div>
@@ -478,9 +496,7 @@ export function EnhancedCanvas() {
           <div className="text-white font-bold mb-4">Node Palette</div>
           {NODE_PALETTE.map((category) => (
             <div key={category.category} className="mb-4">
-              <div className="text-gray-400 text-sm font-semibold mb-2">
-                {category.category}
-              </div>
+              <div className="text-gray-400 text-sm font-semibold mb-2">{category.category}</div>
               <div className="grid grid-cols-2 gap-2">
                 {category.nodes.map((nodeConfig) => (
                   <button
@@ -601,9 +617,7 @@ export function EnhancedCanvas() {
           onNodeDragStop={(_event, node) => {
             // Update node position
             setNodes((nds) =>
-              nds.map((n) =>
-                n.id === node.id ? { ...n, position: node.position } : n
-              )
+              nds.map((n) => (n.id === node.id ? { ...n, position: node.position } : n)),
             );
           }}
           fitView
@@ -615,10 +629,14 @@ export function EnhancedCanvas() {
             nodeColor={(node) => {
               const status = (node.data as AgentData)?.status;
               switch (status) {
-                case 'idle': return NODE_COLORS.agent;
-                case 'thinking': return NODE_COLORS.triad;
-                case 'acting': return NODE_COLORS.historian;
-                default: return '#6B7280';
+                case 'idle':
+                  return NODE_COLORS.agent;
+                case 'thinking':
+                  return NODE_COLORS.triad;
+                case 'acting':
+                  return NODE_COLORS.historian;
+                default:
+                  return '#6B7280';
               }
             }}
             className="bg-gray-800 border-gray-700"
@@ -638,7 +656,7 @@ export function EnhancedCanvas() {
                 ✕
               </button>
             </div>
-            
+
             {executionState.status === 'running' && (
               <div className="mb-4">
                 <div className="text-gray-400 text-sm mb-1">
@@ -655,19 +673,17 @@ export function EnhancedCanvas() {
                     style={{ width: `${executionState.progress}%` }}
                   />
                 </div>
-                <div className="text-gray-400 text-sm mt-1">
-                  {executionState.message}
-                </div>
+                <div className="text-gray-400 text-sm mt-1">{executionState.message}</div>
               </div>
             )}
-            
+
             {executionState.status === 'completed' && (
               <div className="text-center">
                 <div className="text-6xl mb-4">✅</div>
                 <div className="text-white text-lg">Workflow Completed Successfully</div>
               </div>
             )}
-            
+
             {executionState.status === 'error' && (
               <div className="text-center">
                 <div className="text-6xl mb-4">❌</div>

@@ -1,12 +1,12 @@
 /**
  * Decision Node Component for Workflow Builder
- * 
+ *
  * Displays a decision node in visual workflow builder.
  * Handles conditional branching logic.
  */
 
 import React, { memo } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 import type { DecisionNodeData } from './types';
 
 interface DecisionData {
@@ -25,18 +25,18 @@ const statusColors = {
 
 function DecisionNode({ data, selected }: NodeProps<DecisionData>) {
   const colors = statusColors[data.status] || statusColors.idle;
-  
+
   const timeAgo = (timestamp: string) => {
     const now = new Date();
     const past = new Date(timestamp);
     const diff = Math.floor((now.getTime() - past.getTime()) / 1000);
-    
+
     if (diff < 60) return 'just now';
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
     return `${Math.floor(diff / 86400)}d ago`;
   };
-  
+
   return (
     <div
       className={`
@@ -56,7 +56,7 @@ function DecisionNode({ data, selected }: NodeProps<DecisionData>) {
         position={Position.Top}
         className="!bg-gray-600 !border-2 !border-gray-500"
       />
-      
+
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-2xl">🔀</span>
@@ -70,20 +70,15 @@ function DecisionNode({ data, selected }: NodeProps<DecisionData>) {
           {data.status}
         </span>
       </div>
-      
+
       {/* Decision Info */}
       <div className="space-y-2">
-        <div className="text-sm font-medium text-gray-900">
-          Condition: {data.condition}
-        </div>
+        <div className="text-sm font-medium text-gray-900">Condition: {data.condition}</div>
         {data.branches && data.branches.length > 0 && (
           <div className="space-y-1">
             <div className="text-xs font-semibold text-gray-700">Branches:</div>
             {data.branches.map((branch, index) => (
-              <div
-                key={branch.id}
-                className="px-2 py-1 rounded border border-gray-300 text-xs"
-              >
+              <div key={branch.id} className="px-2 py-1 rounded border border-gray-300 text-xs">
                 <div className="font-medium">{branch.label}</div>
                 <div className="text-gray-600">{branch.condition}</div>
               </div>
@@ -91,25 +86,24 @@ function DecisionNode({ data, selected }: NodeProps<DecisionData>) {
           </div>
         )}
         {data.lastActivity && (
-          <div className="text-xs text-gray-500">
-            {timeAgo(data.lastActivity)}
-          </div>
+          <div className="text-xs text-gray-500">{timeAgo(data.lastActivity)}</div>
         )}
       </div>
-      
+
       {/* Source Handles (one per branch) */}
-      {data.branches && data.branches.map((branch, index) => (
-        <Handle
-          key={branch.id}
-          type="source"
-          position={Position.Bottom}
-          id={branch.id}
-          style={{
-            left: `${((index + 1) / (data.branches!.length + 1)) * 100}%`,
-          }}
-          className="!bg-gray-600 !border-2 !border-gray-500"
-        />
-      ))}
+      {data.branches &&
+        data.branches.map((branch, index) => (
+          <Handle
+            key={branch.id}
+            type="source"
+            position={Position.Bottom}
+            id={branch.id}
+            style={{
+              left: `${((index + 1) / (data.branches!.length + 1)) * 100}%`,
+            }}
+            className="!bg-gray-600 !border-2 !border-gray-500"
+          />
+        ))}
     </div>
   );
 }

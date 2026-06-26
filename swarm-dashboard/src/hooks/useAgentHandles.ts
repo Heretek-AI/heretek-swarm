@@ -13,7 +13,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Position } from 'reactflow';
+import { Position } from '@xyflow/react';
 
 /**
  * Channel types for handle color-coding
@@ -82,10 +82,10 @@ interface UseAgentHandlesResult {
  */
 export function getHandleColor(channelType: ChannelType): string {
   const colors: Record<ChannelType, string> = {
-    event: '#10B981',    // Green
-    command: '#3B82F6',  // Blue
+    event: '#10B981', // Green
+    command: '#3B82F6', // Blue
     response: '#8B5CF6', // Purple
-    metric: '#F59E0B',   // Amber
+    metric: '#F59E0B', // Amber
   };
   return colors[channelType] || '#6B7280';
 }
@@ -96,7 +96,7 @@ export function getHandleColor(channelType: ChannelType): string {
 export function getHandlePosition(
   type: 'source' | 'target',
   index: number,
-  total: number
+  total: number,
 ): Position {
   if (type === 'target') {
     // Input handles on top, distributed horizontally
@@ -135,7 +135,7 @@ export function useAgentHandles({
 
     try {
       const response = await fetch(`${apiUrl}/api/agents/${agentId}/channels`);
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           // Agent has no subscriptions yet, use defaults
@@ -160,53 +160,57 @@ export function useAgentHandles({
   /**
    * Add a new channel subscription
    */
-  const addSubscription = useCallback(async (
-    subscription: Omit<ChannelSubscription, 'subscribedAt'>
-  ) => {
-    if (!agentId) return;
+  const addSubscription = useCallback(
+    async (subscription: Omit<ChannelSubscription, 'subscribedAt'>) => {
+      if (!agentId) return;
 
-    try {
-      const response = await fetch(`${apiUrl}/api/agents/${agentId}/channels`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(subscription),
-      });
+      try {
+        const response = await fetch(`${apiUrl}/api/agents/${agentId}/channels`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(subscription),
+        });
 
-      if (!response.ok) {
-        throw new Error(`Failed to add subscription: ${response.statusText}`);
+        if (!response.ok) {
+          throw new Error(`Failed to add subscription: ${response.statusText}`);
+        }
+
+        await fetchSubscriptions();
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Unknown error');
+        setError(error);
+        throw error;
       }
-
-      await fetchSubscriptions();
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error');
-      setError(error);
-      throw error;
-    }
-  }, [agentId, apiUrl, fetchSubscriptions]);
+    },
+    [agentId, apiUrl, fetchSubscriptions],
+  );
 
   /**
    * Remove a channel subscription
    */
-  const removeSubscription = useCallback(async (channelName: string) => {
-    if (!agentId) return;
+  const removeSubscription = useCallback(
+    async (channelName: string) => {
+      if (!agentId) return;
 
-    try {
-      const response = await fetch(
-        `${apiUrl}/api/agents/${agentId}/channels/${encodeURIComponent(channelName)}`,
-        { method: 'DELETE' }
-      );
+      try {
+        const response = await fetch(
+          `${apiUrl}/api/agents/${agentId}/channels/${encodeURIComponent(channelName)}`,
+          { method: 'DELETE' },
+        );
 
-      if (!response.ok) {
-        throw new Error(`Failed to remove subscription: ${response.statusText}`);
+        if (!response.ok) {
+          throw new Error(`Failed to remove subscription: ${response.statusText}`);
+        }
+
+        await fetchSubscriptions();
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Unknown error');
+        setError(error);
+        throw error;
       }
-
-      await fetchSubscriptions();
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error');
-      setError(error);
-      throw error;
-    }
-  }, [agentId, apiUrl, fetchSubscriptions]);
+    },
+    [agentId, apiUrl, fetchSubscriptions],
+  );
 
   /**
    * Convert subscriptions to handles
@@ -220,17 +224,18 @@ export function useAgentHandles({
 
       // Calculate position based on total count
       const totalInputs = subscriptions.filter(
-        s => s.direction === 'input' || s.direction === 'bidirectional'
+        (s) => s.direction === 'input' || s.direction === 'bidirectional',
       ).length;
       const totalOutputs = subscriptions.filter(
-        s => s.direction === 'output' || s.direction === 'bidirectional'
+        (s) => s.direction === 'output' || s.direction === 'bidirectional',
       ).length;
 
       if (isInput) {
-        const inputIndex = subscriptions
-          .filter((s, i) => (s.direction === 'input' || s.direction === 'bidirectional') && i <= index)
-          .length - 1;
-        
+        const inputIndex =
+          subscriptions.filter(
+            (s, i) => (s.direction === 'input' || s.direction === 'bidirectional') && i <= index,
+          ).length - 1;
+
         newHandles.push({
           id: `input-${sub.channelName}`,
           type: 'target',
