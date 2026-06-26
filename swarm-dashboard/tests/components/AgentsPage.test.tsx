@@ -52,7 +52,11 @@ describe('AgentsPage', () => {
     (getAvailableAgentTypes as any).mockResolvedValue({ available_agents: [], total: 0 });
     renderWithProviders(<AgentsPage />);
     await waitFor(() => {
-      expect(screen.getByText('Agents')).toBeInTheDocument();
+      expect(screen.getByText('Failed to fetch agents')).toBeInTheDocument();
     });
+    // Verify the error message is shown in the toast
+    expect(screen.getByText('Network error')).toBeInTheDocument();
+    // Verify the toast has the alert role
+    expect(screen.getByRole('alert')).toBeInTheDocument();
   });
 });
