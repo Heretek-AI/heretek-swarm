@@ -25,6 +25,11 @@ class Settings(BaseSettings):
     local_model: str = "llama3.1:8b"
     llm_timeout_s: float = 60.0
 
+    # Memory
+    embedding_model: str = "text-embedding-3-small"
+    embedding_dimensions: int = 1536
+    memory_ttl_s: int = 3600
+
     # Consensus
     max_rounds: int = 3
     charlie_veto_confidence: float = 0.7
