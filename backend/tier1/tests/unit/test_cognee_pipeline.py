@@ -51,3 +51,25 @@ async def test_improve_calls_cognee(pipeline):
         mock_cognee.improve = AsyncMock()
         await pipeline.improve()
         mock_cognee.improve.assert_called_once()
+
+
+async def test_add_extracts_entities(pipeline, mock_memory):
+    mock_memory.store = AsyncMock(return_value="entry-id")
+    with patch("tier1.memory.cognee_store.cognee") as mock_cognee:
+        mock_cognee.add = AsyncMock()
+        result = await pipeline.add(
+            "We decided to use JWT for authentication",
+            metadata={"source": "deliberation"},
+        )
+        mock_cognee.add.assert_called_once()
+        call_args = mock_cognee.add.call_args
+        assert "JWT" in call_args[0][0] or "JWT" in str(call_args)
+
+
+def test_extraction_prompt_format():
+    from tier1.memory.cognee_store import EXTRACTION_PROMPT
+
+    prompt = EXTRACTION_PROMPT.format(text="test content")
+    assert "test content" in prompt
+    assert "entities" in prompt
+    assert "relations" in prompt

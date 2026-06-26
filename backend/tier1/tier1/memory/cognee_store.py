@@ -9,6 +9,10 @@ from tier1.memory import MemoryBackend, MemoryEntry, MemoryType
 
 log = structlog.get_logger(__name__)
 
+EXTRACTION_PROMPT = """Extract entities and relationships from this text.
+Return JSON: {{"entities": [{{"name": "...", "type": "person|concept|decision|component|metric|event"}}], "relations": [{{"source": "...", "target": "...", "type": "causes|depends_on|contradicts|supports|part_of|decided_by"}}]}}
+Text: {text}"""
+
 
 class CogneePipeline:
     """Pipeline orchestrator: cognee graph + MemoryBackend storage."""
