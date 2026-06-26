@@ -30,6 +30,10 @@ class Settings(BaseSettings):
     embedding_dimensions: int = 1536
     memory_ttl_s: int = 3600
 
+    # Cognee
+    cognee_graph_path: str = ".cognee_data"
+    cognee_llm_provider: str = "openai"
+
     # Consensus
     max_rounds: int = 3
     charlie_veto_confidence: float = 0.7
