@@ -29,10 +29,8 @@ function _safeUrl(raw: string): string {
   return '';
 }
 import { DashboardLayout, NavItem } from './components/Dashboard/Layout';
-import { HomePage } from './components/Home/HomePage';
 import { AgentsPage } from './components/Agents/AgentsPage';
 import { ConsciousnessPage } from './components/Consciousness/ConsciousnessPage';
-import { DeliberationPage } from './components/Deliberation/DeliberationPage';
 import { AutonomousPage } from './components/Autonomous/AutonomousPage';
 import { ObservabilityPage } from './components/Observability/ObservabilityPage';
 import { MessageList } from './components/Chat/MessageList';
@@ -52,10 +50,8 @@ import { WorkflowBuilder } from './components/WorkflowBuilder/WorkflowBuilder';
 import { CommandPalette, CommandItem } from './components/UI/CommandPalette';
 
 type View =
-  | 'home'
   | 'agents'
   | 'consciousness'
-  | 'deliberation'
   | 'autonomous'
   | 'workflows'
   | 'logs'
@@ -66,10 +62,8 @@ type View =
   | 'canvas';
 
 const navItems: NavItem[] = [
-  { id: 'home', label: 'Home', icon: '🏠' },
   { id: 'agents', label: 'Agents', icon: '🤖' },
   { id: 'consciousness', label: 'Consciousness', icon: '🧠' },
-  { id: 'deliberation', label: 'Deliberation', icon: '🗳️' },
   { id: 'autonomous', label: 'Autonomous', icon: '🔄' },
   { id: 'observability', label: 'Observability', icon: '🔍' },
   { id: 'memory', label: 'Memory', icon: '🧠' },
@@ -81,7 +75,7 @@ const navItems: NavItem[] = [
 ];
 
 function DashboardContent() {
-  const [currentView, setCurrentView] = useState<View>('home');
+  const [currentView, setCurrentView] = useState<View>('agents');
   const [systemStatus, setSystemStatus] = useState<'healthy' | 'degraded' | 'offline'>('healthy');
   const toast = useToast();
 
@@ -219,14 +213,10 @@ function DashboardContent() {
     // function is kept only as a fallback for legacy callers. The
     // router is now the source of truth.
     switch (currentView) {
-      case 'home':
-        return <HomePage />;
       case 'agents':
         return <AgentsPage />;
       case 'consciousness':
         return <ConsciousnessPage />;
-      case 'deliberation':
-        return <DeliberationPage />;
       case 'autonomous':
         return <AutonomousPage />;
       case 'observability':
@@ -244,7 +234,7 @@ function DashboardContent() {
       case 'settings':
         return <SettingsPage onRerunSetup={handleRerunSetup} />;
       default:
-        return <HomePage />;
+        return <NewHomePage />;
     }
   };
 
