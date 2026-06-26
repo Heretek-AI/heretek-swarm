@@ -223,7 +223,6 @@ addopts = [
     "-m",
     "not integration",
 ]
-asyncio_mode = "auto"
 markers = [
     "unit: Unit tests (fast, isolated)",
     "integration: Integration tests (require external services)",
@@ -235,6 +234,9 @@ markers = [
     "bench: Benchmark tests (pytest-benchmark throughput)",
     "security: Security-focused tests",
 ]
+
+[tool.pytest-asyncio]
+mode = "auto"
 
 # ============== COVERAGE CONFIGURATION ==============
 [tool.coverage.run]
