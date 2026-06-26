@@ -2,26 +2,7 @@
  * API Client - Consciousness metrics endpoints
  */
 
-import axios from 'axios';
-
-// Use environment variable or relative path (nginx proxies /api to api:8000)
-const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
-
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Add API key interceptor
-api.interceptors.request.use((config) => {
-  const apiKey = localStorage.getItem('api_key') || import.meta.env.VITE_API_KEY;
-  if (apiKey) {
-    config.headers.Authorization = `Bearer ${apiKey}`;
-  }
-  return config;
-});
+import { api } from './client';
 
 export interface ConsciousnessStatistics {
   total_agents: number;
@@ -116,7 +97,7 @@ export type ConsciousnessWebSocketEvent = PhiUpdateEvent | FepUpdateEvent | Agen
  * Get collective consciousness statistics
  */
 export const getConsciousnessStatistics = async (): Promise<ConsciousnessStatistics> => {
-  const response = await api.get('/api/consciousness/statistics');
+  const response = await api.get<ConsciousnessStatistics>('/api/consciousness/statistics');
   return response.data;
 };
 
@@ -124,7 +105,7 @@ export const getConsciousnessStatistics = async (): Promise<ConsciousnessStatist
  * Get consciousness metrics for specific agent
  */
 export const getAgentMetrics = async (agentId: string): Promise<AgentMetrics> => {
-  const response = await api.get(`/api/consciousness/agents/${agentId}`);
+  const response = await api.get<AgentMetrics>(`/api/consciousness/agents/${agentId}`);
   return response.data;
 };
 
@@ -132,7 +113,7 @@ export const getAgentMetrics = async (agentId: string): Promise<AgentMetrics> =>
  * Get agency metrics for specific agent
  */
 export const getAgencyMetrics = async (agentId: string): Promise<AgencyMetrics> => {
-  const response = await api.get(`/api/consciousness/agency/${agentId}`);
+  const response = await api.get<AgencyMetrics>(`/api/consciousness/agency/${agentId}`);
   return response.data;
 };
 
@@ -142,10 +123,10 @@ export const getAgencyMetrics = async (agentId: string): Promise<AgencyMetrics> 
 export const getTimeSeriesData = async (
   agentId: string,
   metric: string,
-  hours: number = 24
+  hours: number = 24,
 ): Promise<TimeSeriesData> => {
-  const response = await api.get(
-    `/api/consciousness/visualization/timeseries?agent_id=${agentId}&metric=${metric}&hours=${hours}`
+  const response = await api.get<TimeSeriesData>(
+    `/api/consciousness/visualization/timeseries?agent_id=${agentId}&metric=${metric}&hours=${hours}`,
   );
   return response.data;
 };
@@ -154,7 +135,7 @@ export const getTimeSeriesData = async (
  * Get network visualization data
  */
 export const getNetworkVisualization = async (): Promise<NetworkVisualization> => {
-  const response = await api.get('/api/consciousness/visualization/network');
+  const response = await api.get<NetworkVisualization>('/api/consciousness/visualization/network');
   return response.data;
 };
 
@@ -165,6 +146,9 @@ export const getAgentStates = async (): Promise<{
   counts: Record<string, number>;
   states: Record<string, 'dormant' | 'emerging' | 'coherent' | 'transcendent'>;
 }> => {
-  const response = await api.get('/api/consciousness/states');
+  const response = await api.get<{
+    counts: Record<string, number>;
+    states: Record<string, 'dormant' | 'emerging' | 'coherent' | 'transcendent'>;
+  }>('/api/consciousness/states');
   return response.data;
 };

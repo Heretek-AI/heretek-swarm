@@ -1,6 +1,6 @@
 /**
  * API Client - Enhanced with error handling and retry logic
- * 
+ *
  * Provides a centralized HTTP client with:
  * - Bearer token authentication
  * - Automatic retry for transient failures
@@ -8,7 +8,12 @@
  * - Request/response interceptors
  */
 
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import { useToast } from '../components/UI/Toast';
 
 // Configuration
@@ -66,7 +71,7 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Response interceptor - Handle errors
@@ -123,14 +128,14 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(new ApiError(errorMessage, errorCode, status, data));
-  }
+  },
 );
 
 // Retry logic wrapper
 export async function withRetry<T>(
   fn: () => Promise<T>,
   retries = MAX_RETRIES,
-  delay = RETRY_DELAY
+  delay = RETRY_DELAY,
 ): Promise<T> {
   try {
     return await fn();
@@ -140,19 +145,21 @@ export async function withRetry<T>(
     }
 
     const apiError = error as ApiError;
-    
+
     // Don't retry for client errors (4xx except 429)
-    if (apiError instanceof ApiError && 
-        apiError.status && 
-        apiError.status >= 400 && 
-        apiError.status < 500 && 
-        apiError.status !== 429) {
+    if (
+      apiError instanceof ApiError &&
+      apiError.status &&
+      apiError.status >= 400 &&
+      apiError.status < 500 &&
+      apiError.status !== 429
+    ) {
       throw error;
     }
 
     // Wait before retrying
     await new Promise((resolve) => setTimeout(resolve, delay));
-    
+
     // Retry with exponential backoff
     return withRetry(fn, retries - 1, delay * 2);
   }
@@ -161,27 +168,27 @@ export async function withRetry<T>(
 // Helper methods
 export const api = {
   // GET request
-  get: async <T>(url: string, config?: { headers?: Record<string, string> }) => {
+  get: async <T>(url: string, config?: Omit<AxiosRequestConfig, 'data'>) => {
     return withRetry(() => apiClient.get<T>(url, config));
   },
 
   // POST request
-  post: async <T>(url: string, data?: unknown, config?: { headers?: Record<string, string> }) => {
+  post: async <T>(url: string, data?: unknown, config?: AxiosRequestConfig) => {
     return withRetry(() => apiClient.post<T>(url, data, config));
   },
 
   // PUT request
-  put: async <T>(url: string, data?: unknown, config?: { headers?: Record<string, string> }) => {
+  put: async <T>(url: string, data?: unknown, config?: AxiosRequestConfig) => {
     return withRetry(() => apiClient.put<T>(url, data, config));
   },
 
   // PATCH request
-  patch: async <T>(url: string, data?: unknown, config?: { headers?: Record<string, string> }) => {
+  patch: async <T>(url: string, data?: unknown, config?: AxiosRequestConfig) => {
     return withRetry(() => apiClient.patch<T>(url, data, config));
   },
 
   // DELETE request
-  delete: async <T>(url: string, config?: { headers?: Record<string, string> }) => {
+  delete: async <T>(url: string, config?: Omit<AxiosRequestConfig, 'data'>) => {
     return withRetry(() => apiClient.delete<T>(url, config));
   },
 

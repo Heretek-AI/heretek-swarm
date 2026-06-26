@@ -165,33 +165,19 @@ export interface ProvisionResponse {
 // API Functions
 // =============================================================================
 
-const API_URL = localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_HOST || '';
+import apiClient from './client';
 
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
-  const apiKey = localStorage.getItem('api_key');
+  const method = (options?.method || 'GET') as string;
+  const body = options?.body ? JSON.parse(options.body as string) : undefined;
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
-
-  if (apiKey) {
-    headers['Authorization'] = `Bearer ${apiKey}`;
-  }
-
-  const response = await fetch(`${API_URL}${url}`, {
-    ...options,
-    headers: {
-      ...headers,
-      ...options?.headers,
-    },
+  const response = await apiClient.request<T>({
+    method,
+    url,
+    data: body,
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.detail || errorData.error || `HTTP ${response.status}`);
-  }
-
-  return response.json();
+  return response.data;
 }
 
 /**
@@ -235,16 +221,15 @@ export async function getConfigStatus(): Promise<ConfigStatus> {
 export async function validateCredentials(
   providerId: string,
   apiKey?: string,
-  baseUrl?: string
+  baseUrl?: string,
 ): Promise<ValidationResult> {
   const params = new URLSearchParams();
   if (apiKey) params.append('api_key', apiKey);
   if (baseUrl) params.append('base_url', baseUrl);
 
-  return fetchJson<ValidationResult>(
-    `/api/wizard/validate/${providerId}?${params.toString()}`,
-    { method: 'POST' }
-  );
+  return fetchJson<ValidationResult>(`/api/wizard/validate/${providerId}?${params.toString()}`, {
+    method: 'POST',
+  });
 }
 
 /**
@@ -278,16 +263,14 @@ export async function getInfrastructureConfigs(): Promise<{
   total: number;
 }> {
   return fetchJson<{ infrastructure: InfrastructureConfig[]; total: number }>(
-    '/api/wizard/infrastructure'
+    '/api/wizard/infrastructure',
   );
 }
 
 /**
  * Create or update infrastructure service configuration
  */
-export async function saveInfrastructureConfig(
-  config: InfrastructureCreate
-): Promise<{
+export async function saveInfrastructureConfig(config: InfrastructureCreate): Promise<{
   id: string;
   service: string;
   host: string;
@@ -313,22 +296,17 @@ export async function saveInfrastructureConfig(
 /**
  * Get infrastructure configuration for a specific service
  */
-export async function getInfrastructureConfig(
-  service: string
-): Promise<InfrastructureConfig> {
+export async function getInfrastructureConfig(service: string): Promise<InfrastructureConfig> {
   return fetchJson<InfrastructureConfig>(`/api/wizard/infrastructure/${service}`);
 }
 
 /**
  * Run health check for a specific infrastructure service
  */
-export async function checkInfrastructureHealth(
-  service: string
-): Promise<HealthCheckResult> {
-  return fetchJson<HealthCheckResult>(
-    `/api/wizard/infrastructure/${service}/health-check`,
-    { method: 'POST' }
-  );
+export async function checkInfrastructureHealth(service: string): Promise<HealthCheckResult> {
+  return fetchJson<HealthCheckResult>(`/api/wizard/infrastructure/${service}/health-check`, {
+    method: 'POST',
+  });
 }
 
 /**
@@ -336,21 +314,25 @@ export async function checkInfrastructureHealth(
  */
 export async function checkAllInfrastructureHealth(): Promise<{
   results: HealthCheckResult[];
-  summary: {
-    total: number;
-    healthy: number;
-    unhealthy: number;
-    degraded: number;
-  } | string;
+  summary:
+    | {
+        total: number;
+        healthy: number;
+        unhealthy: number;
+        degraded: number;
+      }
+    | string;
 }> {
   return fetchJson<{
     results: HealthCheckResult[];
-    summary: {
-      total: number;
-      healthy: number;
-      unhealthy: number;
-      degraded: number;
-    } | string;
+    summary:
+      | {
+          total: number;
+          healthy: number;
+          unhealthy: number;
+          degraded: number;
+        }
+      | string;
   }>('/api/wizard/infrastructure/health-check-all', {
     method: 'POST',
   });
@@ -359,29 +341,13 @@ export async function checkAllInfrastructureHealth(): Promise<{
 /**
  * Delete infrastructure configuration for a service
  */
-export async function deleteInfrastructureConfig(
-  service: string
-): Promise<{ success: boolean }> {
-  const response = await fetch(
-    `${API_URL}/api/wizard/infrastructure/${service}`,
-    {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-
-  if (response.status === 204) {
+export async function deleteInfrastructureConfig(service: string): Promise<{ success: boolean }> {
+  const response = await apiClient.delete(`/api/wizard/infrastructure/${service}`);
+  // Axios returns 204 with empty data — treat as success
+  if (!response.data || Object.keys(response.data).length === 0) {
     return { success: true };
   }
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.detail || `HTTP ${response.status}`);
-  }
-
-  return response.json();
+  return response.data;
 }
 
 /**
@@ -391,7 +357,7 @@ export async function deleteInfrastructureConfig(
  */
 export async function provisionInfrastructure(
   services: string[],
-  runtime?: RuntimeChoice
+  runtime?: RuntimeChoice,
 ): Promise<ProvisionResponse> {
   return fetchJson<ProvisionResponse>('/api/wizard/provision', {
     method: 'POST',

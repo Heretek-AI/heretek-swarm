@@ -5,22 +5,7 @@
  * goal pipeline state, and events timeline from the autonomous runtime.
  */
 
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
-
-const api = axios.create({
-  baseURL: API_URL,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-api.interceptors.request.use((config) => {
-  const apiKey = localStorage.getItem('api_key') || import.meta.env.VITE_API_KEY;
-  if (apiKey) {
-    config.headers.Authorization = `Bearer ${apiKey}`;
-  }
-  return config;
-});
+import { api } from './client';
 
 // ── Analysis types ───────────────────────────────────────────────────────────
 
@@ -129,27 +114,37 @@ function buildParams(page = 1, limit = 20): string {
 
 // ── API functions ────────────────────────────────────────────────────────────
 
-export const getAnalysisHistory = async (params?: PaginationParams): Promise<AnalysisListResponse> => {
-  const response = await api.get(`/api/autonomous/analyses${buildParams(params?.page, params?.limit)}`);
+export const getAnalysisHistory = async (
+  params?: PaginationParams,
+): Promise<AnalysisListResponse> => {
+  const response = await api.get<AnalysisListResponse>(
+    `/api/autonomous/analyses${buildParams(params?.page, params?.limit)}`,
+  );
   return response.data;
 };
 
 export const getActiveTasks = async (params?: PaginationParams): Promise<TaskListResponse> => {
-  const response = await api.get(`/api/autonomous/tasks${buildParams(params?.page, params?.limit)}`);
+  const response = await api.get<TaskListResponse>(
+    `/api/autonomous/tasks${buildParams(params?.page, params?.limit)}`,
+  );
   return response.data;
 };
 
 export const getGoalPipeline = async (params?: PaginationParams): Promise<GoalListResponse> => {
-  const response = await api.get(`/api/autonomous/goals${buildParams(params?.page, params?.limit)}`);
+  const response = await api.get<GoalListResponse>(
+    `/api/autonomous/goals${buildParams(params?.page, params?.limit)}`,
+  );
   return response.data;
 };
 
 export const getEventsTimeline = async (params?: PaginationParams): Promise<EventListResponse> => {
-  const response = await api.get(`/api/autonomous/events${buildParams(params?.page, params?.limit)}`);
+  const response = await api.get<EventListResponse>(
+    `/api/autonomous/events${buildParams(params?.page, params?.limit)}`,
+  );
   return response.data;
 };
 
 export const getAutonomousStatus = async (): Promise<AutonomousStatus> => {
-  const response = await api.get('/api/autonomous/status');
+  const response = await api.get<AutonomousStatus>('/api/autonomous/status');
   return response.data;
 };
