@@ -29,10 +29,8 @@ from opentelemetry.sdk.trace.sampling import Sampler, TraceIdRatioBased
 from opentelemetry.trace import Span, SpanKind, Status, StatusCode
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
-from heretek_swarm_core.models.external_call_log import ExternalCallLog
-from heretek_swarm_core.models.external_call_log_encryption import get_encryptor
-
 if TYPE_CHECKING:
+    from heretek_swarm_core.models.external_call_log import ExternalCallLog
     from sqlalchemy.ext.asyncio import async_sessionmaker
 
 logger = structlog.get_logger(__name__)
@@ -500,6 +498,12 @@ async def _write_call_log(
     Encrypts request headers, request body, and response body before storage.
     Silently catches and logs DB errors so they never propagate to callers.
     """
+    # Lazy imports: avoid circular dependency between heretek_swarm and
+    # heretek_swarm_core at module load time. See CLAUDE.md notes on
+    # the packages extraction work for context.
+    from heretek_swarm_core.models.external_call_log import ExternalCallLog
+    from heretek_swarm_core.models.external_call_log_encryption import get_encryptor
+
     encryptor = get_encryptor()
 
     # Sanitize and encrypt headers
