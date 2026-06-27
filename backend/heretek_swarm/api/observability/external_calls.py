@@ -12,7 +12,7 @@ from sqlalchemy import func, select
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm_core.models.external_call_log import ExternalCallLog
 from heretek_swarm_core.models.external_call_log_encryption import get_encryptor
-from heretek_swarm.schemas.external_call_log import (
+from heretek_swarm_core.schemas.external_call_log import (
     ExternalCallLogCreate,
     ExternalCallLogListItem,
     ExternalCallLogListResponse,

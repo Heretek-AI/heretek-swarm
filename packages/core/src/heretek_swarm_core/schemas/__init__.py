@@ -3,10 +3,10 @@
 Re-exports actor message models and external call log schemas so external
 callers use a single stable entry point:
 
-    from heretek_swarm.schemas import ActorMessage, ExternalCallLogResponse
+    from heretek_swarm_core.schemas import ActorMessage, ExternalCallLogResponse
 """
 
-from heretek_swarm.schemas.actors import (
+from heretek_swarm_core.schemas.actors import (
     MESSAGE_TYPES,
     ActorMessage,
     AgentMessageBase,
@@ -27,7 +27,7 @@ from heretek_swarm.schemas.actors import (
     create_tool_response,
     validate_message,
 )
-from heretek_swarm.schemas.external_call_log import (
+from heretek_swarm_core.schemas.external_call_log import (
     ExternalCallLogBase,
     ExternalCallLogCreate,
     ExternalCallLogListItem,

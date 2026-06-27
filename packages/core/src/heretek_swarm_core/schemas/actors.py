@@ -4,7 +4,7 @@ schemas.actors — consolidated Pydantic models for inter-actor messages.
 This module re-exports all Pydantic models from the validation layer so that
 external callers can use a stable import path::
 
-    from heretek_swarm.schemas.actors import ActorMessage, MessageType, MESSAGE_TYPES
+    from heretek_swarm_core.schemas.actors import ActorMessage, MessageType, MESSAGE_TYPES
 
 The internal dataclass ActorMessage in actors/base/core.py is NOT re-exported here;
 it remains an internal implementation detail.
@@ -87,8 +87,7 @@ def __getattr__(name: str) -> Any:
     """Re-export from agent_messages; raise DeprecationWarning for legacy paths."""
     if name in _PLAN_REFERENCED_MISSING:
         raise AttributeError(
-            f"heretek_swarm.schemas.actors.{name} is not yet implemented "
-            f"(planned for a future slice)."
+            f"heretek_swarm_core.schemas.actors.{name} is not yet implemented (planned for a future slice)."
         )
 
     # Redirect known exports through the module namespace.

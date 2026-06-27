@@ -7,10 +7,10 @@ This module contains:
 - ActorStatus dataclass
 - AgentActor core initialization and lifecycle methods
 
-The Pydantic models for inter-actor messaging are in heretek_swarm.schemas.actors.
+The Pydantic models for inter-actor messaging are in heretek_swarm_core.schemas.actors.
 Import from there for validated message types::
 
-    from heretek_swarm.schemas.actors import ActorMessage as PydanticActorMessage
+    from heretek_swarm_core.schemas.actors import ActorMessage as PydanticActorMessage
 """
 
 import asyncio
@@ -353,9 +353,7 @@ class AgentActor:
             if isinstance(mesh, NATSEventMesh):
                 return "real"
         except ImportError:
-            logger.debug(
-                "NATSEventMesh import unavailable, falling back to class-name mesh type detection"
-            )
+            logger.debug("NATSEventMesh import unavailable, falling back to class-name mesh type detection")
         # Fallback: check class name for NATS substring (supports mocks)
         mesh_type_name = type(mesh).__name__
         if "NATS" in mesh_type_name:
@@ -635,16 +633,14 @@ class AgentActor:
                 logger.debug("Task cancellation complete during actor teardown")
             except Exception as e:
                 # P1-10d fix: Log any other exceptions during task cancellation
-                logger.exception(
-                    f"[{self.agent_id}] Error during task cancellation: {e}"
-                )
+                logger.exception(f"[{self.agent_id}] Error during task cancellation: {e}")
 
 
 # Trigger mixin bindings when this module is imported
 
 # Backward-compat: existing code that imports ActorMessage from actors.base.core
 # gets the internal dataclass ActorMessage (defined above), not the Pydantic one.
-# Use heretek_swarm.schemas.actors for the Pydantic models.
+# Use heretek_swarm_core.schemas.actors for the Pydantic models.
 
 
 # ---------------------------------------------------------------------------
