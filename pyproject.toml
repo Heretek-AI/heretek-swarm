@@ -195,7 +195,7 @@ override-dependencies = [
 # target). When the split lands, this becomes:
 #   members = ["packages/core", "packages/api"]
 [tool.uv.workspace]
-members = []
+members = ["packages/core", "packages/api"]
 
 # ============== PYTEST CONFIGURATION ==============
 [tool.pytest.ini_options]

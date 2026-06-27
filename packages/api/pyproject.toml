@@ -74,3 +74,6 @@ Repository = "https://github.com/heretek-ai/heretek-swarm"
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["heretek_swarm_api*"]
+
+[tool.uv.sources]
+heretek-swarm-core = { workspace = true }
