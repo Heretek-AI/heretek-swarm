@@ -21,6 +21,9 @@ from heretek_swarm.orchestration.langgraph_workflow import (
 from heretek_swarm.plugins.consciousness import ConsciousnessPlugin
 from heretek_swarm.plugins.liberation import LiberationPlugin
 
+# Backward-compat re-export (remove after migration complete)
+from heretek_swarm_core.embeddings import *  # noqa: F401,F403
+
 __all__ = [
     "ActorSupervisor",
     "AgentActor",

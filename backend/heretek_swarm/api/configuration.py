@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 # Lazy-loaded provider factory functions (embedding factory only; LLM CRUD
 # routes were consolidated onto the ModelGarage-backed /api/providers/llm
 # surface in Phase 4 follow-up).
-_embedding_factory = get_lazy_import("heretek_swarm.embeddings.providers.factory")
+_embedding_factory = get_lazy_import("heretek_swarm_core.embeddings.providers.factory")
 
 
 def _get_embedding_provider_factory():
@@ -129,6 +129,8 @@ async def create_config(
     except ValueError as e:
         logger.warning("create_config_validation_failed", error=str(e))
         raise HTTPException(400, "Invalid configuration data") from e
+
+
 async def delete_config(
     key: str,
     authenticated: str = Depends(verify_auth),
@@ -215,6 +217,8 @@ async def create_embedding_provider(
     except ValueError as e:
         logger.warning("create_embedding_provider_validation_failed", error=str(e))
         raise HTTPException(400, "Invalid embedding provider data") from e
+
+
 async def update_embedding_provider(
     provider_id: UUID,
     update: EmbeddingProviderUpdate,
@@ -311,9 +315,7 @@ async def list_agent_configs(
     service: ConfigurationService = Depends(get_service),
 ) -> dict[str, Any]:
     """List agent configurations."""
-    configs = await service.list_agent_configs(
-        agent_type=agent_type, include_inactive=not active_only
-    )
+    configs = await service.list_agent_configs(agent_type=agent_type, include_inactive=not active_only)
     return {
         "configs": [c.model_dump() for c in configs],
         "total": len(configs),
@@ -346,6 +348,8 @@ async def create_agent_config(
     except ValueError as e:
         logger.warning("create_agent_config_validation_failed", error=str(e))
         raise HTTPException(400, "Invalid agent configuration data") from e
+
+
 async def update_agent_config(
     config_id: UUID,
     update: AgentConfigUpdate,
@@ -491,9 +495,7 @@ async def reload_configurations(
             "cache_count": reload_result.get("cache_count", 0),
             "cache_stats": cache_stats,
             "reloaded_by": authenticated,
-            "reloaded_at": datetime.now(UTC).isoformat()
-            if hasattr(datetime, "utcnow")
-            else datetime.now().isoformat(),
+            "reloaded_at": datetime.now(UTC).isoformat() if hasattr(datetime, "utcnow") else datetime.now().isoformat(),
         }
     except Exception as e:
         logger.error("Configuration reload failed", error=str(e))
@@ -521,9 +523,7 @@ async def configuration_health(
     try:
         # Test database connectivity
         test_config = await service.get_config("system.health_check")
-        database_healthy = (
-            test_config is not None or True
-        )  # Config may not exist but connection works
+        database_healthy = test_config is not None or True  # Config may not exist but connection works
 
         # Get cache stats
         loader = get_config_loader()
@@ -609,4 +609,3 @@ async def import_configuration_bundle(
         "imported_by": authenticated,
         "imported_at": datetime.now(UTC).isoformat(),
     }
-

@@ -19,20 +19,20 @@ T = TypeVar("T")
 class LazyImport:
     """Lazy import wrapper that defers import until first access.
 
-    Use this to avoid circular imports when module A needs to import
-    from module B but module B might import from module A at the top level.
+        Use this to avoid circular imports when module A needs to import
+        from module B but module B might import from module A at the top level.
 
-import structlog
+    import structlog
 
-logger = structlog.get_logger(__name__)
+    logger = structlog.get_logger(__name__)
 
-    Example:
-        # Instead of: from foo import Bar
-        # Use:
-        Bar = LazyImport('foo.Bar')
+        Example:
+            # Instead of: from foo import Bar
+            # Use:
+            Bar = LazyImport('foo.Bar')
 
-        # Later, when you need it:
-        result = Bar.some_method()  # Import happens here
+            # Later, when you need it:
+            result = Bar.some_method()  # Import happens here
     """
 
     def __init__(self, import_path: str, attr: str | None = None):
@@ -80,12 +80,12 @@ class LazyModule(dict[str, Any]):
 
     Example:
         # Instead of:
-        # from heretek_swarm.embeddings.providers import factory
+        # from heretek_swarm_core.embeddings.providers import factory
 
         # Use:
         factory = LazyModule({
-            'create_embedding_provider': LazyImport('heretek_swarm.embeddings.providers.factory', 'create_embedding_provider'),  # noqa: E501
-            'get_provider_class': LazyImport('heretek_swarm.embeddings.providers.factory', 'get_provider_class'),  # noqa: E501
+            'create_embedding_provider': LazyImport('heretek_swarm_core.embeddings.providers.factory', 'create_embedding_provider'),  # noqa: E501
+            'get_provider_class': LazyImport('heretek_swarm_core.embeddings.providers.factory', 'get_provider_class'),  # noqa: E501
         })
 
         # Then use: factory.create_embedding_provider(...)
@@ -107,7 +107,7 @@ def lazy_import(import_path: str) -> Callable[[Callable[..., T]], Callable[..., 
     The actual import is deferred until the decorated function is called.
 
     Example:
-        @lazy_import('heretek_swarm.embeddings.providers.factory')
+        @lazy_import('heretek_swarm_core.embeddings.providers.factory')
         def create_provider(config):
             return create_provider(config)
     """
