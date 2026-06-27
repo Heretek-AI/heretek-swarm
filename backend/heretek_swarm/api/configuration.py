@@ -35,7 +35,7 @@ from heretek_swarm.gateway.auth import verify_auth
 
 # Use lazy imports to break circular dependency at module load time
 # These imports are resolved only when the functions are called
-from heretek_swarm.utils import get_lazy_import
+from heretek_swarm_core.utils import get_lazy_import
 
 if TYPE_CHECKING:
     from uuid import UUID
