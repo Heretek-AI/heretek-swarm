@@ -40,7 +40,7 @@ from heretek_swarm.consensus_api import (  # noqa: F401
     router as consensus_router,
     ConsensusService,
 )
-from heretek_swarm.realtime import (  # noqa: F401
+from heretek_swarm_api.realtime import (  # noqa: F401
     WebSocketAuthManager,
     ConnectionManager,
     manager as ws_manager,

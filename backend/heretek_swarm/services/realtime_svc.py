@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from heretek_swarm.realtime import ConnectionManager, manager as _default_manager
+from heretek_swarm_api.realtime import ConnectionManager, manager as _default_manager
 
 
 class RealtimeServiceStub:

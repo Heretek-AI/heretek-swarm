@@ -28,6 +28,7 @@ from heretek_swarm_core.schemas import *  # noqa: F401,F403
 from heretek_swarm_core.swarm_logging import *  # noqa: F401,F403
 from heretek_swarm_core.utils import *  # noqa: F401,F403
 from heretek_swarm_core.validation import *  # noqa: F401,F403
+from heretek_swarm_api.realtime import *  # noqa: F401,F403
 
 __all__ = [
     "ActorSupervisor",
