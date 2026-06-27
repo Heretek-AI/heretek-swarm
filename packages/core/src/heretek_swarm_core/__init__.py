@@ -39,12 +39,9 @@ from __future__ import annotations
 # gets the same names as if it imported from heretek_swarm.
 # When the actual move happens, the re-exports below are
 # removed and the source files live in this package.
-from heretek_swarm.actors import (  # noqa: F401
-    AgentActor,
-    ActorMessage,
-    ActorSupervisor,
-    ActorFactory,
-)
+from heretek_swarm.actors.base.core import AgentActor, ActorMessage  # noqa: F401
+from heretek_swarm.actors.supervisor import ActorSupervisor  # noqa: F401
+from heretek_swarm.actors.factory import ActorFactory  # noqa: F401
 from heretek_swarm.consensus import (  # noqa: F401
     MAKERConsensus,
     EnhancedMAKERConsensus,
