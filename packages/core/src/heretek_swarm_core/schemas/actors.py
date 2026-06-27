@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from heretek_swarm.validation.agent_messages import (
+from heretek_swarm_core.validation.agent_messages import (
     MESSAGE_TYPES,
     ActorMessage,
     AgentMessageBase,

@@ -29,7 +29,7 @@ from heretek_swarm.actors.mixins import (
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-from heretek_swarm.validation import validate_message
+from heretek_swarm_core.validation import validate_message
 
 logger = structlog.get_logger("EmpathAgent")
 
@@ -149,9 +149,7 @@ class EmpathAgent(
         # Session 44: Collective Learning Integration - initialize pattern extractor
         from heretek_swarm.collective.learning import PatternExtractor
 
-        self.pattern_extractor = _pattern_extractor or PatternExtractor(
-            min_support=3, min_confidence=0.6
-        )
+        self.pattern_extractor = _pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
 
         # Session 44: Consensus Integration - initialize deliberation engine
         from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
@@ -194,7 +192,6 @@ class EmpathAgent(
             except Exception as e:
                 logger.exception(
                     f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-
                 )
                 self.error_count += 1
                 # Send error response if reply_to is specified
@@ -257,11 +254,7 @@ class EmpathAgent(
             content = (
                 validated.content
                 if hasattr(validated, "content")
-                else (
-                    validated.to_dict().get("content")
-                    if hasattr(validated, "to_dict")
-                    else message.content
-                )
+                else (validated.to_dict().get("content") if hasattr(validated, "to_dict") else message.content)
             )
 
             text = content.get("text", "")
@@ -517,21 +510,15 @@ Provide your analysis in this exact JSON format:
         existing = self._agent_emotions.get(agent_id, {})
         self._agent_emotions[agent_id] = {**existing, **mood_entry, **sentiment_result}
 
-    def _check_stress_indicators(
-        self, agent_id: str, sentiment_result: dict[str, Any] | None = None
-    ) -> float:
+    def _check_stress_indicators(self, agent_id: str, sentiment_result: dict[str, Any] | None = None) -> float:
         """Check for stress indicators and update stress levels. Returns current stress level."""
         if sentiment_result is not None:
             # Update stress level based on sentiment
             if sentiment_result.get("stress_indicators", False):
-                self.agent_stress_levels[agent_id] = min(
-                    1.0, self.agent_stress_levels.get(agent_id, 0.0) + 0.1
-                )
+                self.agent_stress_levels[agent_id] = min(1.0, self.agent_stress_levels.get(agent_id, 0.0) + 0.1)
             else:
                 # Gradually decrease stress over time
-                self.agent_stress_levels[agent_id] = max(
-                    0.0, self.agent_stress_levels.get(agent_id, 0.0) - 0.05
-                )
+                self.agent_stress_levels[agent_id] = max(0.0, self.agent_stress_levels.get(agent_id, 0.0) - 0.05)
         else:
             # Compute stress from stored emotional state if no sentiment_result provided
             emotions = self._agent_emotions.get(agent_id, {})
@@ -584,9 +571,7 @@ Provide your analysis in this exact JSON format:
             intensity = content.get("intensity", 0.5)
 
             if not agent_id or not emotion:
-                await self._send_error_response(
-                    message, "Missing required fields: agent_id, emotion"
-                )
+                await self._send_error_response(message, "Missing required fields: agent_id, emotion")
                 return
 
             self._update_agent_mood(
@@ -624,9 +609,7 @@ Provide your analysis in this exact JSON format:
             context = content.get("context", "")
 
             if len(agents) < 2:
-                await self._send_error_response(
-                    message, "Conflict detection requires at least 2 agents"
-                )
+                await self._send_error_response(message, "Conflict detection requires at least 2 agents")
                 return
 
             # Analyze recent interactions between agents
@@ -681,8 +664,7 @@ Provide your analysis in this exact JSON format:
             moods = self.agent_moods.get(agent_id, [])[-10:]
             if moods:
                 avg_sentiment = sum(
-                    1 if m["sentiment"] == "positive" else -1 if m["sentiment"] == "negative" else 0
-                    for m in moods
+                    1 if m["sentiment"] == "positive" else -1 if m["sentiment"] == "negative" else 0 for m in moods
                 ) / len(moods)
                 recent_sentiments[agent_id] = avg_sentiment
         if len(recent_sentiments) >= 2:
@@ -693,10 +675,7 @@ Provide your analysis in this exact JSON format:
 
     def _has_high_stress(self, agents: list[str]) -> bool:
         """Check if any agent exceeds the stress threshold."""
-        return any(
-            self.agent_stress_levels.get(aid, 0.0) > self.stress_threshold
-            for aid in agents
-        )
+        return any(self.agent_stress_levels.get(aid, 0.0) > self.stress_threshold for aid in agents)
 
     async def _handle_get_emotional_state(self, message: ActorMessage) -> None:
         """
@@ -729,9 +708,7 @@ Provide your analysis in this exact JSON format:
                     "collective_stress": self.collective_stress,
                     "agent_count": len(self.agent_moods),
                     "high_stress_agents": [
-                        aid
-                        for aid, stress in self.agent_stress_levels.items()
-                        if stress > self.stress_threshold
+                        aid for aid, stress in self.agent_stress_levels.items() if stress > self.stress_threshold
                     ],
                 }
 
@@ -805,9 +782,7 @@ Provide your analysis in this exact JSON format:
             logger.exception(f"[{self.agent_id}] Conflict mediation failed: {e}")
             await self._send_error_response(message, f"Mediation failed: {e}")
 
-    async def _generate_mediation(
-        self, agents: list[str], proposed_resolution: str | None
-    ) -> dict[str, Any]:
+    async def _generate_mediation(self, agents: list[str], proposed_resolution: str | None) -> dict[str, Any]:
         """Generate mediation suggestions."""
         try:
             if self.pydantic_ai_agent:
@@ -889,9 +864,7 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
 
         # Average stress
         if self.agent_stress_levels:
-            self.collective_stress = sum(self.agent_stress_levels.values()) / len(
-                self.agent_stress_levels
-            )
+            self.collective_stress = sum(self.agent_stress_levels.values()) / len(self.agent_stress_levels)
 
     # =========================================================================
     # Session 44: Collective Learning, Deliberation, and Memory Integration
@@ -995,7 +968,6 @@ Format your response as a clear analysis with these three elements.
         except Exception as e:
             logger.exception(
                 f"[{self.agent_id}] On-demand sentiment analysis failed: {e}",
-
             )
             return {
                 "sentiment": "neutral",

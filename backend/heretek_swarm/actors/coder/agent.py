@@ -36,7 +36,7 @@ from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
 from heretek_swarm.actors.mixins.validation import ValidationMixin
 from heretek_swarm.actors.validation import validate_message as validate_message_schema
-from heretek_swarm.validation import (
+from heretek_swarm_core.validation import (
     LLMOutputValidator,
     is_code_safe,
     is_text_safe,
@@ -48,9 +48,7 @@ validate_message = validate_message_schema
 logger = structlog.get_logger("CoderAgent")
 
 
-class CoderAgent(
-    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
-):
+class CoderAgent(ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Code Implementation & Debugging Specialist Agent.
 
@@ -140,7 +138,8 @@ class CoderAgent(
         """
         payload: dict[str, Any] = message.content if isinstance(message.content, dict) else {}
         logger.info(
-            "[%s] route_task handler invoked", self.agent_id,
+            "[%s] route_task handler invoked",
+            self.agent_id,
             extra={
                 "sender": message.sender,
                 "task_type": payload.get("task_type"),
@@ -205,7 +204,9 @@ class CoderAgent(
         handler = self.get_handlers().get(handler_key)
         if handler is None:
             logger.error(
-                "[%s] Handler %s not registered", self.agent_id, handler_key,
+                "[%s] Handler %s not registered",
+                self.agent_id,
+                handler_key,
                 extra={"task_type": task_type},
             )
             return {"status": "error", "error": f"Handler {handler_key} not available"}
@@ -297,7 +298,21 @@ class CoderAgent(
 
             # Build and execute docker run CLI using asyncio subprocess
             # Enforce network isolation, memory limits, read-only rootfs, and non-root user
-            docker_cmd = ["docker", "run", "--rm", "--network", "none", "--memory", "128m", "--cpus", "0.5", "--read-only", "-i", image, *cmd]
+            docker_cmd = [
+                "docker",
+                "run",
+                "--rm",
+                "--network",
+                "none",
+                "--memory",
+                "128m",
+                "--cpus",
+                "0.5",
+                "--read-only",
+                "-i",
+                image,
+                *cmd,
+            ]
 
             proc = await asyncio.create_subprocess_exec(
                 *docker_cmd,
@@ -453,9 +468,7 @@ class CoderAgent(
             logger.info("Reviewing code", language=language.value, focus_areas=focus_areas)
 
             # Perform code review
-            review_result = await self._review_code_llm(
-                code=code, language=language, focus_areas=focus_areas
-            )
+            review_result = await self._review_code_llm(code=code, language=language, focus_areas=focus_areas)
 
             # Parse issues
             issues = []
@@ -556,9 +569,7 @@ class CoderAgent(
             logger.info("Debugging code", session_id=session_id, error=error_message[:100])
 
             # Analyze and fix
-            debug_result = await self._debug_code_llm(
-                code=code, error_message=error_message, symptoms=symptoms
-            )
+            debug_result = await self._debug_code_llm(code=code, error_message=error_message, symptoms=symptoms)
 
             # Update session
             session.root_cause = debug_result.get("root_cause")
@@ -600,9 +611,7 @@ class CoderAgent(
 
             logger.info("Generating tests", language=language.value, framework=framework)
 
-            tests = await self._generate_tests_for_code(
-                code=code, language=language, framework=framework
-            )
+            tests = await self._generate_tests_for_code(code=code, language=language, framework=framework)
 
             return {
                 "status": "success",
@@ -666,9 +675,7 @@ class CoderAgent(
 
             logger.info("Refactoring code", goals=goals, constraints=constraints)
 
-            refactored = await self._refactor_code_llm(
-                code=code, goals=goals, constraints=constraints
-            )
+            refactored = await self._refactor_code_llm(code=code, goals=goals, constraints=constraints)
 
             return {
                 "status": "success",
@@ -701,9 +708,7 @@ class CoderAgent(
 
             logger.info("Explaining code", audience=audience, detail_level=detail_level)
 
-            explanation = await self._explain_code_llm(
-                code=code, audience=audience, detail_level=detail_level
-            )
+            explanation = await self._explain_code_llm(code=code, audience=audience, detail_level=detail_level)
 
             return {
                 "status": "success",
@@ -756,9 +761,7 @@ class CoderAgent(
 
             # Generate tests
             if include_tests:
-                task.tests = await self._generate_tests_for_code(
-                    code=task.generated_code, language=language
-                )
+                task.tests = await self._generate_tests_for_code(code=task.generated_code, language=language)
 
             # Generate docs
             if include_docs:
@@ -813,12 +816,8 @@ Return as JSON with keys: code, dependencies, purpose, complexity"""
                 # Validate generated code for safety
                 code = result.get("code", "")
                 if code and not self.llm_output_validator.is_safe_code(code):
-                    logger.warning(
-                        "Generated code contains dangerous patterns", code_preview=code[:100]
-                    )
-                    result["security_warning"] = (
-                        "Generated code contains potentially dangerous patterns"
-                    )
+                    logger.warning("Generated code contains dangerous patterns", code_preview=code[:100])
+                    result["security_warning"] = "Generated code contains potentially dangerous patterns"
                 return result
             except Exception as e:
                 logger.debug("coder_json_parse_failed_762", error=str(e))
@@ -856,9 +855,7 @@ Return only the test code."""
             logger.debug("coder_test_gen_failed", error=str(e))
             return "# Test generation failed"
 
-    async def _review_code_llm(
-        self, code: str, language: CodeLanguage, focus_areas: list[str]
-    ) -> dict[str, Any]:
+    async def _review_code_llm(self, code: str, language: CodeLanguage, focus_areas: list[str]) -> dict[str, Any]:
         """Review code using LLM."""
         try:
             areas = ", ".join(focus_areas)
@@ -899,9 +896,7 @@ Return as JSON array of issues plus summary, score, recommendations."""
             logger.debug("coder_review_llm_failed", error=str(e))
             return {"issues": [], "summary": "Review failed", "score": 50.0, "recommendations": []}
 
-    async def _debug_code_llm(
-        self, code: str, error_message: str, symptoms: list[str]
-    ) -> dict[str, Any]:
+    async def _debug_code_llm(self, code: str, error_message: str, symptoms: list[str]) -> dict[str, Any]:
         """Debug code using LLM."""
         try:
             prompt = f"""Debug this code:
@@ -949,9 +944,7 @@ Return only the documentation."""
             logger.debug("coder_docs_gen_failed", error=str(e))
             return "# Documentation generation failed"
 
-    async def _refactor_code_llm(
-        self, code: str, goals: list[str], constraints: list[str]
-    ) -> dict[str, Any]:
+    async def _refactor_code_llm(self, code: str, goals: list[str], constraints: list[str]) -> dict[str, Any]:
         """Refactor code using LLM."""
         try:
             prompt = f"""Refactor this code with goals: {", ".join(goals)}

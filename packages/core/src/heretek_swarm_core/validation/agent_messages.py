@@ -33,7 +33,7 @@ from pydantic import (
     field_validator,
 )
 
-from heretek_swarm.validation.llm_output import (
+from heretek_swarm_core.validation.llm_output import (
     LLMOutputValidator,
     ValidationResult,
     ValidationSeverity,
@@ -183,13 +183,9 @@ class StateUpdate(AgentMessageBase):
     """
 
     message_type: StrictStr = Field(default=MessageType.STATE_UPDATE.value)
-    state_key: StrictStr = Field(
-        ..., min_length=1, max_length=256, description="Key identifying the state to update"
-    )
+    state_key: StrictStr = Field(..., min_length=1, max_length=256, description="Key identifying the state to update")
     state_value: Any = Field(..., description="New value for the state")
-    operation: StrictStr = Field(
-        default="set", description="Operation to perform (set, append, delete, merge)"
-    )
+    operation: StrictStr = Field(default="set", description="Operation to perform (set, append, delete, merge)")
     version: StrictInt | None = Field(None, description="Expected version for optimistic locking")
 
     @field_validator("state_key")
@@ -211,14 +207,10 @@ class StateUpdate(AgentMessageBase):
             if isinstance(value, str):
                 result = validator.validate_text(value)
                 if not result.valid:
-                    raise ValueError(
-                        f"Unsafe state value at path '{path}': {', '.join(result.errors)}"
-                    )
+                    raise ValueError(f"Unsafe state value at path '{path}': {', '.join(result.errors)}")
                 return result.sanitized_content or value
             if isinstance(value, dict):
-                return {
-                    k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()
-                }
+                return {k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()}
             if isinstance(value, list):
                 return [check_value(item, f"{path}[{i}]") for i, item in enumerate(value)]
             return value
@@ -245,9 +237,7 @@ class ToolRequest(AgentMessageBase):
     """
 
     message_type: StrictStr = Field(default=MessageType.TOOL_REQUEST.value)
-    tool_name: StrictStr = Field(
-        ..., min_length=1, max_length=100, description="Name of the tool to execute"
-    )
+    tool_name: StrictStr = Field(..., min_length=1, max_length=100, description="Name of the tool to execute")
     arguments: dict[str, Any] = Field(default_factory=dict, description="Arguments for the tool")
     timeout: StrictInt = Field(default=HERETEK_TOOL_TIMEOUT, ge=1, le=300, description="Execution timeout in seconds")
     execution_id: StrictStr = Field(default_factory=lambda: f"exec_{uuid.uuid4().hex[:8]}")
@@ -309,9 +299,7 @@ class ToolResponse(AgentMessageBase):
     success: StrictBool = Field(..., description="Whether the tool execution succeeded")
     result: Any | None = Field(None, description="Result of the tool execution")
     error: StrictStr | None = Field(None, description="Error message if execution failed")
-    execution_time_ms: StrictInt = Field(
-        default=0, ge=0, description="Execution time in milliseconds"
-    )
+    execution_time_ms: StrictInt = Field(default=0, ge=0, description="Execution time in milliseconds")
 
     @field_validator("error")
     @classmethod
@@ -340,12 +328,8 @@ class CoordinationRequest(AgentMessageBase):
 
     message_type: StrictStr = Field(default=MessageType.COORDINATION_REQUEST.value)
     request_type: StrictStr = Field(..., description="Type of coordination request")
-    description: StrictStr = Field(
-        ..., max_length=2000, description="Description of the coordination needed"
-    )
-    required_capabilities: list[StrictStr] = Field(
-        default_factory=list, description="Required agent capabilities"
-    )
+    description: StrictStr = Field(..., max_length=2000, description="Description of the coordination needed")
+    required_capabilities: list[StrictStr] = Field(default_factory=list, description="Required agent capabilities")
     deadline: datetime | None = Field(None, description="Optional deadline for the request")
     payload: dict[str, Any] | None = Field(None, description="Additional payload for the request")
 
@@ -361,9 +345,7 @@ class CoordinationRequest(AgentMessageBase):
 
     @field_validator("payload")
     @classmethod
-    def validate_payload_safety(
-        cls, v: dict[str, Any] | None, _info: ValidationInfo
-    ) -> dict[str, Any] | None:
+    def validate_payload_safety(cls, v: dict[str, Any] | None, _info: ValidationInfo) -> dict[str, Any] | None:
         """Validate payload safety."""
         if not v:
             return v
@@ -377,9 +359,7 @@ class CoordinationRequest(AgentMessageBase):
                     raise ValueError(f"Unsafe payload at '{path}': {', '.join(result.errors)}")
                 return result.sanitized_content or value
             if isinstance(value, dict):
-                return {
-                    k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()
-                }
+                return {k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()}
             if isinstance(value, list):
                 return [check_value(item, f"{path}[{i}]") for i, item in enumerate(value)]
             return value
@@ -399,12 +379,8 @@ class ConsensusProposal(AgentMessageBase):
     message_type: StrictStr = Field(default=MessageType.CONSENSUS_PROPOSAL.value)
     proposal_id: StrictStr = Field(default_factory=lambda: f"prop_{uuid.uuid4().hex[:12]}")
     title: StrictStr = Field(..., min_length=1, max_length=200, description="Title of the proposal")
-    description: StrictStr = Field(
-        ..., max_length=5000, description="Detailed description of the proposal"
-    )
-    options: list[StrictStr] = Field(
-        default_factory=list, description="Available options for voting"
-    )
+    description: StrictStr = Field(..., max_length=5000, description="Detailed description of the proposal")
+    options: list[StrictStr] = Field(default_factory=list, description="Available options for voting")
     proposer_id: StrictStr = Field(..., description="ID of the proposing agent")
 
     @field_validator("title", "description")
@@ -428,12 +404,8 @@ class ConsensusVote(AgentMessageBase):
     message_type: StrictStr = Field(default=MessageType.CONSENSUS_VOTE.value)
     proposal_id: StrictStr = Field(..., description="ID of the proposal being voted on")
     vote: StrictStr = Field(..., description="The vote value (option name or yes/no)")
-    confidence: StrictFloat = Field(
-        default=1.0, ge=0.0, le=1.0, description="Confidence in the vote (0-1)"
-    )
-    reasoning: StrictStr | None = Field(
-        None, max_length=1000, description="Optional reasoning for the vote"
-    )
+    confidence: StrictFloat = Field(default=1.0, ge=0.0, le=1.0, description="Confidence in the vote (0-1)")
+    reasoning: StrictStr | None = Field(None, max_length=1000, description="Optional reasoning for the vote")
 
     @field_validator("reasoning")
     @classmethod
@@ -488,9 +460,7 @@ class TaskMessage(AgentMessageBase):
 
     @field_validator("task_data")
     @classmethod
-    def validate_task_data_safety(
-        cls, v: dict[str, Any] | None, _info: ValidationInfo
-    ) -> dict[str, Any] | None:
+    def validate_task_data_safety(cls, v: dict[str, Any] | None, _info: ValidationInfo) -> dict[str, Any] | None:
         """Validate task data safety."""
         if not v:
             return v
@@ -504,9 +474,7 @@ class TaskMessage(AgentMessageBase):
                     raise ValueError(f"Unsafe task data at '{path}': {', '.join(result.errors)}")
                 return result.sanitized_content or value
             if isinstance(value, dict):
-                return {
-                    k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()
-                }
+                return {k: check_value(val, f"{path}.{k}" if path else k) for k, val in value.items()}
             if isinstance(value, list):
                 return [check_value(item, f"{path}[{i}]") for i, item in enumerate(value)]
             return value

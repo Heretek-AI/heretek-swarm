@@ -53,7 +53,7 @@ from heretek_swarm.gateway.external_api import (
     RetryConfig,
     RetryStrategy,
 )
-from heretek_swarm.validation import LLMOutputValidator
+from heretek_swarm_core.validation import LLMOutputValidator
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -130,9 +130,7 @@ class NexusAgent(
         self.llm_output_validator = LLMOutputValidator(strict_mode=True)
 
         # ZERO-01: Hostile Input Treatment configuration
-        self._max_payload_size: int = self._config.get(
-            "max_payload_size", 1024 * 1024
-        )  # 1MB default
+        self._max_payload_size: int = self._config.get("max_payload_size", 1024 * 1024)  # 1MB default
         self._rate_limit_window: int = self._config.get("rate_limit_window", 60)  # seconds
         self._rate_limit_max: int = self._config.get("rate_limit_max", 100)  # requests per window
 
@@ -514,9 +512,7 @@ class NexusAgent(
                 creds = f"{connection.auth_config.get('username', '')}:{connection.auth_config.get('password', '')}"
                 headers["Authorization"] = f"Basic {base64.b64encode(creds.encode()).decode()}"
             elif connection.auth_type == "api_key":
-                headers[connection.auth_config.get("header", "X-API-Key")] = (
-                    connection.auth_config.get("key", "")
-                )
+                headers[connection.auth_config.get("header", "X-API-Key")] = connection.auth_config.get("key", "")
 
             # Execute request
             start_time = datetime.now(UTC)
@@ -727,9 +723,7 @@ class NexusAgent(
                     return
 
             # Calculate expected signature
-            payload_str = (
-                json.dumps(payload, sort_keys=True) if isinstance(payload, dict) else str(payload)
-            )
+            payload_str = json.dumps(payload, sort_keys=True) if isinstance(payload, dict) else str(payload)
             expected_signature = hmac.new(
                 webhook.secret.encode(),
                 f"{payload_str}{timestamp or ''}".encode(),
@@ -974,9 +968,7 @@ class NexusAgent(
             )
         except Exception as e:
             logger.error("get_api_metrics_failed", error=str(e))
-            await self._send_error(
-                message.sender_id, f"Failed to get metrics: {e!s}", message.message_type
-            )
+            await self._send_error(message.sender_id, f"Failed to get metrics: {e!s}", message.message_type)
 
     async def _handle_configure_retry(self, message: ActorMessage) -> None:
         """Configure retry behavior."""
@@ -1001,9 +993,7 @@ class NexusAgent(
             )
         except Exception as e:
             logger.error("configure_retry_failed", error=str(e))
-            await self._send_error(
-                message.sender_id, f"Failed to configure retry: {e!s}", message.message_type
-            )
+            await self._send_error(message.sender_id, f"Failed to configure retry: {e!s}", message.message_type)
 
     async def _handle_configure_rate_limit(self, message: ActorMessage) -> None:
         """Configure rate limit handling."""
@@ -1028,9 +1018,7 @@ class NexusAgent(
             )
         except Exception as e:
             logger.error("configure_rate_limit_failed", error=str(e))
-            await self._send_error(
-                message.sender_id, f"Failed to configure rate limit: {e!s}", message.message_type
-            )
+            await self._send_error(message.sender_id, f"Failed to configure rate limit: {e!s}", message.message_type)
 
     async def _handle_configure_circuit_breaker(self, message: ActorMessage) -> None:
         """Configure circuit breaker."""
@@ -1067,9 +1055,7 @@ class NexusAgent(
             connection_id = content.get("connection_id")
             fallback_url = content.get("fallback_url")
             if not connection_id or connection_id not in self._connections:
-                await self._send_error(
-                    message.sender_id, f"Connection {connection_id} not found", message.message_type
-                )
+                await self._send_error(message.sender_id, f"Connection {connection_id} not found", message.message_type)
                 return
             if fallback_url:
                 self._connections[connection_id].metadata["fallback_endpoints"] = self._connections[
@@ -1086,9 +1072,7 @@ class NexusAgent(
             )
         except Exception as e:
             logger.error("add_fallback_endpoint_failed", error=str(e))
-            await self._send_error(
-                message.sender_id, f"Failed to add fallback: {e!s}", message.message_type
-            )
+            await self._send_error(message.sender_id, f"Failed to add fallback: {e!s}", message.message_type)
 
     async def _handle_get_resilience_status(self, message: ActorMessage) -> None:
         """Get resilience component status."""
@@ -1096,15 +1080,9 @@ class NexusAgent(
             circuit_breakers = {}
             if self._api_client:
                 for endpoint in self._api_client._circuit_breaker._states:
-                    circuit_breakers[endpoint] = self._api_client._circuit_breaker.get_metrics(
-                        endpoint
-                    )
-            rate_limiter_metrics = (
-                self._api_client._rate_limiter.get_metrics() if self._api_client else {}
-            )
-            fallback_health = (
-                self._api_client._fallback_manager.get_health_status() if self._api_client else {}
-            )
+                    circuit_breakers[endpoint] = self._api_client._circuit_breaker.get_metrics(endpoint)
+            rate_limiter_metrics = self._api_client._rate_limiter.get_metrics() if self._api_client else {}
+            fallback_health = self._api_client._fallback_manager.get_health_status() if self._api_client else {}
             await self.send(
                 message.sender_id,
                 ActorMessage(
@@ -1119,9 +1097,7 @@ class NexusAgent(
             )
         except Exception as e:
             logger.error("get_resilience_status_failed", error=str(e))
-            await self._send_error(
-                message.sender_id, f"Failed to get resilience status: {e!s}", message.message_type
-            )
+            await self._send_error(message.sender_id, f"Failed to get resilience status: {e!s}", message.message_type)
 
     async def _handle_reset_circuit_breaker(self, message: ActorMessage) -> None:
         """Reset circuit breaker for an endpoint."""
@@ -1146,9 +1122,7 @@ class NexusAgent(
             )
         except Exception as e:
             logger.error("reset_circuit_breaker_failed", error=str(e))
-            await self._send_error(
-                message.sender_id, f"Failed to reset circuit breaker: {e!s}", message.message_type
-            )
+            await self._send_error(message.sender_id, f"Failed to reset circuit breaker: {e!s}", message.message_type)
 
     def _record_api_metrics(
         self,

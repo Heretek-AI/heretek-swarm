@@ -436,10 +436,7 @@ class AgentActorMessageHandling(AgentActor):
                     )
 
                 # P0-1: Auto-persist if interval configured and threshold reached
-                if (
-                    self._persistence_interval
-                    and self._messages_since_persist >= self._persistence_interval
-                ):
+                if self._persistence_interval and self._messages_since_persist >= self._persistence_interval:
                     await self.save_state()
                     self._messages_since_persist = 0
                     logger.debug(
@@ -459,7 +456,6 @@ class AgentActorMessageHandling(AgentActor):
                 self.error_count += 1
                 logger.exception(
                     f"[{self.agent_id}] Error processing message: {e}",
-
                 )
 
     async def _validate_and_prepare_message(self, message: ActorMessage) -> ActorMessage | None:
@@ -500,7 +496,6 @@ class AgentActorMessageHandling(AgentActor):
         except Exception as e:
             logger.exception(
                 f"[{self.agent_id}] Error in handler for {message.message_type}: {e}",
-
             )
             self.error_count += 1
 
@@ -987,9 +982,7 @@ Please provide your analysis and recommendation for this collective task."""
         if raw_response is None:
             pydantic_ai_agent = getattr(self, "pydantic_ai_agent", None)
             if pydantic_ai_agent is None:
-                raise RuntimeError(
-                    "No LLM path available — configure providers or provide a pydantic_ai_agent"
-                )
+                raise RuntimeError("No LLM path available — configure providers or provide a pydantic_ai_agent")
 
             try:
                 # Phase 2A.3 cutover: inline perf_counter + record_actor_processing
@@ -1001,9 +994,7 @@ Please provide your analysis and recommendation for this collective task."""
                         pydantic_ai_agent.run(prompt, **kwargs),
                         timeout=timeout,
                     )
-                    raw_response = getattr(
-                        pydantic_ai_result, "output", str(pydantic_ai_result)
-                    )
+                    raw_response = getattr(pydantic_ai_result, "output", str(pydantic_ai_result))
                 finally:
                     record_actor_processing(
                         agent_id=self.agent_id,
@@ -1024,7 +1015,7 @@ Please provide your analysis and recommendation for this collective task."""
                 raise
 
         # --- LLM output validation (S04: single choke point for all agent responses) ---
-        from heretek_swarm.validation.llm_output import validate_llm_text
+        from heretek_swarm_core.validation.llm_output import validate_llm_text
 
         validation_result = validate_llm_text(raw_response)
         if not validation_result.valid:
@@ -1075,6 +1066,7 @@ Please provide your analysis and recommendation for this collective task."""
         # Instrument standard OpenTelemetry / OpenLLMetry trace span for cognitive tracing
         try:
             from opentelemetry import trace
+
             tracer = trace.get_tracer("heretek_swarm.cognitive_telemetry")
             with tracer.start_as_current_span(
                 "llm.call",
@@ -1157,9 +1149,7 @@ AgentActor._handle_terminate = AgentActorMessageHandling._handle_terminate
 AgentActor._handle_route_task = AgentActorMessageHandling._handle_route_task
 AgentActor._process_route_task = AgentActorMessageHandling._process_route_task
 AgentActor._handle_collective_task = AgentActorMessageHandling._handle_collective_task
-AgentActor._generate_collective_contribution = (
-    AgentActorMessageHandling._generate_collective_contribution
-)
+AgentActor._generate_collective_contribution = AgentActorMessageHandling._generate_collective_contribution
 AgentActor._get_actor_registry = AgentActorMessageHandling._get_actor_registry
 AgentActor.run_with_llm = AgentActorMessageHandling.run_with_llm
 AgentActor._heartbeat_loop = AgentActorMessageHandling._heartbeat_loop

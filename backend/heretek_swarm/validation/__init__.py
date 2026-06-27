@@ -1,82 +1,47 @@
+"""Backward-compatibility shim for ``heretek_swarm.validation``.
+
+The canonical implementation lives in ``heretek_swarm_core.validation``.
+This package re-exports the public surface and forwards submodule
+imports (``import heretek_swarm.validation.agent_messages``) to the
+canonical home during the migration. Remove once all callers are
+updated.
+
+The ``__path__`` shim makes submodule resolution find files under
+``heretek_swarm_core.validation``. The ``__getattr__`` shim makes
+attribute access on the package itself (``from heretek_swarm.validation
+import LLMOutputValidator``) work after either the canonical package
+has been loaded or someone calls ``from heretek_swarm.validation``
+at runtime — by which point both packages are fully initialized.
 """
-Validation Module for Heretek Swarm
 
-This module provides comprehensive validation for LLM outputs and agent messages.
-It includes:
-- LLM output validation with security pattern detection
-- Agent message schema validation
-- Code sanitization and safety checks
-- Tool call validation
+from __future__ import annotations
 
-Author: Heretek Swarm Collective
-Date: 2026-04-07
-Version: 1.0.0
-"""
+from pathlib import Path as _Path
 
-from heretek_swarm.validation.agent_messages import (
-    ActorMessage,
-    AgentMessageBase,
-    CodeExecutionRequest,
-    ConsensusProposal,
-    ConsensusVote,
-    CoordinationRequest,
-    ErrorMessage,
-    MessagePriority,
-    MessageType,
-    StateUpdate,
-    TaskMessage,
-    ToolRequest,
-    ToolResponse,
-    create_actor_message,
-    create_state_update,
-    create_tool_request,
-    create_tool_response,
-    validate_message,
+# Forward submodule resolution to the canonical package directory.
+_canonical_pkg = (
+    _Path(__file__).resolve().parent.parent.parent.parent
+    / "packages"
+    / "core"
+    / "src"
+    / "heretek_swarm_core"
+    / "validation"
 )
-from heretek_swarm.validation.llm_output import (
-    CodeBlock,
-    CodeLanguage,
-    LLMOutputValidator,
-    TextOutput,
-    ValidationResult,
-    ValidationSeverity,
-    is_code_safe,
-    is_text_safe,
-    validate_llm_code,
-    validate_llm_structured,
-    validate_llm_text,
-)
+if _canonical_pkg.is_dir():
+    __path__ = [str(_canonical_pkg)] + list(__path__)
 
-__all__ = [
-    "ActorMessage",
-    # Agent Messages
-    "AgentMessageBase",
-    "CodeBlock",
-    "CodeExecutionRequest",
-    # LLM Output Validation
-    "CodeLanguage",
-    "ConsensusProposal",
-    "ConsensusVote",
-    "CoordinationRequest",
-    "ErrorMessage",
-    "LLMOutputValidator",
-    "MessagePriority",
-    "MessageType",
-    "StateUpdate",
-    "TaskMessage",
-    "TextOutput",
-    "ToolRequest",
-    "ToolResponse",
-    "ValidationResult",
-    "ValidationSeverity",
-    "create_actor_message",
-    "create_state_update",
-    "create_tool_request",
-    "create_tool_response",
-    "is_code_safe",
-    "is_text_safe",
-    "validate_llm_code",
-    "validate_llm_structured",
-    "validate_llm_text",
-    "validate_message",
-]
+
+def __getattr__(name: str):
+    # Lazy proxy to heretek_swarm_core.validation so legacy
+    # `from heretek_swarm.validation import X` keeps working
+    # without triggering heretek_swarm_core's init at package
+    # load time (which would create a circular import).
+    import heretek_swarm_core.validation as _core
+
+    return getattr(_core, name)
+
+
+def __dir__() -> list[str]:
+    import heretek_swarm_core.validation as _core
+
+    return sorted(set(globals()) | set(dir(_core)))

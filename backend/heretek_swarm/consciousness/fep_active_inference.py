@@ -27,16 +27,18 @@ import math
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-from heretek_swarm.validation.llm_output import (
-    LLMOutputValidator,
-    ValidationResult,
-    ValidationSeverity,
-)
+
+if TYPE_CHECKING:
+    from heretek_swarm_core.validation.llm_output import (
+        LLMOutputValidator,
+        ValidationResult,
+        ValidationSeverity,
+    )
 
 logger = structlog.get_logger("FEPActiveInference")
 
@@ -269,15 +271,17 @@ class FreeEnergyCalculator:
         Args:
             strict_validation: If True, strictly validate all inputs
         """
+        # Lazy import: avoid circular dependency between heretek_swarm
+        # and heretek_swarm_core at module load time.
+        from heretek_swarm_core.validation.llm_output import LLMOutputValidator
+
         self._validator = LLMOutputValidator(strict_mode=strict_validation)
         self._zero_trust = ZeroTrustValidator()
         self._cache: dict[str, FEPResult] = {}
         self._calculation_count = 0
         self._last_calculation_time: datetime | None = None
 
-        logger.info(
-            "FreeEnergyCalculator initialized", extra={"strict_validation": strict_validation}
-        )
+        logger.info("FreeEnergyCalculator initialized", extra={"strict_validation": strict_validation})
 
     def calculate_free_energy(
         self,
@@ -534,7 +538,7 @@ class FreeEnergyCalculator:
         self,
         observations: dict[str, Any],
         generative_model: dict[str, Any],
-    ) -> ValidationResult:
+    ) -> "ValidationResult":
         """
         Validate inputs using zero-trust validation.
 
@@ -545,6 +549,13 @@ class FreeEnergyCalculator:
         Returns:
             ValidationResult with validation status
         """
+        # Lazy imports: avoid circular dependency between heretek_swarm
+        # and heretek_swarm_core at module load time.
+        from heretek_swarm_core.validation.llm_output import (
+            ValidationResult,
+            ValidationSeverity,
+        )
+
         errors: list[str] = []
         warnings: list[str] = []
 
@@ -878,9 +889,7 @@ class FreeEnergyCalculator:
         return {
             "calculation_count": self._calculation_count,
             "cache_size": len(self._cache),
-            "last_calculation_time": (
-                self._last_calculation_time.isoformat() if self._last_calculation_time else None
-            ),
+            "last_calculation_time": (self._last_calculation_time.isoformat() if self._last_calculation_time else None),
         }
 
 
@@ -936,6 +945,10 @@ class ActiveInferenceAgent:
         """
         self.agent_id = agent_id
         self._calculator = calculator or FreeEnergyCalculator(strict_validation=strict_validation)
+        # Lazy import: avoid circular dependency between heretek_swarm
+        # and heretek_swarm_core at module load time.
+        from heretek_swarm_core.validation.llm_output import LLMOutputValidator
+
         self._validator = LLMOutputValidator(strict_mode=strict_validation)
 
         # Agent state
@@ -1390,9 +1403,7 @@ class ActiveInferenceAgent:
                     expected = optimized_action.expected_outcome[key]
                     current = optimized_action.parameters[key]
                     # Move toward expected value
-                    optimized_action.parameters[key] = current + surprise_factor * (
-                        expected - current
-                    )
+                    optimized_action.parameters[key] = current + surprise_factor * (expected - current)
 
             optimized.actions.append(optimized_action)
 

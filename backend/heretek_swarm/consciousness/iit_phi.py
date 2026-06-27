@@ -25,15 +25,16 @@ import math
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.validation.llm_output import (
-    LLMOutputValidator,
-    ValidationResult,
-    ValidationSeverity,
-)
+if TYPE_CHECKING:
+    from heretek_swarm_core.validation.llm_output import (
+        LLMOutputValidator,
+        ValidationResult,
+        ValidationSeverity,
+    )
 
 logger = structlog.get_logger("IITPhiCalculator")
 
@@ -210,6 +211,10 @@ class PhiCalculator:
         Args:
             strict_validation: If True, strictly validate all inputs
         """
+        # Lazy import: avoid circular dependency between heretek_swarm
+        # and heretek_swarm_core at module load time.
+        from heretek_swarm_core.validation.llm_output import LLMOutputValidator
+
         self._validator = LLMOutputValidator(strict_mode=strict_validation)
         self._cache: dict[str, PhiResult] = {}
         self._calculation_count = 0
@@ -351,17 +356,26 @@ class PhiCalculator:
     def _validate_cause_effect_structure(
         self,
         structure: dict[str, Any],
-    ) -> ValidationResult:
+    ) -> "ValidationResult":
         """
         Validate cause-effect structure input.
         """
+        # Lazy imports: avoid circular dependency between heretek_swarm
+        # and heretek_swarm_core at module load time.
+        from heretek_swarm_core.validation.llm_output import (
+            ValidationResult,
+            ValidationSeverity,
+        )
+
         errors: list[str] = []
         warnings: list[str] = []
 
         if not isinstance(structure, dict):
             errors.append("Cause-effect structure must be a dictionary")
             return ValidationResult(
-                valid=False, content=structure, errors=errors,
+                valid=False,
+                content=structure,
+                errors=errors,
                 severity=ValidationSeverity.CRITICAL,
             )
 
@@ -371,17 +385,19 @@ class PhiCalculator:
         self._validate_safety(structure, errors)
 
         severity = (
-            ValidationSeverity.CRITICAL if errors
+            ValidationSeverity.CRITICAL
+            if errors
             else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO)
         )
         return ValidationResult(
-            valid=len(errors) == 0, content=structure,
-            errors=errors, warnings=warnings, severity=severity,
+            valid=len(errors) == 0,
+            content=structure,
+            errors=errors,
+            warnings=warnings,
+            severity=severity,
         )
 
-    def _validate_elements(
-        self, structure: dict[str, Any], errors: list[str]
-    ) -> None:
+    def _validate_elements(self, structure: dict[str, Any], errors: list[str]) -> None:
         """Validate the elements list in the structure."""
         elements = structure.get("elements")
         if elements is not None:
@@ -390,9 +406,7 @@ class PhiCalculator:
             elif not all(isinstance(e, str) for e in elements):
                 errors.append("All elements must be strings")
 
-    def _validate_connectivity(
-        self, structure: dict[str, Any], errors: list[str], warnings: list[str]
-    ) -> None:
+    def _validate_connectivity(self, structure: dict[str, Any], errors: list[str], warnings: list[str]) -> None:
         """Validate the connectivity matrix."""
         connectivity = structure.get("connectivity")
         if connectivity is None:
@@ -409,21 +423,15 @@ class PhiCalculator:
                     errors.append(f"Connection weight must be numeric: {source}->{target}")
                     break
                 if weight < 0 or weight > 1:
-                    warnings.append(
-                        f"Connection weight outside [0,1] range: {source}->{target}={weight}"
-                    )
+                    warnings.append(f"Connection weight outside [0,1] range: {source}->{target}={weight}")
 
-    def _validate_current_state(
-        self, structure: dict[str, Any], errors: list[str]
-    ) -> None:
+    def _validate_current_state(self, structure: dict[str, Any], errors: list[str]) -> None:
         """Validate the current_state field."""
         current_state = structure.get("current_state")
         if current_state is not None and not isinstance(current_state, dict):
             errors.append("'current_state' must be a dictionary")
 
-    def _validate_safety(
-        self, structure: dict[str, Any], errors: list[str]
-    ) -> None:
+    def _validate_safety(self, structure: dict[str, Any], errors: list[str]) -> None:
         """Check for dangerous patterns using zero-trust validator."""
         structure_str = str(structure)
         safety_result = self._validator.validate_text(structure_str, content_type="json")
@@ -1007,7 +1015,5 @@ class PhiCalculator:
         return {
             "calculation_count": self._calculation_count,
             "cache_size": len(self._cache),
-            "last_calculation_time": (
-                self._last_calculation_time.isoformat() if self._last_calculation_time else None
-            ),
+            "last_calculation_time": (self._last_calculation_time.isoformat() if self._last_calculation_time else None),
         }

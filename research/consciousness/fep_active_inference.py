@@ -32,7 +32,7 @@ from typing import Any
 import structlog
 
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-from heretek_swarm.validation.llm_output import (
+from heretek_swarm_core.validation.llm_output import (
     LLMOutputValidator,
     ValidationResult,
     ValidationSeverity,
@@ -275,9 +275,7 @@ class FreeEnergyCalculator:
         self._calculation_count = 0
         self._last_calculation_time: datetime | None = None
 
-        logger.info(
-            "FreeEnergyCalculator initialized", extra={"strict_validation": strict_validation}
-        )
+        logger.info("FreeEnergyCalculator initialized", extra={"strict_validation": strict_validation})
 
     def calculate_free_energy(
         self,
@@ -878,9 +876,7 @@ class FreeEnergyCalculator:
         return {
             "calculation_count": self._calculation_count,
             "cache_size": len(self._cache),
-            "last_calculation_time": (
-                self._last_calculation_time.isoformat() if self._last_calculation_time else None
-            ),
+            "last_calculation_time": (self._last_calculation_time.isoformat() if self._last_calculation_time else None),
         }
 
 
@@ -986,9 +982,7 @@ class ActiveInferenceAgent:
         self._beliefs.prior = self._beliefs.posterior or self._beliefs.beliefs
 
         # Update beliefs using the calculator
-        self._beliefs = self._calculator._update_beliefs_from_observations(
-            self._beliefs, observations
-        )
+        self._beliefs = self._calculator._update_beliefs_from_observations(self._beliefs, observations)
 
         # Calculate KL divergence (measure of belief update)
         kl_div = self._calculator.calculate_kl_divergence(
@@ -1390,9 +1384,7 @@ class ActiveInferenceAgent:
                     expected = optimized_action.expected_outcome[key]
                     current = optimized_action.parameters[key]
                     # Move toward expected value
-                    optimized_action.parameters[key] = current + surprise_factor * (
-                        expected - current
-                    )
+                    optimized_action.parameters[key] = current + surprise_factor * (expected - current)
 
             optimized.actions.append(optimized_action)
 
