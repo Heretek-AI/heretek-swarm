@@ -1,17 +1,13 @@
 """Backward-compatibility shim for ``heretek_swarm.validation``.
 
-The canonical implementation lives in ``heretek_swarm_core.validation``.
-This package re-exports the public surface and forwards submodule
-imports (``import heretek_swarm.validation.agent_messages``) to the
-canonical home during the migration. Remove once all callers are
-updated.
+Canonical implementation lives in ``heretek_swarm_core.validation``.
+This shim re-exports the public surface and forwards submodule imports
+(``import heretek_swarm.validation.agent_messages``) to the canonical
+home during the migration. Remove once all callers are updated.
 
-The ``__path__`` shim makes submodule resolution find files under
-``heretek_swarm_core.validation``. The ``__getattr__`` shim makes
-attribute access on the package itself (``from heretek_swarm.validation
-import LLMOutputValidator``) work after either the canonical package
-has been loaded or someone calls ``from heretek_swarm.validation``
-at runtime — by which point both packages are fully initialized.
+Lazy access via ``__getattr__`` avoids eager evaluation of
+``heretek_swarm_core`` at package import time, which would trigger a
+circular import through ``heretek_swarm.actors.supervisor``.
 """
 
 from __future__ import annotations
@@ -32,10 +28,6 @@ if _canonical_pkg.is_dir():
 
 
 def __getattr__(name: str):
-    # Lazy proxy to heretek_swarm_core.validation so legacy
-    # `from heretek_swarm.validation import X` keeps working
-    # without triggering heretek_swarm_core's init at package
-    # load time (which would create a circular import).
     import heretek_swarm_core.validation as _core
 
     return getattr(_core, name)
