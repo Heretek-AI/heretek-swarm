@@ -10,8 +10,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import func, select
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.models.external_call_log import ExternalCallLog
-from heretek_swarm.models.external_call_log_encryption import get_encryptor
+from heretek_swarm_core.models.external_call_log import ExternalCallLog
+from heretek_swarm_core.models.external_call_log_encryption import get_encryptor
 from heretek_swarm.schemas.external_call_log import (
     ExternalCallLogCreate,
     ExternalCallLogListItem,
@@ -37,12 +37,8 @@ async def get_external_calls(
     agent_id: str | None = Query(None, description="Filter by agent ID"),
     call_type: str | None = Query(None, description="Filter by call type (http/mcp)"),
     status: str = Query("all", description="Filter by status: success, error, or all"),
-    start_time: datetime | None = Query(
-        None, description="Filter by start time (ISO format)"
-    ),
-    end_time: datetime | None = Query(
-        None, description="Filter by end time (ISO format)"
-    ),
+    start_time: datetime | None = Query(None, description="Filter by start time (ISO format)"),
+    end_time: datetime | None = Query(None, description="Filter by end time (ISO format)"),
     limit: int = Query(default=100, ge=1, le=1000, description="Maximum records to return"),
     offset: int = Query(default=0, ge=0, description="Number of records to skip"),
     authenticated: str = Depends(verify_auth),
@@ -185,15 +181,11 @@ async def create_external_call(
 
     encrypted_request_body = None
     if log_data.request_body is not None:
-        encrypted_request_body = encryptor.encrypt({"body": log_data.request_body}).get(
-            "encrypted", ""
-        )
+        encrypted_request_body = encryptor.encrypt({"body": log_data.request_body}).get("encrypted", "")
 
     encrypted_response_body = None
     if log_data.response_body is not None:
-        encrypted_response_body = encryptor.encrypt({"body": log_data.response_body}).get(
-            "encrypted", ""
-        )
+        encrypted_response_body = encryptor.encrypt({"body": log_data.response_body}).get("encrypted", "")
 
     async with session_factory() as session:
         try:
@@ -293,9 +285,7 @@ async def get_external_call(
 
     async with session_factory() as session:
         try:
-            result = await session.execute(
-                select(ExternalCallLog).where(ExternalCallLog.id == call_uuid)
-            )
+            result = await session.execute(select(ExternalCallLog).where(ExternalCallLog.id == call_uuid))
             log = result.scalar_one_or_none()
 
             if log is None:
@@ -328,8 +318,7 @@ def _build_log_response_data(log: ExternalCallLog) -> dict[str, Any]:
         "agent_type": log.agent_type,
         "call_type": log.call_type,
         "url": log.url,
-        "url_domain": log.url.split("://", 1)[1].split("/")[0]
-        if "://" in log.url else log.url.split("/")[0],
+        "url_domain": log.url.split("://", 1)[1].split("/")[0] if "://" in log.url else log.url.split("/")[0],
         "url_full": log.url,
         "method": log.method,
         "status_code": log.status_code,
@@ -340,18 +329,12 @@ def _build_log_response_data(log: ExternalCallLog) -> dict[str, Any]:
     }
 
 
-def _decrypt_log_bodies(
-    response_data: dict[str, Any], log: ExternalCallLog, call_id: str
-) -> None:
+def _decrypt_log_bodies(response_data: dict[str, Any], log: ExternalCallLog, call_id: str) -> None:
     """Decrypt and attach request/response bodies to response_data."""
     encryptor = get_encryptor()
     response_data["request_headers"] = _decrypt_headers(encryptor, log, call_id)
-    response_data["request_body"] = _decrypt_body(
-        encryptor, log.request_body_encrypted, call_id, "request_body"
-    )
-    response_data["response_body"] = _decrypt_body(
-        encryptor, log.response_body_encrypted, call_id, "response_body"
-    )
+    response_data["request_body"] = _decrypt_body(encryptor, log.request_body_encrypted, call_id, "request_body")
+    response_data["response_body"] = _decrypt_body(encryptor, log.response_body_encrypted, call_id, "response_body")
 
 
 def _decrypt_headers(encryptor: Any, log: ExternalCallLog, call_id: str) -> Any:
@@ -369,9 +352,7 @@ def _decrypt_headers(encryptor: Any, log: ExternalCallLog, call_id: str) -> Any:
         return {"_error": "Failed to decrypt"}
 
 
-def _decrypt_body(
-    encryptor: Any, encrypted: Any, call_id: str, label: str
-) -> Any:
+def _decrypt_body(encryptor: Any, encrypted: Any, call_id: str, label: str) -> Any:
     """Decrypt a single body field."""
     if not encrypted:
         return None

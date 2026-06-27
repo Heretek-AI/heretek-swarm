@@ -108,6 +108,7 @@ from heretek_swarm.services import (  # noqa: F401
     RealtimeServiceStub,
 )
 from heretek_swarm_core.embeddings import *  # noqa: F401,F403
+from heretek_swarm_core.models import *  # noqa: F401,F403
 
 __all__ = [
     "AgentActor",

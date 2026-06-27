@@ -14,8 +14,8 @@ from typing import Any, ClassVar
 
 import structlog
 
-from heretek_swarm.models.external_call_log import ExternalCallLog
-from heretek_swarm.models.external_call_log_encryption import (
+from heretek_swarm_core.models.external_call_log import ExternalCallLog
+from heretek_swarm_core.models.external_call_log_encryption import (
     ExternalCallLogEncryptor,
 )
 
@@ -202,9 +202,7 @@ class MCPToolRegistry:
         """Get statistics for all tools."""
         return self._tool_stats.copy()
 
-    async def invoke(
-        self, name: str, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict[str, Any]:
+    async def invoke(self, name: str, arguments: dict[str, Any], context: dict | None = None) -> dict[str, Any]:
         """
         Invoke an MCP tool.
 
@@ -356,9 +354,7 @@ class MCPToolRegistry:
 
         return True
 
-    def _validate_property(
-        self, key: str, value: Any, prop_schema: dict[str, Any]
-    ) -> bool:
+    def _validate_property(self, key: str, value: Any, prop_schema: dict[str, Any]) -> bool:
         """Validate a single property against its schema."""
         expected_type = prop_schema.get("type")
         if expected_type and expected_type in self._TYPE_CHECKS:
@@ -416,9 +412,7 @@ class CoreMCPTools:
         # Register all tools via specialized registrars
         register_all_tools(self.registry, handlers)
 
-    async def _handle_memory_store(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_memory_store(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle memory store request via CogneeMemoryWriter."""
         if not self._cognee_writer:
             return {"error": "Cognee writer not initialized"}
@@ -437,9 +431,7 @@ class CoreMCPTools:
             "stored_at": datetime.now(UTC).isoformat(),
         }
 
-    async def _handle_memory_retrieve(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_memory_retrieve(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle memory retrieve request via CogneeMemoryReader."""
         if not self._cognee_reader:
             return {"error": "Cognee reader not initialized"}
@@ -466,9 +458,7 @@ class CoreMCPTools:
             ]
         }
 
-    async def _handle_agent_message(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_agent_message(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle agent message request."""
         target = arguments.get("target_agent")
         message_type = arguments.get("message_type")
@@ -488,9 +478,7 @@ class CoreMCPTools:
 
         return {"sent": True, "target": target}
 
-    async def _handle_agent_handoff(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_agent_handoff(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle agent handoff request."""
         to_agent = arguments.get("to_agent")
         handoff_context = arguments.get("context")
@@ -511,9 +499,7 @@ class CoreMCPTools:
 
         return {"handoff_initiated": True, "to_agent": to_agent}
 
-    async def _handle_consensus_propose(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_consensus_propose(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle consensus propose request."""
         if not self.consensus:
             return {"error": "Consensus engine not initialized"}
@@ -531,9 +517,7 @@ class CoreMCPTools:
             "urgency": urgency,
         }
 
-    async def _handle_consensus_vote(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_consensus_vote(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle consensus vote request."""
         if not self.consensus:
             return {"error": "Consensus engine not initialized"}
@@ -550,9 +534,7 @@ class CoreMCPTools:
             "agent_id": context.get("agent_id") if context else None,
         }
 
-    async def _handle_rag_query(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_rag_query(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle RAG query request."""
         if not self.rag:
             return {"error": "RAG retriever not initialized"}
@@ -576,9 +558,7 @@ class CoreMCPTools:
             ]
         }
 
-    async def _handle_rag_ingest(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_rag_ingest(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle RAG ingest request."""
         if not self.rag:
             return {"error": "RAG pipeline not initialized"}
@@ -590,9 +570,7 @@ class CoreMCPTools:
         # Ingest document
         return {"ingested": True, "source": source}
 
-    async def _handle_external_api_call(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_external_api_call(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle external API call request."""
         import httpx
 
@@ -613,9 +591,7 @@ class CoreMCPTools:
         except Exception as e:
             return {"error": str(e)}
 
-    async def _handle_notification_send(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_notification_send(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle notification send request."""
         channel = arguments.get("channel")
         message = arguments.get("message")
@@ -635,9 +611,7 @@ class CoreMCPTools:
 
         return {"sent": True, "channel": channel}
 
-    async def _handle_workflow_start(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_workflow_start(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle workflow start request."""
         workflow_type = arguments.get("workflow_type")
         params = arguments.get("params", {})
@@ -661,9 +635,7 @@ class CoreMCPTools:
 
         return {"workflow_id": workflow_id, "status": "started"}
 
-    async def _handle_workflow_status(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_workflow_status(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle workflow status request."""
         workflow_id = arguments.get("workflow_id")
 
@@ -674,9 +646,7 @@ class CoreMCPTools:
             "phase": "analysis",
         }
 
-    async def _handle_system_health(
-        self, arguments: dict[str, Any], context: dict | None = None
-    ) -> dict:
+    async def _handle_system_health(self, arguments: dict[str, Any], context: dict | None = None) -> dict:
         """Handle system health request."""
         return {
             "status": "healthy",

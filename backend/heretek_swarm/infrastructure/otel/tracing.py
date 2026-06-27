@@ -29,8 +29,8 @@ from opentelemetry.sdk.trace.sampling import Sampler, TraceIdRatioBased
 from opentelemetry.trace import Span, SpanKind, Status, StatusCode
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
-from heretek_swarm.models.external_call_log import ExternalCallLog
-from heretek_swarm.models.external_call_log_encryption import get_encryptor
+from heretek_swarm_core.models.external_call_log import ExternalCallLog
+from heretek_swarm_core.models.external_call_log_encryption import get_encryptor
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import async_sessionmaker
@@ -113,9 +113,7 @@ def init_tracing(config: TracingConfig | None = None) -> TracingConfig:
 
     exporter_type = _tracer_config.exporter.lower()
     if exporter_type == "otlp":
-        endpoint = _tracer_config.endpoint or os.getenv(
-            "OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317"
-        )
+        endpoint = _tracer_config.endpoint or os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
         try:
             otlp_exporter = OTLPSpanExporter(
                 endpoint=endpoint,
@@ -441,9 +439,7 @@ def _get_external_call_log_session_factory() -> async_sessionmaker:  # type: ign
     if _external_call_log_session_factory is None:
         database_url = os.environ.get("DATABASE_URL")
         if not database_url:
-            _extra_logger.warning(
-                "DATABASE_URL not set — ExternalCallLog entries will not be persisted"
-            )
+            _extra_logger.warning("DATABASE_URL not set — ExternalCallLog entries will not be persisted")
             # Return a no-op sentinel that the caller handles gracefully
             # Sentinel: caller handles None gracefully — no DB session when DATABASE_URL is unset
             return None  # type: ignore[return-value]
@@ -727,14 +723,12 @@ class InstrumentedAsyncClient:
 
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, response.status_code)
                 span.set_status(
-                    Status(StatusCode.OK)
-                    if 200 <= response.status_code < 400
-                    else Status(StatusCode.ERROR)
+                    Status(StatusCode.OK) if 200 <= response.status_code < 400 else Status(StatusCode.ERROR)
                 )
 
                 # Extract response body for logging (up to MAX_BODY_SIZE = 10KB)
                 if response.text:
-                    from heretek_swarm.models.external_call_log_encryption import MAX_BODY_SIZE
+                    from heretek_swarm_core.models.external_call_log_encryption import MAX_BODY_SIZE
 
                     response_body_str = response.text[:MAX_BODY_SIZE]
 
@@ -892,9 +886,7 @@ class InstrumentedAsyncClient:
 
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, response.status_code)
                 span.set_status(
-                    Status(StatusCode.OK)
-                    if 200 <= response.status_code < 400
-                    else Status(StatusCode.ERROR)
+                    Status(StatusCode.OK) if 200 <= response.status_code < 400 else Status(StatusCode.ERROR)
                 )
 
                 # Write log entry on stream exit

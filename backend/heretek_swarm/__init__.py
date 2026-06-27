@@ -23,6 +23,7 @@ from heretek_swarm.plugins.liberation import LiberationPlugin
 
 # Backward-compat re-export (remove after migration complete)
 from heretek_swarm_core.embeddings import *  # noqa: F401,F403
+from heretek_swarm_core.models import *  # noqa: F401,F403
 
 __all__ = [
     "ActorSupervisor",
