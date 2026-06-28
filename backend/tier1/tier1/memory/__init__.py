@@ -38,11 +38,13 @@ class MemoryBackend:
         redis: "RedisMemoryCache",
         postgres: "PostgresMemoryStore",
         mem0: "Mem0Backend | None" = None,
+        cognee: "CogneePipeline | None" = None,
     ) -> None:
         self.qdrant = qdrant
         self.redis = redis
         self.postgres = postgres
         self.mem0 = mem0
+        self.cognee = cognee
 
     async def store(self, entry: MemoryEntry) -> str:
         """Store entry to all tiers. Returns entry.id."""
@@ -66,6 +68,13 @@ class MemoryBackend:
         if self.mem0:
             try:
                 await self.mem0.add(entry.content, user_id=entry.agent, metadata=entry.metadata)
+            except Exception:  # noqa: BLE001
+                pass
+
+        # Cognee (knowledge graph) — best effort
+        if self.cognee is not None:
+            try:
+                await self.cognee.add(entry.content, metadata=entry.metadata)
             except Exception:  # noqa: BLE001
                 pass
 
