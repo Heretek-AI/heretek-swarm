@@ -58,7 +58,7 @@ async def _snapshot_after_round(
     Non-fatal: snapshot failures must not propagate to the caller.
     """
     try:
-        from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+        from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
         writer = CogneeMemoryWriter()
         snapshot_content = f"Round {round_number}: {summary}"

@@ -26,7 +26,7 @@ from typing import Any, Protocol, runtime_checkable
 
 import structlog
 
-from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
 from heretek_swarm.rag.retriever import SearchResult
 
 logger = structlog.get_logger(__name__)

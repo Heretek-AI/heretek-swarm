@@ -195,7 +195,7 @@ class HealthMonitorPlugin(Plugin):
 
         # Check Cognee memory service
         try:
-            from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+            from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
 
             reader = CogneeMemoryReader()
             healthy = await reader.health()

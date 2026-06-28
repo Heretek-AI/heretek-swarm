@@ -22,7 +22,7 @@ import structlog
 # ---------------------------------------------------------------------------
 # Access-pattern analysis & tiering
 # ---------------------------------------------------------------------------
-from heretek_swarm.memory.access_patterns import (
+from heretek_swarm_core.memory.access_patterns import (
     AccessPattern,
     AccessPatternAnalyzer,
     AccessPatternReport,
@@ -35,18 +35,18 @@ from heretek_swarm.memory.access_patterns import (
 # ---------------------------------------------------------------------------
 # Cognee-backed read/write clients
 # ---------------------------------------------------------------------------
-from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
-from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
 # ---------------------------------------------------------------------------
 # Mem0 backend
 # ---------------------------------------------------------------------------
-from heretek_swarm.memory.mem0_backend import MEM0_AVAILABLE, Mem0Backend, Mem0Config
+from heretek_swarm_core.memory.mem0_backend import MEM0_AVAILABLE, Mem0Backend, Mem0Config
 
 # ---------------------------------------------------------------------------
 # Canonical MemoryStore Protocol + resolver (Phase 1.1)
 # ---------------------------------------------------------------------------
-from heretek_swarm.memory.store import (
+from heretek_swarm_core.memory.store import (
     MemoryEntry,
     MemoryStore,
     MemoryType,
@@ -57,7 +57,7 @@ from heretek_swarm.memory.store import (
 # ---------------------------------------------------------------------------
 # Eliza-style importance-decay memory manager
 # ---------------------------------------------------------------------------
-from heretek_swarm.memory.eliza_memory import (
+from heretek_swarm_core.memory.eliza_memory import (
     ElizaMemoryEntry,
     MemoryManager,
     MemoryManagerConfig,
@@ -67,7 +67,7 @@ from heretek_swarm.memory.eliza_memory import (
 # ---------------------------------------------------------------------------
 # Intelligent pre-fetching & caching
 # ---------------------------------------------------------------------------
-from heretek_swarm.memory.prefetcher import (
+from heretek_swarm_core.memory.prefetcher import (
     IntelligentPrefetcher,
     LFUCache,
     LRUCache,

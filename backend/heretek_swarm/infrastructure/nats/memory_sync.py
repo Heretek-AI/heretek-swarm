@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from heretek_swarm.infrastructure.nats import NATSClient
-    from heretek_swarm.memory.access_patterns import AccessTier
+    from heretek_swarm_core.memory.access_patterns import AccessTier
 
 logger = structlog.get_logger(__name__)
 

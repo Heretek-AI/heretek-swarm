@@ -215,3 +215,7 @@ com[1-9].*
 lpt[1-9]
 lpt[1-9].*
 review/
+
+# Tooling artifacts (local knowledge graphs / SDD state)
+.superpowers/
+graphify-out/

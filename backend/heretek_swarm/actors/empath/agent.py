@@ -159,7 +159,7 @@ class EmpathAgent(
         )
 
         # Session 44: Memory Optimization Integration - initialize access analyzer
-        from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
+        from heretek_swarm_core.memory.access_patterns import AccessPatternAnalyzer
 
         self.access_analyzer = _access_analyzer or AccessPatternAnalyzer()
 

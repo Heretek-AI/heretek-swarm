@@ -22,7 +22,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from heretek_swarm.memory import (
+from heretek_swarm_core.memory import (
     MemoryEntry,
     MemoryStore,
     MemoryType,

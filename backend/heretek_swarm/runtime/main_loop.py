@@ -40,8 +40,8 @@ from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.goals.pipeline import run_goal_cycle
 from heretek_swarm.goals.store import FileGoalStore
 from heretek_swarm.llm.model_garage import ModelGarage
-from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
-from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 from heretek_swarm.rag.cognee_rag import CogneeRAGRetriever, get_rag_retriever
 from heretek_swarm.routing.model_router import set_global_model_garage
 from heretek_swarm.runtime.actor_orchestrator import ActorOrchestrator

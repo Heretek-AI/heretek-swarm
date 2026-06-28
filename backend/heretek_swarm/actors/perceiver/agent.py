@@ -51,7 +51,7 @@ from heretek_swarm.collective.learning import PatternExtractor
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
+from heretek_swarm_core.memory.access_patterns import AccessPatternAnalyzer
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator

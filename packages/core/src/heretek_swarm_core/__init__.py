@@ -61,7 +61,7 @@ from heretek_swarm.gateway.auth import (  # noqa: F401
     verify_auth,
     verify_jwt,
 )
-from heretek_swarm.memory import (  # noqa: F401
+from heretek_swarm_core.memory import (  # noqa: F401
     MemoryStore,
     MemoryType,
     MemoryEntry,
@@ -104,6 +104,7 @@ from heretek_swarm.services import (  # noqa: F401
     ObservabilityServiceStub,
     RealtimeServiceStub,
 )
+from heretek_swarm_core.memory import *  # noqa: F401,F403
 from heretek_swarm_core.embeddings import *  # noqa: F401,F403
 from heretek_swarm_core.models import *  # noqa: F401,F403
 from heretek_swarm_core.schemas import *  # noqa: F401,F403

@@ -19,8 +19,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
 
-from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
-from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
 logger = logging.getLogger("heretek_swarm.runtime.initializers.memory")
 

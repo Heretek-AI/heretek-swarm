@@ -48,7 +48,7 @@ from typing import Any, Protocol
 
 import structlog
 
-from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
 
 logger = structlog.get_logger(__name__)
 

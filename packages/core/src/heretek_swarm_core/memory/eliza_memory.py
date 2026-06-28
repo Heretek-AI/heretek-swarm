@@ -165,8 +165,8 @@ class MemoryManager:
         # Initialize Cognee writer/reader if configured
         if self.config.use_mem0:
             try:
-                from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
-                from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+                from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
+                from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
                 self._cognee_writer = CogneeMemoryWriter()
                 self._cognee_reader = CogneeMemoryReader()

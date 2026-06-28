@@ -1638,7 +1638,7 @@ async def test_store_analysis_attempts_cognee_write() -> None:
     """Verify _store_analysis_to_cognee attempts to persist via
     _cognee_writer.store when a Cognee writer is configured.
     """
-    from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+    from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
     swarm = AutonomousSwarm(config={}, no_infra=True)
 
@@ -1686,7 +1686,7 @@ async def test_store_analysis_handles_cognee_failure() -> None:
 
     The in-memory buffer should still be populated despite the failure.
     """
-    from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+    from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
     swarm = AutonomousSwarm(config={}, no_infra=True)
 

@@ -13,8 +13,8 @@ __email__ = "ai@heretek.io"
 from heretek_swarm.actors.base import AgentActor
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.consensus.maker import MAKERConsensus
-from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
-from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 from heretek_swarm.orchestration.langgraph_workflow import (
     LangGraphHeavySwarmWorkflow as HeavySwarmWorkflow,
 )
@@ -22,6 +22,7 @@ from heretek_swarm.plugins.consciousness import ConsciousnessPlugin
 from heretek_swarm.plugins.liberation import LiberationPlugin
 
 # Backward-compat re-export (remove after migration complete)
+from heretek_swarm_core.memory import *  # noqa: F401,F403
 from heretek_swarm_core.embeddings import *  # noqa: F401,F403
 from heretek_swarm_core.models import *  # noqa: F401,F403
 from heretek_swarm_core.schemas import *  # noqa: F401,F403

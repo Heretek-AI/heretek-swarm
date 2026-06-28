@@ -20,8 +20,8 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
-from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
 logger = structlog.get_logger(__name__)
 

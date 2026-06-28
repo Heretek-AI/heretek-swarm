@@ -76,14 +76,14 @@ from heretek_swarm.config.service import (
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
 from heretek_swarm.mcp.server import router as mcp_router
-from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
-from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
 # Import mem0 backend — see heretek_swarm.memory.mem0_backend
 # (Previously this did `from memory import …` which always failed because
 # `memory` is a sub-package of `heretek_swarm`, not a top-level module.
 # See PLAN.md §1.8 — Prime Directive "Persistent Operation" violation.)
-from heretek_swarm.memory.mem0_backend import (
+from heretek_swarm_core.memory.mem0_backend import (
     MEM0_AVAILABLE,
     Mem0Backend,
     Mem0Config,

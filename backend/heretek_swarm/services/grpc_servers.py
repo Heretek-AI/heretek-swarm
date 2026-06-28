@@ -162,7 +162,7 @@ class MemoryServicer(pb_grpc.MemoryServiceServicer):
     async def Search(
         self, request: pb.SearchMemoryRequest, context: grpc.aio.ServicerContext
     ) -> pb.SearchMemoryResponse:
-        from heretek_swarm.memory import MemoryType
+        from heretek_swarm_core.memory import MemoryType
 
         try:
             mt = MemoryType(request.memory_type) if request.memory_type else None

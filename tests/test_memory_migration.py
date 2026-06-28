@@ -80,7 +80,7 @@ class TestNoLegacyImportsOutsideMemory:
 
     @pytest.mark.parametrize("symbol", LEGACY_SYMBOLS)
     def test_no_legacy_imports(self, symbol: str) -> None:
-        """Grep for 'from heretek_swarm.memory.* import.*<symbol>' outside memory/."""
+        """Grep for 'from heretek_swarm_core.memory.* import.*<symbol>' outside memory/."""
         # Search the whole src tree for import lines referencing the symbol
         lines = _grep(
             rf"from heretek_swarm\.memory\.\w+ import.*{symbol}",

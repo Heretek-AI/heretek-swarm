@@ -211,8 +211,8 @@ async def execute_memory_node(
     context: WorkflowContext,
 ) -> Any:
     """Execute a memory node (store or retrieve)."""
-    from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
-    from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+    from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
+    from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
     operation = node.data.get("operation", "store")
     if operation not in ["store", "retrieve", "search"]:

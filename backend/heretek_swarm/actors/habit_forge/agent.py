@@ -49,7 +49,7 @@ from heretek_swarm.consciousness.phi_training import (
 # Session 44: Zero-Trust Validation
 
 from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
+from heretek_swarm_core.memory.access_patterns import AccessPatternAnalyzer
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger("HabitForgeAgent")

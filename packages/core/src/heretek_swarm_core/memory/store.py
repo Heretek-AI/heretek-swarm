@@ -33,7 +33,7 @@ This module ships:
   cognee when enabled, else mem0 when initialized, else an in-memory
   no-op (so the swarm stays bootable in dev)
 
-It does NOT yet replace every ``from heretek_swarm.memory.cognee_writer
+It does NOT yet replace every ``from heretek_swarm_core.memory.cognee_writer
 import CogneeMemoryWriter`` call site — that is a multi-week migration
 (Phase 1.1 in the audit). New code should import from here.
 """
@@ -183,7 +183,7 @@ def get_default_store() -> MemoryStore:
         return _default_store
 
     if os.getenv("COGNEE_ENABLED", "false").lower() in ("1", "true", "yes"):
-        from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+        from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
         store: MemoryStore = _CogneeAdapter(CogneeMemoryWriter())
         _default_store = store

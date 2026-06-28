@@ -12,7 +12,7 @@ from typing import Any
 
 import httpx
 import pytest
-from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
 
 
 def _ok(handler: Callable[[httpx.Request], httpx.Response]) -> httpx.AsyncClient:

@@ -13,7 +13,7 @@ from typing import Any
 
 import httpx
 import pytest
-from heretek_swarm.memory.cognee_writer import (
+from heretek_swarm_core.memory.cognee_writer import (
     CogneeMemoryWriter,
     get_memory_writer,
 )

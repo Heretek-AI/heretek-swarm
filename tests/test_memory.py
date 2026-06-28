@@ -9,8 +9,8 @@ from __future__ import annotations
 import os
 from unittest.mock import patch
 
-from heretek_swarm.memory.cognee_reader import CogneeMemoryReader
-from heretek_swarm.memory.cognee_writer import CogneeMemoryWriter
+from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
+from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
 # ---------------------------------------------------------------------------
 # CogneeMemoryReader tests
@@ -136,27 +136,27 @@ class TestMemoryPackageExports:
     """Verify heretek_swarm.memory exports the correct public surface."""
 
     def test_cognee_reader_importable(self):
-        from heretek_swarm.memory import CogneeMemoryReader as Reader
+        from heretek_swarm_core.memory import CogneeMemoryReader as Reader
         assert Reader is CogneeMemoryReader
 
     def test_cognee_writer_importable(self):
-        from heretek_swarm.memory import CogneeMemoryWriter as Writer
+        from heretek_swarm_core.memory import CogneeMemoryWriter as Writer
         assert Writer is CogneeMemoryWriter
 
     def test_access_pattern_analyzer_importable(self):
-        from heretek_swarm.memory import AccessPatternAnalyzer as Analyzer
+        from heretek_swarm_core.memory import AccessPatternAnalyzer as Analyzer
         assert Analyzer is not None
 
     def test_intelligent_prefetcher_importable(self):
-        from heretek_swarm.memory import IntelligentPrefetcher as Fetcher
+        from heretek_swarm_core.memory import IntelligentPrefetcher as Fetcher
         assert Fetcher is not None
 
     def test_eliza_memory_importable(self):
-        from heretek_swarm.memory import MemoryManager as Manager
+        from heretek_swarm_core.memory import MemoryManager as Manager
         assert Manager is not None
 
     def test_legacy_dual_tier_memory_not_in_all(self):
-        from heretek_swarm.memory import __all__ as exports
+        from heretek_swarm_core.memory import __all__ as exports
         assert "DualTierMemory" not in exports
 
     def test_legacy_memory_entry_not_in_all(self):
@@ -166,8 +166,8 @@ class TestMemoryPackageExports:
         # pre-Protocol dataclass) was removed; the new one
         # IS in __all__ by design. This test now asserts the
         # new entry is importable from the package.
-        from heretek_swarm.memory import MemoryEntry as Entry
-        from heretek_swarm.memory import __all__ as exports
+        from heretek_swarm_core.memory import MemoryEntry as Entry
+        from heretek_swarm_core.memory import __all__ as exports
         assert "MemoryEntry" in exports
         assert Entry is not None
         assert hasattr(Entry, "id")
@@ -175,9 +175,9 @@ class TestMemoryPackageExports:
         assert hasattr(Entry, "memory_type")
 
     def test_legacy_persistent_memory_not_in_all(self):
-        from heretek_swarm.memory import __all__ as exports
+        from heretek_swarm_core.memory import __all__ as exports
         assert "PersistentMemory" not in exports
 
     def test_all_is_sorted(self):
-        from heretek_swarm.memory import __all__ as exports
+        from heretek_swarm_core.memory import __all__ as exports
         assert exports == sorted(exports), "__all__ must be alphabetically sorted"
