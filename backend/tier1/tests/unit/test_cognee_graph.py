@@ -9,29 +9,24 @@ import pytest
 from tier1.memory.cognee_store import CogneePipeline
 
 
-def _make_pipeline_with_mock_db():
-    """Pipeline with a mocked kuzu Database + Connection."""
+def _make_pipeline_with_mock_conn():
+    """Pipeline with a mocked kuzu Connection (returned by _open_kuzu_db)."""
     backend = MagicMock()
     pipeline = CogneePipeline(backend, graph_path="/tmp/fake-graph")
 
     mock_conn = MagicMock()
-    mock_db = MagicMock()
-    # conn.execute returns a result object; we only care that it's called.
-    mock_db.conn = mock_conn
 
-    # Patch _open_kuzu_db and keep it alive for the duration of the test by
-    # anchoring the patcher on mock_db (otherwise `with patch(...): return`
-    # would restore the original before the test calls _ensure_graph).
-    patcher = patch("tier1.memory.cognee_store._open_kuzu_db", return_value=mock_db)
+    # Patch _open_kuzu_db to return our mock_conn directly. Anchor the patcher
+    # on mock_conn so it survives the duration of the test.
+    patcher = patch("tier1.memory.cognee_store._open_kuzu_db", return_value=mock_conn)
     patcher.start()
-    mock_db._patcher = patcher
-    return pipeline, mock_db, mock_conn
+    mock_conn._patcher = patcher
+    return pipeline, mock_conn
 
 
-def test_ensure_graph_opens_db_once():
-    pipeline, mock_db, mock_conn = _make_pipeline_with_mock_db()
+def test_ensure_graph_opens_connection_once():
+    pipeline, mock_conn = _make_pipeline_with_mock_conn()
     pipeline._ensure_graph()
-    assert pipeline._db is mock_db
     assert pipeline._conn is mock_conn
     # Second call is a no-op.
     pipeline._ensure_graph()
@@ -41,7 +36,7 @@ def test_ensure_graph_opens_db_once():
 
 
 def test_improve_is_idempotent_and_runs_ddl():
-    pipeline, mock_db, mock_conn = _make_pipeline_with_mock_db()
+    pipeline, mock_conn = _make_pipeline_with_mock_conn()
     import asyncio
 
     asyncio.run(pipeline.improve())
@@ -50,7 +45,7 @@ def test_improve_is_idempotent_and_runs_ddl():
 
 
 def test_find_entities_for_entry_runs_cypher():
-    pipeline, mock_db, mock_conn = _make_pipeline_with_mock_db()
+    pipeline, mock_conn = _make_pipeline_with_mock_conn()
     # Mock the query result: an iterator of dicts with 'name' key.
     mock_result = MagicMock()
     mock_result.get_next.return_value = {"name": "JWT"}  # then StopIteration on next call
@@ -64,7 +59,7 @@ def test_find_entities_for_entry_runs_cypher():
 
 
 def test_traverse_graph_returns_neighbors():
-    pipeline, mock_db, mock_conn = _make_pipeline_with_mock_db()
+    pipeline, mock_conn = _make_pipeline_with_mock_conn()
     mock_result = MagicMock()
     mock_result.get_next.side_effect = [
         {"name": "middleware"},

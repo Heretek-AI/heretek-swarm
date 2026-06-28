@@ -71,5 +71,4 @@ def test_constructor_preserves_public_surface():
     assert pipeline.memory is backend
     assert pipeline.graph_path == "/tmp/x"
     assert pipeline.llm_provider == "minimax"
-    assert pipeline._db is None  # not opened yet
-    assert pipeline._conn is None
+    assert pipeline._conn is None  # not opened yet

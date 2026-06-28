@@ -22,11 +22,14 @@ RELATION_TYPES = {"causes", "depends_on", "contradicts", "supports", "part_of", 
 
 
 def _open_kuzu_db(path: str):
-    """Open a Kùzu database. Module-level function so tests can patch it."""
+    """Open a Kùzu database and return a ready-to-use Connection.
+
+    Module-level so tests can patch it.
+    """
     import kuzu
 
     db = kuzu.Database(path)
-    return db
+    return kuzu.Connection(db)
 
 
 class CogneePipeline:
@@ -41,15 +44,13 @@ class CogneePipeline:
         self.memory = memory_backend
         self.graph_path = graph_path
         self.llm_provider = llm_provider
-        self._db: Any = None  # kuzu.Database — typed as Any to avoid hard import here
-        self._conn: Any = None
+        self._conn: Any = None  # kuzu.Connection — typed as Any to avoid hard import
 
     def _ensure_graph(self) -> None:
         """Open the Kùzu database and create tables (idempotent)."""
-        if self._db is not None:
+        if self._conn is not None:
             return
-        self._db = _open_kuzu_db(self.graph_path)
-        self._conn = self._db.conn
+        self._conn = _open_kuzu_db(self.graph_path)
         # DDL — kuzu raises if a table already exists, so wrap in try/except.
         ddl_statements = [
             (
