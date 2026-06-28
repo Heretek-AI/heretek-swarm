@@ -89,9 +89,9 @@ class CogneePipeline:
         ddl_statements = [
             (
                 "CREATE NODE TABLE Entity("
-                "id UUID, name STRING, type STRING, "
+                "name STRING, type STRING, "
                 "embedding FLOAT[1536], created_at TIMESTAMP, "
-                "PRIMARY KEY(id))"
+                "PRIMARY KEY(name))"
             ),
             (
                 "CREATE NODE TABLE Document("
@@ -120,11 +120,8 @@ class CogneePipeline:
             {"id": entry_id},
         )
         names: list[str] = []
-        while True:
-            try:
-                row = result.get_next()
-            except StopIteration:
-                break
+        while result.has_next():
+            row = result.get_next()
             names.append(row["name"])
         return names
 
@@ -139,11 +136,8 @@ class CogneePipeline:
             {"names": entity_names},
         )
         names: list[str] = []
-        while True:
-            try:
-                row = result.get_next()
-            except StopIteration:
-                break
+        while result.has_next():
+            row = result.get_next()
             names.append(row["name"])
         return names
 
@@ -196,7 +190,7 @@ class CogneePipeline:
         import hashlib
         import uuid
 
-        doc_id = str(uuid.uuid4())
+        doc_id = uuid.uuid4()
         content_hash = hashlib.sha256(chunk.encode()).hexdigest()
         self._conn.execute(
             "CREATE (d:Document {id: $id, content_hash: $h, processed: true})",
@@ -268,11 +262,8 @@ class CogneePipeline:
                 {"limit": batch_size},
             )
             ids: list[str] = []
-            while True:
-                try:
-                    row = result.get_next()
-                except StopIteration:
-                    break
+            while result.has_next():
+                row = result.get_next()
                 ids.append(row["id"])
             # Mark them processed (no entity extraction here — add() already does it).
             for did in ids:
@@ -286,8 +277,18 @@ class CogneePipeline:
             return 0
 
     async def search(self, query: str, *, top_k: int = 5) -> list[MemoryEntry]:
-        """Vector search via MemoryBackend. Graph enrichment added in Task 3."""
-        return await self.memory.search(query, top_k=top_k)
+        """Vector search via MemoryBackend + 2-hop graph enrichment."""
+        base_results = await self.memory.search(query, top_k=top_k)
+        enriched: list[MemoryEntry] = []
+        for entry in base_results:
+            # Best-effort: skip enrichment on Kuzu failure.
+            try:
+                entities = self._find_entities_for_entry(entry.id)
+                _ = self._traverse_graph(entities, hops=2)
+            except Exception:
+                pass
+            enriched.append(entry)
+        return enriched
 
     async def improve(self) -> None:
         """Best-effort graph refinement: ensure schema exists. Failures logged."""

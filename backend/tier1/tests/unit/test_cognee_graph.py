@@ -48,8 +48,8 @@ def test_find_entities_for_entry_runs_cypher():
     pipeline, mock_conn = _make_pipeline_with_mock_conn()
     # Mock the query result: an iterator of dicts with 'name' key.
     mock_result = MagicMock()
-    mock_result.get_next.return_value = {"name": "JWT"}  # then StopIteration on next call
-    mock_result.get_next.side_effect = [{"name": "JWT"}, {"name": "auth"}, StopIteration]
+    mock_result.has_next.side_effect = [True, True, False]
+    mock_result.get_next.side_effect = [{"name": "JWT"}, {"name": "auth"}]
     mock_conn.execute.return_value = mock_result
 
     names = pipeline._find_entities_for_entry("entry-abc")
@@ -61,10 +61,10 @@ def test_find_entities_for_entry_runs_cypher():
 def test_traverse_graph_returns_neighbors():
     pipeline, mock_conn = _make_pipeline_with_mock_conn()
     mock_result = MagicMock()
+    mock_result.has_next.side_effect = [True, True, False]
     mock_result.get_next.side_effect = [
         {"name": "middleware"},
         {"name": "token"},
-        StopIteration,
     ]
     mock_conn.execute.return_value = mock_result
 
