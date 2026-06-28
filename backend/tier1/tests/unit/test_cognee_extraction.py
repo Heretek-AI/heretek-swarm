@@ -11,6 +11,7 @@ from tier1.memory import MemoryType
 from tier1.memory.cognee_store import (
     EXTRACTION_PROMPT,
     CogneePipeline,
+    _get_extraction_client,
 )
 
 
@@ -119,7 +120,41 @@ async def test_cognify_returns_count_processed():
     pipeline = CogneePipeline(backend)
     pipeline._conn = MagicMock()
     # Mock the unprocessed-documents query to return empty.
-    pipeline._conn.execute.return_value.get_next.side_effect = StopIteration
+    pipeline._conn.execute.return_value.has_next.return_value = False
 
     count = await pipeline.cognify(batch_size=10)
     assert count == 0
+
+
+def test_get_extraction_client_anthropic_returns_none():
+    """Anthropic uses a different SDK; branch returns None without raising."""
+    assert _get_extraction_client("anthropic") is None
+
+
+def test_get_extraction_client_unknown_returns_none():
+    """Unknown providers fall through to the else branch and return None."""
+    assert _get_extraction_client("unknown") is None
+
+
+async def test_add_graph_build_failure_does_not_break():
+    """LLM failures during graph build must not break the memory write path."""
+    backend = MagicMock()
+    backend.store = AsyncMock(return_value="entry-id")
+    pipeline = CogneePipeline(backend)
+
+    fake_client = MagicMock()
+    fake_client.chat.completions.create = AsyncMock(
+        side_effect=RuntimeError("LLM exploded"),
+    )
+
+    with patch(
+        "tier1.memory.cognee_store._get_extraction_client",
+        return_value=fake_client,
+    ):
+        entry_id = await pipeline.add("payload that fails extraction")
+
+    # Memory backend still received the entry; cognee failure was swallowed.
+    assert entry_id == "entry-id"
+    backend.store.assert_awaited_once()
+    stored = backend.store.await_args.args[0]
+    assert stored.content == "payload that fails extraction"
