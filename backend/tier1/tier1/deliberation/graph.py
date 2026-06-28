@@ -35,6 +35,7 @@ from tier1.deliberation.state import (
     DeliberationState,
 )
 from tier1.llm.garage import ModelGarage
+from tier1.memory import MemoryBackend
 
 EventSink = Callable[[DeliberationEvent], Awaitable[None]]
 
@@ -59,18 +60,20 @@ class Tribunal:
         settings: Settings,
         garage: ModelGarage,
         sink: EventSink | None = None,
+        memory: "MemoryBackend | None" = None,
     ) -> None:
         self.settings = settings
         self.garage = garage
         self.sink = sink
-        self._compiled = self._build(self.sink)
+        self.memory = memory
+        self._compiled = self._build(self.sink, self.memory)
 
-    def _build(self, sink: EventSink | None):
+    def _build(self, sink: EventSink | None, memory: "MemoryBackend | None" = None):
         g = StateGraph(DeliberationState)
-        g.add_node("alpha", make_alpha_node(self.garage, sink))
-        g.add_node("beta", make_beta_node(self.garage, sink))
-        g.add_node("charlie", make_charlie_node(self.garage, sink))
-        g.add_node("steward_tally", make_steward_node(self.settings, sink))
+        g.add_node("alpha", make_alpha_node(self.garage, sink, memory))
+        g.add_node("beta", make_beta_node(self.garage, sink, memory))
+        g.add_node("charlie", make_charlie_node(self.garage, sink, memory))
+        g.add_node("steward_tally", make_steward_node(self.settings, sink, memory))
         g.add_node("finalize", _finalize_node)
 
         g.add_edge(START, "alpha")
