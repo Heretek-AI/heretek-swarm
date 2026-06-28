@@ -4,12 +4,9 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock
 
-import pytest
-
 from tier1.config import Settings
 from tier1.deliberation.graph import Tribunal
 from tier1.deliberation.nodes._base import run_agent
-from tier1.deliberation.nodes.alpha import make_alpha_node
 from tier1.deliberation.state import initial_state
 
 
