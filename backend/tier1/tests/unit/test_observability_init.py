@@ -22,7 +22,12 @@ def test_init_telemetry_installs_fastapi_instrumentor():
     from tier1.observability import init_telemetry
 
     app = FastAPI()
-    with patch("tier1.observability._init_otel"):
+    # Patch structlog.configure so we don't mutate the global structlog config
+    # and break other tests that depend on the default processors.
+    with (
+        patch("tier1.observability._init_otel"),
+        patch("tier1.observability.structlog.configure"),
+    ):
         init_telemetry(app)
     # If _init_otel is mocked, we just verify init_telemetry doesn't crash.
 
@@ -38,6 +43,7 @@ def test_init_telemetry_configures_tracer_provider():
         patch("opentelemetry.sdk.trace.TracerProvider") as mock_tracer_prov,
         patch("opentelemetry.instrumentation.fastapi.FastAPIInstrumentor") as mock_fapi,
         patch("tier1.observability.metrics.set_default_provider"),
+        patch("tier1.observability.structlog.configure"),
     ):
         from tier1.observability import init_telemetry
 
@@ -116,46 +122,59 @@ def test_init_telemetry_produces_observable_spans():
 
     Replaces the global TracerProvider with one whose exporter is in-memory,
     so the assertion is deterministic without needing a live Jaeger.
+
+    Includes try/finally to restore the prior OTel globals so this test
+    does not leak state into the rest of the suite.
     """
-    from opentelemetry import trace
+    import copy
+    import structlog
+    import structlog._config as structlog_config
+    from opentelemetry import metrics, trace
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import SimpleSpanProcessor
     from opentelemetry.trace import _TRACER_PROVIDER_SET_ONCE
     from tier1.observability import init_telemetry, get_tracer
 
-    # OTel's set_tracer_provider is one-shot — reset the flag both before and
-    # patch the call during init_telemetry so the in-memory provider below can
-    # still be installed.
+    # Snapshot globals so we can restore them after the test.
+    original_tracer_provider = trace.get_tracer_provider()
+    original_meter_provider = metrics.get_meter_provider()
+    original_structlog = copy.deepcopy(structlog_config._CONFIG)
+
+    # OTel's set_tracer_provider is one-shot — earlier tests or init_telemetry
+    # itself may have set the global provider. Reset the once-flag so the
+    # in-memory install below takes effect.
     _TRACER_PROVIDER_SET_ONCE._done = False
 
-    app = FastAPI()
-    with (
-        patch("opentelemetry.exporter.otlp.proto.http.trace_exporter.OTLPSpanExporter"),
-        patch("opentelemetry.exporter.otlp.proto.http.metric_exporter.OTLPMetricExporter"),
-        patch("opentelemetry.sdk.metrics.export.PeriodicExportingMetricReader"),
-        patch("tier1.observability.metrics.set_default_provider"),
-        patch("opentelemetry.trace.set_tracer_provider"),
-    ):
+    try:
+        app = FastAPI()
+        # Run init_telemetry once to exercise the production wiring path.
         init_telemetry(app)
 
-    # Reset the once-flag again — init_telemetry was patched to a no-op so it
-    # did NOT set the provider, but earlier tests may have. Either way the
-    # flag may now be True; clear it so the in-memory install takes effect.
-    _TRACER_PROVIDER_SET_ONCE._done = False
+        # init_telemetry may have set the provider again — clear the flag once
+        # more so the in-memory install succeeds.
+        _TRACER_PROVIDER_SET_ONCE._done = False
 
-    # Replace the global provider with one whose exporter is in-memory.
-    in_memory = InMemorySpanExporter()
-    new_provider = TracerProvider()
-    new_provider.add_span_processor(SimpleSpanProcessor(in_memory))
-    trace.set_tracer_provider(new_provider)
+        # Replace the global provider with one whose exporter is in-memory.
+        in_memory = InMemorySpanExporter()
+        new_provider = TracerProvider()
+        new_provider.add_span_processor(SimpleSpanProcessor(in_memory))
+        trace.set_tracer_provider(new_provider)
 
-    tracer = get_tracer("test.integration")
-    with tracer.start_as_current_span("test-span"):
-        pass
+        tracer = get_tracer("test.integration")
+        with tracer.start_as_current_span("test-span"):
+            pass
 
-    spans = in_memory.get_finished_spans()
-    assert any(s.name == "test-span" for s in spans), (
-        f"expected test-span, got {[s.name for s in spans]}"
-    )
-    span = next(s for s in spans if s.name == "test-span")
-    assert span.context.trace_id != 0
+        spans = in_memory.get_finished_spans()
+        assert any(s.name == "test-span" for s in spans), (
+            f"expected test-span, got {[s.name for s in spans]}"
+        )
+        span = next(s for s in spans if s.name == "test-span")
+        assert span.context.trace_id != 0
+    finally:
+        # Restore OTel globals so subsequent tests are not affected.
+        trace.set_tracer_provider(original_tracer_provider)
+        metrics.set_meter_provider(original_meter_provider)
+        # Restore the original structlog config — init_telemetry mutates
+        # global structlog processors, and the new chain includes
+        # wrap_for_formatter which fails on PrintLogger without 'extra' kwarg.
+        structlog_config._CONFIG = original_structlog
