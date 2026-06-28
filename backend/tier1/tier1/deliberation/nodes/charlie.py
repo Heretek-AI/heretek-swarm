@@ -16,8 +16,9 @@ async def charlie_node(
     state: DeliberationState,
     garage: ModelGarage,
     sink: EventSink | None = None,
+    memory: "MemoryBackend | None" = None,
 ) -> DeliberationState:
-    return await run_agent(state, garage, agent="charlie", sink=sink)
+    return await run_agent(state, garage, agent="charlie", sink=sink, memory=memory)
 
 
 def make_charlie_node(

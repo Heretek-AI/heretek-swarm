@@ -16,8 +16,9 @@ async def beta_node(
     state: DeliberationState,
     garage: ModelGarage,
     sink: EventSink | None = None,
+    memory: "MemoryBackend | None" = None,
 ) -> DeliberationState:
-    return await run_agent(state, garage, agent="beta", sink=sink)
+    return await run_agent(state, garage, agent="beta", sink=sink, memory=memory)
 
 
 def make_beta_node(

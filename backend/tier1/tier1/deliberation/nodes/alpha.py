@@ -16,8 +16,9 @@ async def alpha_node(
     state: DeliberationState,
     garage: ModelGarage,
     sink: EventSink | None = None,
+    memory: "MemoryBackend | None" = None,
 ) -> DeliberationState:
-    return await run_agent(state, garage, agent="alpha", sink=sink)
+    return await run_agent(state, garage, agent="alpha", sink=sink, memory=memory)
 
 
 # LangGraph expects nodes to take only state; bind garage at graph-build time.
