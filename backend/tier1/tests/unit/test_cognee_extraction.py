@@ -100,7 +100,6 @@ async def test_add_calls_llm_then_writes_graph():
 
     mock_conn = MagicMock()
     pipeline._conn = mock_conn
-    pipeline._db = MagicMock()  # pretend graph is open
 
     with patch(
         "tier1.memory.cognee_store._get_extraction_client",
@@ -119,7 +118,6 @@ async def test_cognify_returns_count_processed():
     backend = MagicMock()
     pipeline = CogneePipeline(backend)
     pipeline._conn = MagicMock()
-    pipeline._db = MagicMock()
     # Mock the unprocessed-documents query to return empty.
     pipeline._conn.execute.return_value.get_next.side_effect = StopIteration
 
