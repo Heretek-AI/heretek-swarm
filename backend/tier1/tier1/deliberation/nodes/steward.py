@@ -26,6 +26,7 @@ async def steward_node(
     state: DeliberationState,
     settings: Settings,
     sink: EventSink | None = None,
+    memory: "MemoryBackend | None" = None,
 ) -> DeliberationState:
     """Tally verdicts. Either finalize or emit feedback and continue."""
     events = list(state.get("events", []))
