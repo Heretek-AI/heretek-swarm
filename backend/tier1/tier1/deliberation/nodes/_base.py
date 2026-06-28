@@ -62,6 +62,7 @@ async def run_agent(
     *,
     agent: AgentName,
     sink: EventSink | None = None,
+    memory: "MemoryBackend | None" = None,
 ) -> DeliberationState:
     """Execute one agent node: prompt -> streamed tokens -> parsed verdict."""
     system = SYSTEM_PROMPTS[agent]

@@ -20,7 +20,15 @@ async def charlie_node(
     return await run_agent(state, garage, agent="charlie", sink=sink)
 
 
-def make_charlie_node(garage: ModelGarage, sink: EventSink | None = None):
-    if sink is None:
+def make_charlie_node(
+    garage: ModelGarage,
+    sink: EventSink | None = None,
+    memory: "MemoryBackend | None" = None,
+):
+    if sink is None and memory is None:
         return partial(charlie_node, garage=garage)
-    return partial(charlie_node, garage=garage, sink=sink)
+    if memory is None:
+        return partial(charlie_node, garage=garage, sink=sink)
+    if sink is None:
+        return partial(charlie_node, garage=garage, memory=memory)
+    return partial(charlie_node, garage=garage, sink=sink, memory=memory)

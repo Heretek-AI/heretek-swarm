@@ -127,7 +127,15 @@ def _build_feedback(state: DeliberationState, final) -> str:
     return "\n".join(lines)
 
 
-def make_steward_node(settings: Settings, sink: EventSink | None = None):
-    if sink is None:
+def make_steward_node(
+    settings: Settings,
+    sink: EventSink | None = None,
+    memory: "MemoryBackend | None" = None,
+):
+    if sink is None and memory is None:
         return partial(steward_node, settings=settings)
-    return partial(steward_node, settings=settings, sink=sink)
+    if memory is None:
+        return partial(steward_node, settings=settings, sink=sink)
+    if sink is None:
+        return partial(steward_node, settings=settings, memory=memory)
+    return partial(steward_node, settings=settings, sink=sink, memory=memory)

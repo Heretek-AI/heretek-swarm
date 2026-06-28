@@ -21,7 +21,15 @@ async def alpha_node(
 
 
 # LangGraph expects nodes to take only state; bind garage at graph-build time.
-def make_alpha_node(garage: ModelGarage, sink: EventSink | None = None):
-    if sink is None:
+def make_alpha_node(
+    garage: ModelGarage,
+    sink: EventSink | None = None,
+    memory: "MemoryBackend | None" = None,
+):
+    if sink is None and memory is None:
         return partial(alpha_node, garage=garage)
-    return partial(alpha_node, garage=garage, sink=sink)
+    if memory is None:
+        return partial(alpha_node, garage=garage, sink=sink)
+    if sink is None:
+        return partial(alpha_node, garage=garage, memory=memory)
+    return partial(alpha_node, garage=garage, sink=sink, memory=memory)
