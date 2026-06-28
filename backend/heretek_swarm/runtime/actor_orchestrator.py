@@ -11,7 +11,7 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
-from heretek_swarm.llm.pydantic_ai_agent_factory import build_pydantic_ai_agent_for
+from heretek_swarm_core.llm.pydantic_ai_agent_factory import build_pydantic_ai_agent_for
 
 # Module-level constants for repeated tier labels
 _TIER1_LABEL = "Tier 1 (Core Triad)"

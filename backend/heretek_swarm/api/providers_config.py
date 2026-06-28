@@ -32,7 +32,7 @@ from pydantic import BaseModel, Field
 
 from heretek_swarm.config import get_config_path
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.llm.model_garage import (
+from heretek_swarm_core.llm.model_garage import (
     ProviderConfig,
     ProviderType,
     get_model_garage,

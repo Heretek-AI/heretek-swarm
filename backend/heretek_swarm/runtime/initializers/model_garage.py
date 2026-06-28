@@ -32,7 +32,7 @@ async def initialize_model_garage(swarm: "AutonomousSwarm") -> None:
     central router (callers fall back to provider-direct paths).
     """
     try:
-        from heretek_swarm.llm.model_garage import (
+        from heretek_swarm_core.llm.model_garage import (
             ModelGarage,
             set_global_model_garage,
         )

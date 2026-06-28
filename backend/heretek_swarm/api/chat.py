@@ -20,7 +20,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
-from heretek_swarm.llm.model_garage import (
+from heretek_swarm_core.llm.model_garage import (
     ChatMessage,
     LLMRequest,
     ModelGarage,

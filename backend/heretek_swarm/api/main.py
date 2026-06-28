@@ -23,7 +23,7 @@ import structlog
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from heretek_swarm.llm.pydantic_ai_agent_factory import build_pydantic_ai_agent_for
+from heretek_swarm_core.llm.pydantic_ai_agent_factory import build_pydantic_ai_agent_for
 from heretek_swarm.config.secrets_loader import SecretsLoader
 from heretek_swarm.swarm_logging.config import logger as logging_logger
 

@@ -18,7 +18,7 @@ from collections.abc import AsyncIterator
 
 from pydantic_ai import Agent
 
-from heretek_swarm.llm.model_garage import (
+from heretek_swarm_core.llm.model_garage import (
     ChatMessage,
     LLMRequest,
     LLMResponse,

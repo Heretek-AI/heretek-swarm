@@ -13,7 +13,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from heretek_swarm.llm.model_garage import LLMResponse, ModelGarage
+    from heretek_swarm_core.llm.model_garage import LLMResponse, ModelGarage
 
 
 class TaskComplexity(Enum):

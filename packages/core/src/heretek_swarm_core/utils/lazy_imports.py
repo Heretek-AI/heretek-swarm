@@ -39,7 +39,7 @@ class LazyImport:
         """Initialize lazy import.
 
         Args:
-            import_path: Module path (e.g., 'heretek_swarm.llm.providers.factory')
+            import_path: Module path (e.g., 'heretek_swarm_core.llm.providers.factory')
             attr: Optional specific attribute to import (e.g., 'create_llm_provider')
         """
         self._import_path = import_path

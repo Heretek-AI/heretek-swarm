@@ -67,12 +67,12 @@ from heretek_swarm_core.memory import (  # noqa: F401
     MemoryEntry,
     get_default_store,
 )
-from heretek_swarm.llm.headroom_compat import (  # noqa: F401
+from heretek_swarm_core.llm.headroom_compat import (  # noqa: F401
     HEADROOM_AVAILABLE,
     wrap as headroom_wrap,
     unwrap as headroom_unwrap,
 )
-from heretek_swarm.llm.hindsight_compat import (  # noqa: F401
+from heretek_swarm_core.llm.hindsight_compat import (  # noqa: F401
     HindsightClient,
     HINDSIGHT_ENABLED as HINDSIGHT_AVAILABLE,
     HINDSIGHT_URL,

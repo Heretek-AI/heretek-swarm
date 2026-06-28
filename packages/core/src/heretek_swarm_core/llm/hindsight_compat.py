@@ -28,7 +28,7 @@ This shim:
   but functional memory surface.
 
 Mirrors the pattern in :mod:`heretek_swarm.memory.mem0_backend`
-and :mod:`heretek_swarm.llm.headroom_compat` — same facade
+and :mod:`heretek_swarm_core.llm.headroom_compat` — same facade
 shape, same graceful degradation, same single optional dep.
 
 Scope

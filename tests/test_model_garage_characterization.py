@@ -20,7 +20,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from heretek_swarm.llm.model_garage import (
+from heretek_swarm_core.llm.model_garage import (
     ChatMessage,
     LLMRequest,
     LLMResponse,
@@ -117,7 +117,7 @@ class TestComplete:
                 return _Usage()
 
         with patch(
-            "heretek_swarm.llm.pydantic_ai_transport.pydantic_ai_complete",
+            "heretek_swarm_core.llm.pydantic_ai_transport.pydantic_ai_complete",
             AsyncMock(return_value=LLMResponse(
                 content="hello world",
                 model="gpt-x",
@@ -155,7 +155,7 @@ class TestComplete:
             )
 
         with patch(
-            "heretek_swarm.llm.pydantic_ai_transport.pydantic_ai_complete",
+            "heretek_swarm_core.llm.pydantic_ai_transport.pydantic_ai_complete",
             side_effect=fake_complete,
         ):
             await garage.complete(
@@ -186,7 +186,7 @@ class TestComplete:
             )
 
         with patch(
-            "heretek_swarm.llm.pydantic_ai_transport.pydantic_ai_complete",
+            "heretek_swarm_core.llm.pydantic_ai_transport.pydantic_ai_complete",
             side_effect=fake_complete,
         ):
             resp = await garage.complete(

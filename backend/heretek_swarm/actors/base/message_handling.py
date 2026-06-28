@@ -923,7 +923,7 @@ Please provide your analysis and recommendation for this collective task."""
                 # Otherwise fall back to the swarms agent
                 model_garage = getattr(router, "_model_garage", None)
                 if model_garage is not None:
-                    from heretek_swarm.llm.model_garage import ChatMessage, LLMRequest
+                    from heretek_swarm_core.llm.model_garage import ChatMessage, LLMRequest
 
                     request = LLMRequest(
                         messages=[ChatMessage(role="user", content=prompt)],

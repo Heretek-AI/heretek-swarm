@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING, Any
 
 import httpx
 import structlog
-from heretek_swarm.llm.headroom_compat import (
+from heretek_swarm_core.llm.headroom_compat import (
     HEADROOM_AVAILABLE as _HEADROOM_AVAILABLE,
     unwrap as _headroom_unwrap,
     wrap as _headroom_wrap,
@@ -370,7 +370,7 @@ class LLMProvider(ABC):
 class OpenAIProvider(LLMProvider):
     """OpenAI API provider.
 
-    Transport delegated to ``heretek_swarm.llm.pydantic_ai_transport``
+    Transport delegated to ``heretek_swarm_core.llm.pydantic_ai_transport``
     (Phase 2 consolidation). The hand-rolled httpx + manual SSE parsing
     has been retired; pydantic-ai handles both completion and token
     streaming. The public surface (``complete`` / ``stream`` /
@@ -394,7 +394,7 @@ class OpenAIProvider(LLMProvider):
                     agent_type="openai",
                     method="POST",
                 )
-            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_complete
+            from heretek_swarm_core.llm.pydantic_ai_transport import pydantic_ai_complete
 
             return await pydantic_ai_complete(self.config, request)
 
@@ -402,7 +402,7 @@ class OpenAIProvider(LLMProvider):
         """Stream completion tokens via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_stream
+            from heretek_swarm_core.llm.pydantic_ai_transport import pydantic_ai_stream
 
             async for chunk in pydantic_ai_stream(self.config, request):
                 yield chunk
@@ -411,7 +411,7 @@ class OpenAIProvider(LLMProvider):
 class OllamaProvider(LLMProvider):
     """Ollama local API provider.
 
-    Transport delegated to ``heretek_swarm.llm.pydantic_ai_transport``
+    Transport delegated to ``heretek_swarm_core.llm.pydantic_ai_transport``
     (Phase 2 consolidation). Public surface preserved.
     """
 
@@ -431,7 +431,7 @@ class OllamaProvider(LLMProvider):
                     agent_type="ollama",
                     method="POST",
                 )
-            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_complete
+            from heretek_swarm_core.llm.pydantic_ai_transport import pydantic_ai_complete
 
             return await pydantic_ai_complete(self.config, request)
 
@@ -439,7 +439,7 @@ class OllamaProvider(LLMProvider):
         """Stream completion tokens via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_stream
+            from heretek_swarm_core.llm.pydantic_ai_transport import pydantic_ai_stream
 
             async for chunk in pydantic_ai_stream(self.config, request):
                 yield chunk
@@ -448,7 +448,7 @@ class OllamaProvider(LLMProvider):
 class MiniMaxProvider(LLMProvider):
     """MiniMax API provider.
 
-    Transport delegated to ``heretek_swarm.llm.pydantic_ai_transport``
+    Transport delegated to ``heretek_swarm_core.llm.pydantic_ai_transport``
     (Phase 2 consolidation). Public surface preserved.
     """
 
@@ -468,7 +468,7 @@ class MiniMaxProvider(LLMProvider):
                     agent_type="minimax",
                     method="POST",
                 )
-            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_complete
+            from heretek_swarm_core.llm.pydantic_ai_transport import pydantic_ai_complete
 
             return await pydantic_ai_complete(self.config, request)
 
@@ -476,7 +476,7 @@ class MiniMaxProvider(LLMProvider):
         """Stream completion tokens via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_stream
+            from heretek_swarm_core.llm.pydantic_ai_transport import pydantic_ai_stream
 
             async for chunk in pydantic_ai_stream(self.config, request):
                 yield chunk
@@ -485,7 +485,7 @@ class MiniMaxProvider(LLMProvider):
 class AnthropicProvider(LLMProvider):
     """Anthropic Claude API provider.
 
-    Transport delegated to ``heretek_swarm.llm.pydantic_ai_transport``
+    Transport delegated to ``heretek_swarm_core.llm.pydantic_ai_transport``
     (Phase 2 consolidation). Public surface preserved.
     """
 
@@ -505,7 +505,7 @@ class AnthropicProvider(LLMProvider):
                     agent_type="anthropic",
                     method="POST",
                 )
-            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_complete
+            from heretek_swarm_core.llm.pydantic_ai_transport import pydantic_ai_complete
 
             return await pydantic_ai_complete(self.config, request)
 
@@ -513,7 +513,7 @@ class AnthropicProvider(LLMProvider):
         """Stream completion tokens via pydantic-ai."""
         await self._rate_limit()
         async with self._rate_limiter:
-            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_stream
+            from heretek_swarm_core.llm.pydantic_ai_transport import pydantic_ai_stream
 
             async for chunk in pydantic_ai_stream(self.config, request):
                 yield chunk
@@ -522,7 +522,7 @@ class AnthropicProvider(LLMProvider):
 class OpenAICompatibleProvider(LLMProvider):
     """Generic OpenAI-compatible API provider.
 
-    Transport delegated to ``heretek_swarm.llm.pydantic_ai_transport``
+    Transport delegated to ``heretek_swarm_core.llm.pydantic_ai_transport``
     (Phase 2 consolidation). Public surface preserved.
     """
 
@@ -546,7 +546,7 @@ class OpenAICompatibleProvider(LLMProvider):
                     agent_type="openai_compatible",
                     method="POST",
                 )
-            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_complete
+            from heretek_swarm_core.llm.pydantic_ai_transport import pydantic_ai_complete
 
             return await pydantic_ai_complete(self.config, request)
 
@@ -558,7 +558,7 @@ class OpenAICompatibleProvider(LLMProvider):
                 raise ValueError(
                     "Model must be specified for OpenAI-compatible providers"
                 )
-            from heretek_swarm.llm.pydantic_ai_transport import pydantic_ai_stream
+            from heretek_swarm_core.llm.pydantic_ai_transport import pydantic_ai_stream
 
             async for chunk in pydantic_ai_stream(self.config, request):
                 yield chunk
