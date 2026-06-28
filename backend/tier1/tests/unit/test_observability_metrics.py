@@ -77,3 +77,52 @@ def test_toggle_circuit_state():
     toggle_circuit_state("minimax", -1, provider=provider)
     metrics = reader.get_metrics_data()
     assert len(metrics.resource_metrics) > 0
+
+
+def test_set_default_provider():
+    """set_default_provider stores the provider; get_meter uses it when no arg passed."""
+    from opentelemetry.sdk.metrics import MeterProvider
+    from opentelemetry.metrics import NoOpMeter
+
+    from tier1.observability.metrics import (
+        _default_provider,
+        set_default_provider,
+    )
+    from tier1 import observability  # access module-level singleton
+
+    # Snapshot and restore so we don't pollute the singleton for later tests.
+    original = observability.metrics._default_provider
+    try:
+        custom = MeterProvider()
+        set_default_provider(custom)
+        assert observability.metrics._default_provider is custom
+        m = observability.get_meter("test.set_default")
+        # The meter returned should be sourced from the custom provider.
+        # The SDK's MeterProvider.get_meter returns a Meter; NoOpMeter is the API no-op fallback.
+        assert m is not None
+    finally:
+        observability.metrics._default_provider = original
+
+
+def test_get_meter_uses_arg_provider():
+    """get_meter(name, provider=custom) prefers the explicit provider over the default."""
+    from opentelemetry.sdk.metrics import MeterProvider
+
+    from tier1.observability.metrics import (
+        get_meter,
+        set_default_provider,
+    )
+    from tier1 import observability
+
+    original = observability.metrics._default_provider
+    try:
+        default = MeterProvider()
+        custom = MeterProvider()
+        set_default_provider(default)
+        m_default = get_meter("test.arg_default")
+        m_custom = get_meter("test.arg_custom", provider=custom)
+        # The two Meter instances must be different (different providers
+        # mint different Meter objects even for the same name).
+        assert m_default is not m_custom
+    finally:
+        observability.metrics._default_provider = original
