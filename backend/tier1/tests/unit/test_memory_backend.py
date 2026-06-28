@@ -56,3 +56,61 @@ async def test_get_session_calls_redis(backend):
     result = await backend.get_session("key")
     backend.redis.get.assert_called_once_with("key")
     assert result is None
+
+
+async def test_store_calls_mem0_when_set():
+    """When mem0 is passed, store() invokes mem0.add with content + metadata + agent."""
+    qdrant = MagicMock()
+    redis = MagicMock()
+    postgres = MagicMock()
+    mem0 = MagicMock()
+    mem0.add = AsyncMock()
+    backend = MemoryBackend(qdrant=qdrant, redis=redis, postgres=postgres, mem0=mem0)
+    qdrant.store = AsyncMock()
+    redis.set = AsyncMock()
+    postgres.store = AsyncMock()
+    entry = MemoryEntry(content="hello mem0", memory_type=MemoryType.episodic, agent="alpha")
+    result = await backend.store(entry)
+    assert result == entry.id
+    mem0.add.assert_awaited_once()
+    args, kwargs = mem0.add.call_args
+    assert args == ("hello mem0",)
+    assert kwargs.get("user_id") == "alpha"
+    assert kwargs.get("metadata") == entry.metadata
+
+
+async def test_store_calls_cognee_when_set():
+    """When cognee is passed, store() invokes cognee.add with content + metadata."""
+    qdrant = MagicMock()
+    redis = MagicMock()
+    postgres = MagicMock()
+    cognee = MagicMock()
+    cognee.add = AsyncMock()
+    backend = MemoryBackend(qdrant=qdrant, redis=redis, postgres=postgres, cognee=cognee)
+    qdrant.store = AsyncMock()
+    redis.set = AsyncMock()
+    postgres.store = AsyncMock()
+    entry = MemoryEntry(content="hello cognee", memory_type=MemoryType.semantic)
+    result = await backend.store(entry)
+    assert result == entry.id
+    cognee.add.assert_awaited_once()
+    args, kwargs = cognee.add.call_args
+    assert args == ("hello cognee",)
+    assert kwargs.get("metadata") == entry.metadata
+
+
+async def test_store_swallows_cognee_failure():
+    """A cognee failure must not break a memory write — log and continue."""
+    qdrant = MagicMock()
+    redis = MagicMock()
+    postgres = MagicMock()
+    cognee = MagicMock()
+    cognee.add = AsyncMock(side_effect=Exception("kuzu down"))
+    backend = MemoryBackend(qdrant=qdrant, redis=redis, postgres=postgres, cognee=cognee)
+    qdrant.store = AsyncMock()
+    redis.set = AsyncMock()
+    postgres.store = AsyncMock()
+    entry = MemoryEntry(content="x", memory_type=MemoryType.semantic)
+    result = await backend.store(entry)
+    assert result == entry.id
+    postgres.store.assert_awaited_once()
