@@ -178,3 +178,34 @@ def test_init_telemetry_produces_observable_spans():
         # global structlog processors, and the new chain includes
         # wrap_for_formatter which fails on PrintLogger without 'extra' kwarg.
         structlog_config._CONFIG = original_structlog
+
+
+def test_get_meter_returns_named_meter():
+    """get_meter delegates to the global OTel MeterProvider."""
+    from tier1.observability import get_meter
+    from opentelemetry import metrics
+
+    sentinel = object()
+    with patch.object(metrics, "get_meter", return_value=sentinel) as gmock:
+        result = get_meter("my.meter")
+    gmock.assert_called_once_with("my.meter")
+    assert result is sentinel
+
+
+def test_get_tracer_returns_same_instance_twice():
+    """get_tracer returns the OTel proxy each call (stable identity)."""
+    from tier1.observability import get_tracer
+
+    t1 = get_tracer("dup")
+    t2 = get_tracer("dup")
+    assert t1 is t2
+
+
+def test_init_telemetry_silently_swallows_importerror():
+    """When OTel SDK is missing, init_telemetry degrades to no-op (no raise)."""
+    from tier1.observability import init_telemetry
+
+    app = FastAPI()
+    with patch("tier1.observability._init_otel", side_effect=ImportError("otel missing")):
+        # Must not raise.
+        init_telemetry(app)
