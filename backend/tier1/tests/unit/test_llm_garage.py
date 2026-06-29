@@ -98,7 +98,7 @@ async def test_stream_chat_falls_back_on_timeout(garage: ModelGarage, monkeypatc
 async def test_stream_chat_all_providers_fail_raises_unavailable(garage: ModelGarage, monkeypatch):
     fake = _FakeProvider(["timeout", "timeout", "timeout", "timeout"])
     monkeypatch.setattr(garage, "_stream_from_provider", fake)
-    with pytest.raises(LLMUnavailable):
+    with pytest.raises(LLMUnavailable, match="all providers failed"):
         async for _ in garage.stream_chat("hi", agent="alpha"):
             pass
 
@@ -109,7 +109,7 @@ async def test_circuit_opens_after_threshold_failures(garage: ModelGarage, monke
     fake = _FakeProvider(["timeout"] * 12)
     monkeypatch.setattr(garage, "_stream_from_provider", fake)
     for i in range(3):
-        with pytest.raises(LLMUnavailable):
+        with pytest.raises(LLMUnavailable, match="all providers failed"):
             async for _ in garage.stream_chat("hi", agent="alpha"):
                 pass
     # provider_order should skip minimax now.
@@ -164,7 +164,7 @@ async def test_stream_chat_midstream_timeout_records_failure_and_propagates(
     fake = _FakeProvider(["ok_then_timeout"])
     monkeypatch.setattr(garage, "_stream_from_provider", fake)
     tokens: list[str] = []
-    with pytest.raises(LLMUnavailable) as excinfo:
+    with pytest.raises(LLMUnavailable, match="mid-stream") as excinfo:
         async for chunk in garage.stream_chat("hi", agent="alpha"):
             tokens.append(chunk.token)
     # Caller received the partial chunks before the failure.
@@ -187,7 +187,7 @@ async def test_stream_chat_midstream_non_llm_exception_also_recorded(
     fake = _FakeProvider(["ok_then_burst"])
     monkeypatch.setattr(garage, "_stream_from_provider", fake)
     tokens: list[str] = []
-    with pytest.raises(LLMUnavailable) as excinfo:
+    with pytest.raises(LLMUnavailable, match="mid-stream") as excinfo:
         async for chunk in garage.stream_chat("hi", agent="alpha"):
             tokens.append(chunk.token)
     assert "".join(tokens) == "middle"
@@ -226,7 +226,7 @@ async def test_circuit_threshold_trips_at_exactly_three_failures_on_one_provider
     fake = _FakeProvider(["timeout", "timeout", "timeout"])
     monkeypatch.setattr(garage, "_stream_from_provider", fake)
     for _ in range(3):
-        with pytest.raises(LLMUnavailable):
+        with pytest.raises(LLMUnavailable, match="all providers failed"):
             async for _ in garage.stream_chat("hi", agent="alpha"):
                 pass
 
@@ -255,7 +255,7 @@ async def test_circuit_below_threshold_stays_closed(garage: ModelGarage, monkeyp
     fake = _FakeProvider(["timeout"] * 8)
     monkeypatch.setattr(garage, "_stream_from_provider", fake)
     for _ in range(2):
-        with pytest.raises(LLMUnavailable):
+        with pytest.raises(LLMUnavailable, match="all providers failed"):
             async for _ in garage.stream_chat("hi", agent="alpha"):
                 pass
     assert len(garage.circuits["minimax"].failures) == 2
@@ -433,7 +433,7 @@ async def test_stream_chat_raises_llmunavailable_mid_stream(garage: ModelGarage,
         raise LLMTimeout("blown up")
 
     monkeypatch.setattr(garage, "_stream_from_provider", provider)
-    with pytest.raises(LLMUnavailable):
+    with pytest.raises(LLMUnavailable, match="mid-stream"):
         async for _ in garage.stream_chat("hi", agent="alpha"):
             pass
 
@@ -444,7 +444,7 @@ async def test_stream_chat_raises_when_all_down(garage: ModelGarage, monkeypatch
         yield  # pragma: no cover
 
     monkeypatch.setattr(garage, "_stream_from_provider", fail)
-    with pytest.raises(LLMUnavailable):
+    with pytest.raises(LLMUnavailable, match="all providers failed"):
         async for _ in garage.stream_chat("hi", agent="alpha"):
             pass
 
@@ -466,7 +466,7 @@ async def test_stream_chat_records_metric_failure(garage: ModelGarage, monkeypat
 
     monkeypatch.setattr(garage, "_stream_from_provider", fail)
     with patch("tier1.llm.garage.record_provider_call") as rec:
-        with pytest.raises(LLMUnavailable):
+        with pytest.raises(LLMUnavailable, match="all providers failed"):
             async for _ in garage.stream_chat("hi", agent="alpha"):
                 pass
 
@@ -553,7 +553,7 @@ async def test_stream_openai_provider_uses_correct_settings_per_provider(
 
 
 async def test_stream_openai_provider_raises_on_unknown_provider(garage: ModelGarage):
-    with pytest.raises(LLMUnavailable):
+    with pytest.raises(LLMUnavailable, match="unknown openai-type provider"):
         async for _ in garage._stream_openai_provider("hi", "alpha", "nonsense"):
             pass
 
@@ -612,7 +612,7 @@ async def test_stream_openai_provider_wraps_timeout(garage: ModelGarage, monkeyp
         patch("tier1.llm.garage.record_provider_call"),
     ):
         tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
-        with pytest.raises(LLMTimeout):
+        with pytest.raises(LLMTimeout, match="timed out"):
             async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
                 pass
 
@@ -631,7 +631,8 @@ async def test_stream_openai_provider_wraps_openai_error(garage: ModelGarage, mo
         patch("tier1.llm.garage.record_provider_call"),
     ):
         tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
-        with pytest.raises(LLMUnavailable):
+        # LLMUnavailable is built from str(exc) — the openai SDK message we passed.
+        with pytest.raises(LLMUnavailable, match="bad key"):
             async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
                 pass
 
@@ -650,7 +651,8 @@ async def test_stream_openai_provider_re_raises_other(garage: ModelGarage, monke
         patch("tier1.llm.garage.record_provider_call"),
     ):
         tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
-        with pytest.raises(RuntimeError):
+        # Bare RuntimeError is re-raised unchanged — match its str().
+        with pytest.raises(RuntimeError, match="weird"):
             async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
                 pass
 
@@ -754,7 +756,7 @@ async def test_stream_anthropic_provider_wraps_timeout(garage: ModelGarage, monk
         patch("tier1.llm.garage.record_provider_call"),
     ):
         tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
-        with pytest.raises(LLMTimeout):
+        with pytest.raises(LLMTimeout, match="timed out"):
             async for _ in garage._stream_anthropic_provider("hi", "alpha"):
                 pass
 
@@ -767,7 +769,8 @@ async def test_stream_anthropic_provider_wraps_anthropic_error(garage: ModelGara
         patch("tier1.llm.garage.record_provider_call"),
     ):
         tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
-        with pytest.raises(LLMUnavailable):
+        # LLMUnavailable wraps str(exc) — match the anthropic SDK message we passed.
+        with pytest.raises(LLMUnavailable, match="auth fail"):
             async for _ in garage._stream_anthropic_provider("hi", "alpha"):
                 pass
 
@@ -783,7 +786,7 @@ async def test_stream_anthropic_provider_no_package_raises(garage: ModelGarage, 
 
     monkeypatch.setattr(_builtins, "__import__", fake_import)
     with patch("tier1.llm.garage.get_tracer"), patch("tier1.llm.garage.record_provider_call"):
-        with pytest.raises(LLMUnavailable):
+        with pytest.raises(LLMUnavailable, match="anthropic package not installed"):
             async for _ in garage._stream_anthropic_provider("hi", "alpha"):
                 pass
 
@@ -880,7 +883,7 @@ async def test_stream_openai_provider_openai_error_import_fallback_re_raises(
             patch("tier1.llm.garage.record_provider_call"),
         ):
             tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
-            with pytest.raises(RuntimeError):
+            with pytest.raises(RuntimeError, match="weird"):
                 async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
                     pass
     finally:
