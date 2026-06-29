@@ -6,7 +6,7 @@ import structlog
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
 
-from tier1.memory import MemoryEntry
+from tier1.memory import MemoryEntry, MemoryType
 
 log = structlog.get_logger(__name__)
 

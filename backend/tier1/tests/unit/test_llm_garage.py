@@ -889,3 +889,47 @@ async def test_stream_openai_provider_openai_error_import_fallback_re_raises(
     finally:
         if saved is not None:
             setattr(_openai, "OpenAIError", saved)
+
+
+async def test_stream_from_provider_dispatches_to_correct_handler(garage: ModelGarage):
+    """Regression: garage.py:172 used to call fn(prompt, agent, provider) with 3
+    args. _stream_anthropic_provider accepts only 2, so routing anthropic through
+    _stream_from_provider raised TypeError. The fix encodes provider_name in the
+    dispatch lambdas and calls fn(prompt, agent) with 2 args."""
+
+    async def _empty_gen(*args, **kwargs):
+        if False:
+            yield  # pragma: no cover
+
+    captured: list[tuple[str, tuple, dict]] = []
+
+    async def _capture_openai(prompt, agent, provider_name):
+        captured.append(("openai", (prompt, agent, provider_name), {}))
+        async for chunk in _empty_gen():
+            yield chunk
+
+    async def _capture_anthropic(prompt, agent):
+        captured.append(("anthropic", (prompt, agent), {}))
+        async for chunk in _empty_gen():
+            yield chunk
+
+    garage._stream_openai_provider = _capture_openai
+    garage._stream_anthropic_provider = _capture_anthropic
+
+    # Anthropic path: 2-arg call.
+    async for _ in garage._stream_from_provider("anthropic", "hello", "alpha"):
+        pass
+    assert ("anthropic", ("hello", "alpha"), {}) in captured
+
+    # Openai-family paths: 3-arg call with encoded provider_name.
+    async for _ in garage._stream_from_provider("minimax", "hello", "alpha"):
+        pass
+    assert ("openai", ("hello", "alpha", "minimax"), {}) in captured
+
+    async for _ in garage._stream_from_provider("openai", "hello", "alpha"):
+        pass
+    assert ("openai", ("hello", "alpha", "openai"), {}) in captured
+
+    async for _ in garage._stream_from_provider("local", "hello", "alpha"):
+        pass
+    assert ("openai", ("hello", "alpha", "local"), {}) in captured

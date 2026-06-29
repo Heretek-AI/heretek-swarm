@@ -161,15 +161,15 @@ class ModelGarage:
         other exception type.
         """
         dispatch = {
-            "minimax": self._stream_openai_provider,
+            "minimax": lambda p, a: self._stream_openai_provider(p, a, "minimax"),
             "anthropic": self._stream_anthropic_provider,
-            "openai": self._stream_openai_provider,
-            "local": self._stream_openai_provider,
+            "openai": lambda p, a: self._stream_openai_provider(p, a, "openai"),
+            "local": lambda p, a: self._stream_openai_provider(p, a, "local"),
         }
         fn = dispatch.get(provider)
         if fn is None:
             raise LLMUnavailable(f"unknown provider: {provider!r}")
-        async for chunk in fn(prompt, agent, provider):
+        async for chunk in fn(prompt, agent):
             yield chunk
 
     async def _stream_openai_provider(

@@ -262,6 +262,35 @@ def test_query_handles_missing_payload(store):
     )
 
 
+def test_query_uses_memory_type_from_payload(store):
+    """Regression: qdrant_store.py:106 references MemoryType in _query's
+    MemoryEntry construction. Previously this raised NameError on any non-empty
+    search hit because the import was missing. With the fix, payload values
+    drive MemoryType lookup correctly."""
+    fake_client = MagicMock()
+    fake_hit = MagicMock()
+    fake_hit.id = "abc-123"
+    fake_hit.payload = {
+        "content": "x",
+        "memory_type": "semantic",
+        "source": "test",
+        "deliberation_id": None,
+        "agent": "alpha",
+        "created_at": "2026-01-01T00:00:00Z",
+        "metadata": {},
+    }
+    fake_client.search.return_value = [fake_hit]
+    store._client = fake_client
+    store._embed = AsyncMock(return_value=[0.0] * 128)
+
+    results = asyncio.run(store.search("anything"))
+
+    assert len(results) == 1
+    assert isinstance(results[0], MemoryEntry)
+    assert results[0].memory_type == MemoryType.semantic
+    assert results[0].id == "abc-123"
+
+
 def test_close_calls_client_close(store):
     fake_client = MagicMock()
     store._client = fake_client
