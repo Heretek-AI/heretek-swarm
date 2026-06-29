@@ -282,19 +282,6 @@ async def test_nats_memory_store_publishes_when_reply_present_and_results_empty(
     assert ("inbox.3", json.dumps({"results": []}).encode()) in nats.published
 
 
-# ---------- Aliases kept for back-compat with the brief ----------
-
-
-async def test_nats_memory_handler_logs_exception_on_store_error():
-    """Back-compat alias — see test_nats_memory_setup_handles_null_reply_and_exceptions."""
-    await test_nats_memory_setup_handles_null_reply_and_exceptions()
-
-
-async def test_nats_memory_handler_logs_exception_on_retrieve_error():
-    """Back-compat alias."""
-    await test_nats_memory_setup_handles_null_reply_and_exceptions()
-
-
 # ---------- redis (persistence) ----------
 
 
