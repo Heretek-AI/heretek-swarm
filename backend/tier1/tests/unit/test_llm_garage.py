@@ -261,3 +261,628 @@ async def test_circuit_below_threshold_stays_closed(garage: ModelGarage, monkeyp
     assert len(garage.circuits["minimax"].failures) == 2
     assert not garage.circuits["minimax"].is_open()
     assert "minimax" in garage.provider_order()
+
+
+# ---------------------------------------------------------------------------
+# Phase 2: direct unit tests for the garage module's classes and provider
+# implementations. We patch SDKs, observability, and time as required.
+# ---------------------------------------------------------------------------
+
+import builtins as _builtins
+import sys as _sys
+
+from unittest.mock import MagicMock, patch
+
+import openai as _openai
+import anthropic as _anthropic
+from freezegun import freeze_time
+
+import tier1.observability.metrics as _metrics_mod
+
+from tier1.llm.garage import _Circuit
+
+
+# -- _Circuit internals ------------------------------------------------------
+
+
+def test_circuit_init_defaults():
+    c = _Circuit("p")
+    assert c.name == "p"
+    assert list(c.failures) == []
+    assert c.open_until == 0.0
+
+
+@freeze_time("2026-01-01 00:00:00")
+def test_circuit_record_failure_appends_timestamp():
+    c = _Circuit("p")
+    with patch.object(_metrics_mod, "toggle_circuit_state"):
+        c.record_failure()
+    assert len(c.failures) == 1
+    assert c.failures[0] == time.time()
+
+
+@freeze_time("2026-01-01 00:00:00")
+def test_circuit_record_failure_opens_after_threshold():
+    c = _Circuit("p")
+    with patch.object(_metrics_mod, "toggle_circuit_state"):
+        c.record_failure()
+        c.record_failure()
+        c.record_failure()
+    assert len(c.failures) == 3
+    assert c.open_until == time.time() + 300.0
+
+
+@freeze_time("2026-01-01 00:00:00")
+def test_circuit_record_failure_evicts_old():
+    c = _Circuit("p")
+    c.failures.append(time.time() - 120.0)  # already outside window
+    with patch.object(_metrics_mod, "toggle_circuit_state"):
+        c.record_failure()
+        c.record_failure()
+        c.record_failure()
+        c.record_failure()
+    # the old entry is evicted before the threshold check, so the failures
+    # deque only contains the 4 fresh timestamps.
+    assert all(time.time() - t < 60.0 for t in c.failures)
+    assert len(c.failures) == 4
+    assert c.open_until > time.time()
+
+
+def test_circuit_record_success_clears_failures():
+    c = _Circuit("p")
+    c.failures.append(time.time())
+    c.open_until = time.time() + 100
+    with patch.object(_metrics_mod, "toggle_circuit_state"):
+        c.record_success()
+    assert list(c.failures) == []
+    assert c.open_until == 0.0
+
+
+@freeze_time("2026-01-01 00:00:00")
+def test_circuit_is_open_false_when_closed():
+    c = _Circuit("p")
+    assert c.is_open() is False
+
+
+@freeze_time("2026-01-01 00:00:00")
+def test_circuit_is_open_true_when_within_window():
+    c = _Circuit("p")
+    c.open_until = time.time() + 10
+    assert c.is_open() is True
+
+
+# -- provider_order ----------------------------------------------------------
+
+
+def test_garage_provider_order_skips_open_circuits():
+    g = ModelGarage(_settings())
+    with patch.object(_metrics_mod, "toggle_circuit_state"):
+        for _ in range(CIRCUIT_THRESHOLD):
+            g.circuits["minimax"].record_failure()
+            g.circuits["openai"].record_failure()
+    order = g.provider_order()
+    assert "minimax" not in order
+    assert "openai" not in order
+    assert "anthropic" in order
+    assert "local" in order
+
+
+def test_garage_provider_order_all_open_returns_empty():
+    g = ModelGarage(_settings())
+    future = time.time() + 600
+    for name in ("minimax", "anthropic", "openai", "local"):
+        g.circuits[name].open_until = future
+    assert g.provider_order() == []
+
+
+# -- stream_chat: behaviour coverage -----------------------------------------
+
+
+def _async_iter(items):
+    """Build an async iterator from a list of items/exceptions."""
+
+    async def gen():
+        for item in items:
+            if isinstance(item, Exception):
+                raise item
+            yield item
+
+    return gen()
+
+
+async def test_stream_chat_yields_chunks_from_first_provider(garage: ModelGarage, monkeypatch):
+    chunk_a = StreamChunk(token="a", agent="alpha", seq=0)
+    chunk_b = StreamChunk(token="b", agent="alpha", seq=0)
+    chunk_c = StreamChunk(token="c", agent="alpha", seq=0)
+
+    async def provider(provider, prompt, agent):
+        for c in (chunk_a, chunk_b, chunk_c):
+            yield c
+
+    monkeypatch.setattr(garage, "_stream_from_provider", provider)
+    out: list[StreamChunk] = []
+    async for ch in garage.stream_chat("hi", agent="alpha"):
+        out.append(ch)
+    assert out == [chunk_a, chunk_b, chunk_c]
+    # success recorded -> failures cleared
+    assert list(garage.circuits["minimax"].failures) == []
+
+
+async def test_stream_chat_falls_through_on_pre_stream_failure(garage: ModelGarage, monkeypatch):
+    async def first(provider, prompt, agent):
+        raise LLMUnavailable("boom")
+        yield  # pragma: no cover - unreachable, makes this an async generator
+
+    async def second(provider, prompt, agent):
+        yield StreamChunk(token="ok", agent="alpha", seq=0)
+
+    seq = [first, second]
+    monkeypatch.setattr(garage, "_stream_from_provider", lambda *a, **kw: seq.pop(0)(*a, **kw))
+    out = []
+    async for ch in garage.stream_chat("hi", agent="alpha"):
+        out.append(ch.token)
+    assert out == ["ok"]
+    # First provider had 1 failure; second had a success (failures cleared).
+    assert len(garage.circuits["minimax"].failures) == 1
+    assert list(garage.circuits["anthropic"].failures) == []
+
+
+async def test_stream_chat_raises_llmunavailable_mid_stream(garage: ModelGarage, monkeypatch):
+    async def provider(provider, prompt, agent):
+        yield StreamChunk(token="hi", agent="alpha", seq=0)
+        raise LLMTimeout("blown up")
+
+    monkeypatch.setattr(garage, "_stream_from_provider", provider)
+    with pytest.raises(LLMUnavailable):
+        async for _ in garage.stream_chat("hi", agent="alpha"):
+            pass
+
+
+async def test_stream_chat_raises_when_all_down(garage: ModelGarage, monkeypatch):
+    async def fail(provider, prompt, agent):
+        raise LLMUnavailable("nope")
+        yield  # pragma: no cover
+
+    monkeypatch.setattr(garage, "_stream_from_provider", fail)
+    with pytest.raises(LLMUnavailable):
+        async for _ in garage.stream_chat("hi", agent="alpha"):
+            pass
+
+
+async def test_stream_chat_raises_when_circuits_all_open(garage: ModelGarage):
+    future = time.time() + 600
+    for name in ("minimax", "anthropic", "openai", "local"):
+        garage.circuits[name].open_until = future
+    with pytest.raises(LLMUnavailable) as excinfo:
+        async for _ in garage.stream_chat("hi", agent="alpha"):
+            pass
+    assert "circuit open" in str(excinfo.value)
+
+
+async def test_stream_chat_records_metric_failure(garage: ModelGarage, monkeypatch):
+    async def fail(provider, prompt, agent):
+        raise LLMUnavailable("nope")
+        yield  # pragma: no cover
+
+    monkeypatch.setattr(garage, "_stream_from_provider", fail)
+    with patch("tier1.llm.garage.record_provider_call") as rec:
+        with pytest.raises(LLMUnavailable):
+            async for _ in garage.stream_chat("hi", agent="alpha"):
+                pass
+
+
+# -- _stream_openai_provider -------------------------------------------------
+
+
+class _FakeDelta:
+    def __init__(self, content: str | None) -> None:
+        self.content = content
+
+
+class _FakeChoice:
+    def __init__(self, content: str | None) -> None:
+        self.delta = _FakeDelta(content)
+
+
+class _FakeChunk:
+    def __init__(self, choices: list[_FakeChoice]) -> None:
+        self.choices = choices
+
+
+def _make_openai_client(chunks: list):
+    """Build a fake AsyncOpenAI whose chat.completions.create returns an async iter."""
+    client = MagicMock()
+    completions = MagicMock()
+    response = _async_iter(chunks)
+
+    async def create(*args, **kwargs):
+        return response
+
+    completions.create = create
+    client.chat.completions = completions
+    return client
+
+
+def _span_cm():
+    cm = MagicMock()
+    cm.__enter__ = MagicMock(return_value=cm)
+    cm.__exit__ = MagicMock(return_value=False)
+    return cm
+
+
+@pytest.mark.parametrize(
+    "provider_name,key_attr,base_attr",
+    [
+        ("minimax", "minimax_api_key", "minimax_base_url"),
+        ("openai", "openai_api_key", None),
+        ("local", None, "ollama_base_url"),
+    ],
+)
+async def test_stream_openai_provider_uses_correct_settings_per_provider(
+    provider_name, key_attr, base_attr, monkeypatch
+):
+    """Each OpenAI-compatible provider pulls its own key/base from settings."""
+    captured: dict = {}
+
+    def fake_asyncopenai(*args, **kwargs):
+        captured.update(kwargs)
+        return _make_openai_client([])
+
+    monkeypatch.setattr(_openai, "AsyncOpenAI", fake_asyncopenai)
+
+    settings = Settings(
+        minimax_api_key="sk-mm",
+        openai_api_key="sk-oa",
+        ollama_base_url="http://localhost:11434/v1",
+    )
+    g = ModelGarage(settings)
+    with (
+        patch("tier1.llm.garage.get_tracer") as tracer_patch,
+        patch("tier1.llm.garage.record_provider_call"),
+    ):
+        tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+        async for _ in g._stream_openai_provider("hi", "alpha", provider_name):
+            pass
+
+    expected_key = "ollama" if provider_name == "local" else getattr(settings, key_attr)
+    assert captured["api_key"] == expected_key
+    if base_attr is None:
+        assert captured["base_url"] is None
+    else:
+        assert captured["base_url"] == getattr(settings, base_attr)
+
+
+async def test_stream_openai_provider_raises_on_unknown_provider(garage: ModelGarage):
+    with pytest.raises(LLMUnavailable):
+        async for _ in garage._stream_openai_provider("hi", "alpha", "nonsense"):
+            pass
+
+
+async def test_stream_openai_provider_raises_when_no_api_key(garage: ModelGarage, monkeypatch):
+    monkeypatch.setattr(garage.settings, "minimax_api_key", "")
+    with pytest.raises(LLMUnavailable) as excinfo:
+        async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
+            pass
+    assert "no API key" in str(excinfo.value)
+
+
+async def test_stream_openai_provider_yields_chunks_with_seq(garage: ModelGarage, monkeypatch):
+    chunks = [
+        _FakeChunk([_FakeChoice("hello")]),
+        _FakeChunk([_FakeChoice(" world")]),
+    ]
+    monkeypatch.setattr(_openai, "AsyncOpenAI", lambda *a, **kw: _make_openai_client(chunks))
+    out = []
+    with (
+        patch("tier1.llm.garage.get_tracer") as tracer_patch,
+        patch("tier1.llm.garage.record_provider_call"),
+    ):
+        tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+        async for ch in garage._stream_openai_provider("hi", "alpha", "minimax"):
+            out.append(ch)
+    assert [c.token for c in out] == ["hello", " world"]
+    assert [c.seq for c in out] == [0, 1]
+
+
+async def test_stream_openai_provider_handles_empty_choices(garage: ModelGarage, monkeypatch):
+    chunks = [_FakeChunk([]), _FakeChunk([])]
+    monkeypatch.setattr(_openai, "AsyncOpenAI", lambda *a, **kw: _make_openai_client(chunks))
+    out = []
+    with (
+        patch("tier1.llm.garage.get_tracer") as tracer_patch,
+        patch("tier1.llm.garage.record_provider_call"),
+    ):
+        tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+        async for ch in garage._stream_openai_provider("hi", "alpha", "minimax"):
+            out.append(ch)
+    assert out == []
+
+
+async def test_stream_openai_provider_wraps_timeout(garage: ModelGarage, monkeypatch):
+    class _TimeoutClient:
+        class chat:
+            class completions:
+                @staticmethod
+                async def create(*args, **kwargs):
+                    raise RuntimeError("request timed out")
+
+    monkeypatch.setattr(_openai, "AsyncOpenAI", lambda *a, **kw: _TimeoutClient())
+    with (
+        patch("tier1.llm.garage.get_tracer") as tracer_patch,
+        patch("tier1.llm.garage.record_provider_call"),
+    ):
+        tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+        with pytest.raises(LLMTimeout):
+            async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
+                pass
+
+
+async def test_stream_openai_provider_wraps_openai_error(garage: ModelGarage, monkeypatch):
+    class _BoomClient:
+        class chat:
+            class completions:
+                @staticmethod
+                async def create(*args, **kwargs):
+                    raise _openai.OpenAIError("bad key")
+
+    monkeypatch.setattr(_openai, "AsyncOpenAI", lambda *a, **kw: _BoomClient())
+    with (
+        patch("tier1.llm.garage.get_tracer") as tracer_patch,
+        patch("tier1.llm.garage.record_provider_call"),
+    ):
+        tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+        with pytest.raises(LLMUnavailable):
+            async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
+                pass
+
+
+async def test_stream_openai_provider_re_raises_other(garage: ModelGarage, monkeypatch):
+    class _BoomClient:
+        class chat:
+            class completions:
+                @staticmethod
+                async def create(*args, **kwargs):
+                    raise RuntimeError("weird")
+
+    monkeypatch.setattr(_openai, "AsyncOpenAI", lambda *a, **kw: _BoomClient())
+    with (
+        patch("tier1.llm.garage.get_tracer") as tracer_patch,
+        patch("tier1.llm.garage.record_provider_call"),
+    ):
+        tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+        with pytest.raises(RuntimeError):
+            async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
+                pass
+
+
+async def test_stream_openai_provider_records_call_metric(garage: ModelGarage, monkeypatch):
+    monkeypatch.setattr(
+        _openai,
+        "AsyncOpenAI",
+        lambda *a, **kw: _make_openai_client([_FakeChunk([_FakeChoice("x")])]),
+    )
+    with (
+        patch("tier1.llm.garage.get_tracer") as tracer_patch,
+        patch("tier1.llm.garage.record_provider_call") as rec,
+    ):
+        tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+        async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
+            pass
+    rec.assert_called_once()
+    assert rec.call_args.args[0] == "minimax"
+
+
+# -- _stream_anthropic_provider ---------------------------------------------
+
+
+class _FakeAnthropicStream:
+    def __init__(self, tokens: list[str]) -> None:
+        self._tokens = list(tokens)
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        return False
+
+    @property
+    def text_stream(self):
+        return _async_iter(self._tokens)
+
+
+class _FakeAnthropicClient:
+    def __init__(self, tokens: list[str], exc: Exception | None = None) -> None:
+        self._tokens = tokens
+        self._exc = exc
+
+    class messages:
+        @staticmethod
+        def stream(*args, **kwargs):
+            raise AssertionError("static call not used")  # pragma: no cover
+
+
+def _make_anthropic_module(tokens=None, exc=None):
+    """Patch anthropic module shape used by garage."""
+    if tokens is None:
+        tokens = []
+    stream_obj = _FakeAnthropicStream(tokens)
+
+    class _Messages:
+        def stream(self, *args, **kwargs):
+            if exc is not None:
+                raise exc
+            return stream_obj
+
+    class _AsyncAnthropic:
+        def __init__(self, *args, **kwargs):
+            self.messages = _Messages()
+
+    fake_module = MagicMock()
+    fake_module.AsyncAnthropic = _AsyncAnthropic
+    fake_module.AnthropicError = Exception
+    return fake_module
+
+
+async def test_stream_anthropic_provider_yields_chunks(garage: ModelGarage, monkeypatch):
+    fake_mod = _make_anthropic_module(tokens=["hi", " there"])
+    monkeypatch.setitem(_sys.modules, "anthropic", fake_mod)
+    out = []
+    with (
+        patch("tier1.llm.garage.get_tracer") as tracer_patch,
+        patch("tier1.llm.garage.record_provider_call"),
+    ):
+        tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+        async for ch in garage._stream_anthropic_provider("hi", "alpha"):
+            out.append(ch)
+    assert [c.token for c in out] == ["hi", " there"]
+    assert [c.seq for c in out] == [0, 1]
+
+
+async def test_stream_anthropic_provider_no_api_key_raises(garage: ModelGarage, monkeypatch):
+    monkeypatch.setattr(garage.settings, "anthropic_api_key", "")
+    with pytest.raises(LLMUnavailable) as excinfo:
+        async for _ in garage._stream_anthropic_provider("hi", "alpha"):
+            pass
+    assert "no API key" in str(excinfo.value)
+
+
+async def test_stream_anthropic_provider_wraps_timeout(garage: ModelGarage, monkeypatch):
+    fake_mod = _make_anthropic_module(exc=RuntimeError("connection timed out"))
+    monkeypatch.setitem(_sys.modules, "anthropic", fake_mod)
+    with (
+        patch("tier1.llm.garage.get_tracer") as tracer_patch,
+        patch("tier1.llm.garage.record_provider_call"),
+    ):
+        tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+        with pytest.raises(LLMTimeout):
+            async for _ in garage._stream_anthropic_provider("hi", "alpha"):
+                pass
+
+
+async def test_stream_anthropic_provider_wraps_anthropic_error(garage: ModelGarage, monkeypatch):
+    fake_mod = _make_anthropic_module(exc=_anthropic.AnthropicError("auth fail"))
+    monkeypatch.setitem(_sys.modules, "anthropic", fake_mod)
+    with (
+        patch("tier1.llm.garage.get_tracer") as tracer_patch,
+        patch("tier1.llm.garage.record_provider_call"),
+    ):
+        tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+        with pytest.raises(LLMUnavailable):
+            async for _ in garage._stream_anthropic_provider("hi", "alpha"):
+                pass
+
+
+async def test_stream_anthropic_provider_no_package_raises(garage: ModelGarage, monkeypatch):
+    # Force ImportError on `import anthropic` via __import__ interception.
+    real_import = _builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == "anthropic" or name.startswith("anthropic."):
+            raise ImportError("not installed")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(_builtins, "__import__", fake_import)
+    with patch("tier1.llm.garage.get_tracer"), patch("tier1.llm.garage.record_provider_call"):
+        with pytest.raises(LLMUnavailable):
+            async for _ in garage._stream_anthropic_provider("hi", "alpha"):
+                pass
+
+
+# -- chat() convenience ------------------------------------------------------
+
+
+async def test_chat_collects_all_tokens_into_string(garage: ModelGarage, monkeypatch):
+    """chat() concatenates tokens from stream_chat into one string."""
+
+    async def fake_stream(prompt, *, agent):
+        for tok in ("hello", " ", "world"):
+            yield StreamChunk(token=tok, agent=agent, seq=0)
+
+    monkeypatch.setattr(garage, "stream_chat", fake_stream)
+    result = await garage.chat("hi", agent="alpha")
+    assert result == "hello world"
+
+
+# ---------------------------------------------------------------------------
+# Dispatch + import-failure branches
+# ---------------------------------------------------------------------------
+
+
+async def test_stream_from_provider_dispatches_by_name(garage: ModelGarage, monkeypatch):
+    """`_stream_from_provider` resolves the right per-provider coroutine."""
+    calls: list[str] = []
+
+    async def fake_openai(*args, **kwargs):
+        # (self, prompt, agent, provider_name) when bound, but tests bypass
+        # that by passing positionally via the source's `fn(prompt, agent, provider)`
+        calls.append(f"openai:{args}")
+        yield StreamChunk(token="x", agent="alpha", seq=0)
+
+    async def fake_anthropic(*args, **kwargs):
+        calls.append(f"anthropic:{args}")
+        yield StreamChunk(token="y", agent="alpha", seq=0)
+
+    monkeypatch.setattr(garage, "_stream_openai_provider", fake_openai)
+    monkeypatch.setattr(garage, "_stream_anthropic_provider", fake_anthropic)
+    out = []
+    async for ch in garage._stream_from_provider("anthropic", "hi", "alpha"):
+        out.append(ch.token)
+    assert calls[0].startswith("anthropic:")
+    assert out == ["y"]
+    calls.clear()
+    out.clear()
+    async for ch in garage._stream_from_provider("minimax", "hi", "alpha"):
+        out.append(ch.token)
+    assert calls[0].startswith("openai:")
+    assert "minimax" in calls[0]
+    assert out == ["x"]
+
+
+async def test_stream_openai_provider_no_package_raises(garage: ModelGarage, monkeypatch):
+    """If `openai` cannot be imported, raise LLMUnavailable."""
+    real_import = _builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == "openai" or name.startswith("openai."):
+            raise ImportError("not installed")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(_builtins, "__import__", fake_import)
+    with patch("tier1.llm.garage.get_tracer"), patch("tier1.llm.garage.record_provider_call"):
+        with pytest.raises(LLMUnavailable) as excinfo:
+            async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
+                pass
+        assert "openai package not installed" in str(excinfo.value)
+
+
+async def test_stream_openai_provider_openai_error_import_fallback_re_raises(
+    garage: ModelGarage, monkeypatch
+):
+    """If `from openai import OpenAIError` raises ImportError, the exception
+    branch must re-raise the original generic exception unchanged."""
+
+    class _BoomClient:
+        class chat:
+            class completions:
+                @staticmethod
+                async def create(*args, **kwargs):
+                    raise RuntimeError("weird")
+
+    monkeypatch.setattr(_openai, "AsyncOpenAI", lambda *a, **kw: _BoomClient())
+    # Delete OpenAIError so the lazy `from openai import OpenAIError` raises
+    # ImportError -> OpenAIError is None -> branch falls through to `raise`.
+    saved = getattr(_openai, "OpenAIError", None)
+    if hasattr(_openai, "OpenAIError"):
+        delattr(_openai, "OpenAIError")
+    try:
+        with (
+            patch("tier1.llm.garage.get_tracer") as tracer_patch,
+            patch("tier1.llm.garage.record_provider_call"),
+        ):
+            tracer_patch.return_value.start_as_current_span.return_value = _span_cm()
+            with pytest.raises(RuntimeError):
+                async for _ in garage._stream_openai_provider("hi", "alpha", "minimax"):
+                    pass
+    finally:
+        if saved is not None:
+            setattr(_openai, "OpenAIError", saved)
