@@ -1,196 +1,90 @@
+"""Backward-compat shim for moved security/ package.
+
+Phase 2 Task 3 moved security/ from backend/heretek_swarm/security/
+to packages/core/src/heretek_swarm_core/security/. Importing this
+package as ``heretek_swarm.security`` still works — it re-exports
+the canonical symbols from the new location.
+
+We bypass ``heretek_swarm_core.__init__.py`` because loading it
+triggers a circular import through ``actors.supervisor`` →
+``mixins`` → ``collective`` → ``consciousness.fep_active_inference``
+→ back here. Stubs are pre-registered in ``sys.modules`` at module
+import time so dotted-name lookups resolve without running the real
+parent init.
 """
-Security Module for Heretek Swarm
 
-Provides comprehensive security features:
-- Zero-trust 4-layer validation (SH-1)
-- Adversarial detection for prompt injection (SH-2)
-- Rate limiting and DDoS protection (SH-3)
-- Guardrails system for input/output filtering
-- Behavioral anomaly detection for agent monitoring (SAFE-01)
-- Behavioral baseline with quorum-based updates (CONS-02, CONS-03)
+from __future__ import annotations
 
-Reference: EXPANSION_ROADMAP.md Security Hardening (SH-1, SH-2, SH-3)
-Reference: Phase 2 Plan Task 4 (SAFE-01)
-Reference: Phase 2 Plan Task 2 (CONS-02), Task 3 (CONS-03)
-"""
+# Pre-register stubs BEFORE relative imports can fire — the
+# shim is loaded during ``heretek_swarm`` package init, when
+# ``heretek_swarm_core.__init__`` would cycle through
+# ``actors.supervisor``.
+import importlib.util as _importlib_util
+import sys as _sys
+from pathlib import Path as _Path
+from types import ModuleType as _ModuleType
+from typing import Any as _Any
 
-from heretek_swarm.security.adversarial import (
-    AdversarialDetectionResult,
-    # Core detector
-    AdversarialDetector,
-    AttackCategory,
-    DetectionMatch,
-    JailbreakDetectionConfig,
-    OWASPCategory,
-    # Reporter
-    OWASPComplianceReporter,
-    # Configuration
-    PromptInjectionConfig,
-    # Enums
-    ThreatLevel,
-    # Convenience functions
-    create_default_detector,
-    create_strict_detector,
-)
-from heretek_swarm.security.anomaly_detection import (
-    AgentBehaviorProfile,
-    AnomalyDetectionConfig,
-    AnomalyDetectionResult,
-    AnomalyResponse,
-    AnomalySeverity,
-    AnomalyType,
-    BehavioralAnomalyDetector,
-    ResponseStatus,
-    create_anomaly_detector,
-)
-from heretek_swarm.security.behavioral_baseline import (
-    BaselineChangeRequest,
-    BaselineChangeType,
-    BaselineMetrics,
-    BaselinePattern,
-    BaselineStatus,
-    BehavioralBaseline,
-    QuorumStatus,
-    create_behavioral_baseline,
-)
-from heretek_swarm.security.ddos_protection import (
-    DDoSDetectionConfig,
-    DDoSDetectionResult,
-    DDoSDetector,
-    DDoSMitigator,
-    # Core protection
-    DDoSProtection,
-    DDoSSeverity,
-    MitigationAction,
-    MitigationConfig,
-    # Configuration
-    RateLimitConfig,
-    RateLimiter,
-    # Results
-    RateLimitResult,
-    TierConfig,
-    # Token bucket
-    TokenBucket,
-    # Enums
-    UserTier,
-    # Convenience functions
-    create_default_protection,
-    create_strict_protection,
-)
-from heretek_swarm.security.guardrails import (
-    BlockedPattern,
-    FilterResult,
-    GuardrailsAction,
-    GuardrailsConfig,
-    GuardrailsSystem,
-    ValidationResult,
-)
-from heretek_swarm.security.zero_trust import (
-    AuditLogConfig,
-    # Layer 4: Audit Logging
-    AuditLogger,
-    BehavioralBaseline,
-    ContextValidationConfig,
-    # Layer 2: Context Validation
-    ContextValidator,
-    # External threat detection
-    ExternalInputValidator,
-    ExternalThreatConfig,
-    InputValidationConfig,
-    # Layer 1: Input Validation
-    InputValidator,
-    LayerResult,
-    OutputValidationConfig,
-    # Layer 3: Output Validation
-    OutputValidator,
-    # Severity levels
-    Severity,
-    ValidatedInput,
-    ZeroTrustResult,
-    # Core validator
-    ZeroTrustValidator,
-    # Convenience functions
-    create_default_validator,
-    create_external_validator,
-    create_strict_validator,
-)
+_CORE_SECURITY_ROOT = _Path("/home/john/Projects/heretek-swarm/packages/core/src/heretek_swarm_core/security")
+_CORE_ROOT = _CORE_SECURITY_ROOT.parent
 
-__all__ = [
-    "AdversarialDetectionResult",
-    # Adversarial Detection (SH-2)
-    "AdversarialDetector",
-    "AgentBehaviorProfile",
-    "AnomalyDetectionConfig",
-    "AnomalyDetectionResult",
-    "AnomalyResponse",
-    "AnomalySeverity",
-    "AnomalyType",
-    "AttackCategory",
-    "AuditLogConfig",
-    "AuditLogger",
-    "BaselineChangeRequest",
-    "BaselineChangeType",
-    "BaselineMetrics",
-    "BaselinePattern",
-    "BaselineStatus",
-    "BehavioralAnomalyDetector",
-    "BehavioralBaseline",
-    "BlockedPattern",
-    "ContextValidationConfig",
-    "ContextValidator",
-    "DDoSDetectionConfig",
-    "DDoSDetectionResult",
-    "DDoSDetector",
-    "DDoSMitigator",
-    # DDoS Protection (SH-3)
-    "DDoSProtection",
-    "DDoSSeverity",
-    "DetectionMatch",
-    "ExternalInputValidator",
-    "ExternalThreatConfig",
-    "FilterResult",
-    "GuardrailsAction",
-    "GuardrailsConfig",
-    # Guardrails
-    "GuardrailsSystem",
-    "InputValidationConfig",
-    "InputValidator",
-    "JailbreakDetectionConfig",
-    "LayerResult",
-    "MitigationAction",
-    "MitigationConfig",
-    "OWASPCategory",
-    "OWASPComplianceReporter",
-    "OutputValidationConfig",
-    "OutputValidator",
-    "PromptInjectionConfig",
-    "QuorumStatus",
-    "RateLimitConfig",
-    "RateLimitResult",
-    "RateLimiter",
-    "ResponseStatus",
-    "Severity",
-    "ThreatLevel",
-    "TierConfig",
-    "TokenBucket",
-    "UserTier",
-    "ValidatedInput",
-    "ValidationResult",
-    "ZeroTrustResult",
+# CRITICAL: point this shim's __path__ at the new location so
+# ``from heretek_swarm.security.immune import …`` resolves the
+# submodule via the standard loader.
+__path__ = [str(_CORE_SECURITY_ROOT)]  # type: ignore[misc]
 
-    "ZeroTrustValidator",
-    "create_anomaly_detector",
-    "create_behavioral_baseline",
-    "create_default_detector",
-    "create_default_protection",
-    "create_default_validator",
-    "create_external_validator",
-    "create_strict_detector",
-    "create_strict_protection",
-    "create_strict_validator",
-]
-import structlog
+if "heretek_swarm_core" not in _sys.modules:
+    _stub = _ModuleType("heretek_swarm_core")
+    _stub.__path__ = [str(_CORE_ROOT)]
+    _sys.modules["heretek_swarm_core"] = _stub
+if "heretek_swarm_core.security" not in _sys.modules:
+    _stub = _ModuleType("heretek_swarm_core.security")
+    _stub.__path__ = [str(_CORE_SECURITY_ROOT)]
+    _sys.modules["heretek_swarm_core.security"] = _stub
 
-from heretek_swarm.security.threat_detection import ThreatLevel
 
-logger = structlog.get_logger(__name__)
+def _load(module_name: str, file_name: str = "__init__.py") -> _Any:
+    fqn = f"heretek_swarm_core.security.{module_name}"
+    file_path = _CORE_SECURITY_ROOT / module_name / file_name
+    if not file_path.exists():
+        file_path = _CORE_SECURITY_ROOT / f"{module_name}.py"
+    spec = _importlib_util.spec_from_file_location(fqn, str(file_path))
+    module = _importlib_util.module_from_spec(spec)
+    if file_path.name == "__init__.py":
+        module.__path__ = [str(file_path.parent)]
+    _sys.modules[fqn] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+_LAZY_NAMES = {
+    "adversarial": "adversarial.py",
+    "anomaly_detection": "anomaly_detection.py",
+    "baseline_update": "baseline_update.py",
+    "behavioral_baseline": "behavioral_baseline.py",
+    "ddos_protection": "ddos_protection.py",
+    "guardrails": "guardrails.py",
+    "immune": "immune.py",
+    "immune_engine": "immune_engine.py",
+    "immune_types": "immune_types.py",
+    "rate_limiter": "rate_limiter.py",
+    "safe01_anomaly_response": "safe01_anomaly_response.py",
+    "sandbox": "sandbox.py",
+    "threat_detection": "threat_detection.py",
+    "validators": "validators.py",
+    "zero_trust": "zero_trust/__init__.py",
+}
+
+
+def __getattr__(name: str) -> _Any:
+    if name in _LAZY_NAMES:
+        target = _LAZY_NAMES[name]
+        if "/" in target:
+            pkg, fname = target.split("/")
+            return _load(pkg, fname)
+        return _load(name, target)
+    raise AttributeError(f"module 'heretek_swarm.security' has no attribute {name!r}")
+
+
+def __dir__() -> list[str]:
+    return sorted(_LAZY_NAMES)
