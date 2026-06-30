@@ -30,7 +30,7 @@ from heretek_swarm.governance.protocol import (
     GovernanceProtocol,
     ValidationStatus,
 )
-from heretek_swarm.security.zero_trust import (
+from heretek_swarm_core.security.zero_trust import (
     ZeroTrustValidator,
     create_default_validator,
 )

@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from heretek_swarm.collective.learning import PatternExtractor
     from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
     from heretek_swarm_core.memory.access_patterns import AccessPatternAnalyzer
-    from heretek_swarm.security.zero_trust import ZeroTrustValidator
+    from heretek_swarm_core.security.zero_trust import ZeroTrustValidator
 from heretek_swarm.actors.catalyst.types import (
     ChangeNotification,
     ChangeRequest,

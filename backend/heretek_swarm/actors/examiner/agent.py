@@ -86,7 +86,7 @@ from heretek_swarm.testing.stress_testing import (
 if TYPE_CHECKING:
     from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
     from heretek_swarm_core.memory.access_patterns import AccessPatternAnalyzer
-    from heretek_swarm.security.zero_trust import ZeroTrustValidator
+    from heretek_swarm_core.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger("ExaminerAgent")
 

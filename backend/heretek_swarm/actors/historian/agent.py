@@ -47,7 +47,7 @@ from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
 from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm_core.security.zero_trust import ZeroTrustValidator
 
 _HISTORIAN_FILE = Path(".gsd/historian.jsonl")
 logger = structlog.get_logger("HistorianAgent")

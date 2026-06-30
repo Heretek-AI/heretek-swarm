@@ -38,7 +38,7 @@ from heretek_swarm.consensus.swarm_deliberation import (
 from heretek_swarm_core.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm_core.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger("ArbiterAgent")
 

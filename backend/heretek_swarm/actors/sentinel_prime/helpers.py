@@ -94,10 +94,10 @@ class SentinelPrimeHelpers:
         threat_result: Any,
     ) -> SecurityIncident:
         """Create a SecurityIncident from ThreatDetectionResult."""
-        from heretek_swarm.security.threat_detection import (
+        from heretek_swarm_core.security.threat_detection import (
             ExternalThreatType,
         )
-        from heretek_swarm.security.threat_detection import (
+        from heretek_swarm_core.security.threat_detection import (
             ThreatLevel as ExtThreatLevel,
         )
 

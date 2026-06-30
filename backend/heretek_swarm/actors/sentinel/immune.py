@@ -26,12 +26,12 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.security.immune import (
+from heretek_swarm_core.security.immune import (
     ImmuneResponseBuilding,
     PatternClassification,
     ResponseOutcome,
 )
-from heretek_swarm.security.behavioral_baseline import (
+from heretek_swarm_core.security.behavioral_baseline import (
     BaselineChangeType,
     BehavioralBaseline,
 )

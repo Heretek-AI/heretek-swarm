@@ -40,7 +40,11 @@ from __future__ import annotations
 # When the actual move happens, the re-exports below are
 # removed and the source files live in this package.
 from heretek_swarm.actors.base.core import AgentActor, ActorMessage  # noqa: F401
-from heretek_swarm.actors.supervisor import ActorSupervisor  # noqa: F401
+
+# NOTE: ActorSupervisor is exposed lazily via __getattr__ at the bottom
+# of this file. Eagerly importing it here would re-introduce the cycle
+# that the backward-compat security/ shim had to work around (Task 3),
+# and it will resurface when Task 4 moves consensus/ into this package.
 from heretek_swarm.actors.factory import ActorFactory  # noqa: F401
 from heretek_swarm.consensus import (  # noqa: F401
     MAKERConsensus,
@@ -83,27 +87,24 @@ from heretek_swarm.orchestration import (  # noqa: F401
     WorkflowPhase,
     WorkflowResult,
 )
-from heretek_swarm.runtime.main_loop import (  # noqa: F401
-    AutonomousSwarm,
-)
-from heretek_swarm.runtime.wiring import (  # noqa: F401
-    wire_orchestrators,
-    thread_event_mesh_to_supervisor,
-)
-from heretek_swarm.security.immune import (  # noqa: F401
+
+# NOTE: runtime.main_loop / runtime.wiring re-exports are lazy via
+# __getattr__. They pull in actors.supervisor mid-import which cycles
+# through actors.mixins -> collective -> consciousness -> fep_active
+# _inference -> security. Same cycle ActorSupervisor hits; resolved by
+# deferring the import.
+from heretek_swarm_core.security.immune import (  # noqa: F401
     ImmuneResponseBuilding,
     ResponseOutcome,
 )
-from heretek_swarm.security.rate_limiter import (  # noqa: F401
+from heretek_swarm_core.security.rate_limiter import (  # noqa: F401
     limiter,
     install_rate_limiter,
 )
-from heretek_swarm.services import (  # noqa: F401
-    ConsensusServiceStub,
-    MemoryServiceStub,
-    ObservabilityServiceStub,
-    RealtimeServiceStub,
-)
+
+# NOTE: heretek_swarm.services re-exports cycle through
+# consensus_api -> api -> api.consciousness -> collective.agency_tracking
+# mid-import. Resolved via __getattr__.
 from heretek_swarm_core.memory import *  # noqa: F401,F403
 from heretek_swarm_core.embeddings import *  # noqa: F401,F403
 from heretek_swarm_core.models import *  # noqa: F401,F403
@@ -155,3 +156,51 @@ __all__ = [
     "ObservabilityServiceStub",
     "RealtimeServiceStub",
 ]
+
+
+# PEP 562 lazy module attribute. ``ActorSupervisor`` triggers a cycle:
+# actors.supervisor -> mixins -> collective -> consciousness ->
+# fep_active_inference, which loops back through this __init__.py when
+# ``heretek_swarm.security`` is imported during the cycle.
+#
+# Eagerly importing it here was previously masked because Task 3 left
+# security/ under backend/heretek_swarm/ — moving consensus/ (Task 4)
+# will surface the cycle on every `import heretek_swarm_core`. Resolving
+# it lazily keeps the public surface stable while breaking the loop
+# at module-load time. `from heretek_swarm_core import ActorSupervisor`
+# still works; it just costs one extra dict lookup on first access.
+_LAZY_ATTRS = {
+    "ActorSupervisor": ("heretek_swarm.actors.supervisor", "ActorSupervisor"),
+    "AutonomousSwarm": ("heretek_swarm.runtime.main_loop", "AutonomousSwarm"),
+    "wire_orchestrators": (
+        "heretek_swarm.runtime.wiring",
+        "wire_orchestrators",
+    ),
+    "thread_event_mesh_to_supervisor": (
+        "heretek_swarm.runtime.wiring",
+        "thread_event_mesh_to_supervisor",
+    ),
+    "ConsensusServiceStub": (
+        "heretek_swarm.services",
+        "ConsensusServiceStub",
+    ),
+    "MemoryServiceStub": ("heretek_swarm.services", "MemoryServiceStub"),
+    "ObservabilityServiceStub": (
+        "heretek_swarm.services",
+        "ObservabilityServiceStub",
+    ),
+    "RealtimeServiceStub": ("heretek_swarm.services", "RealtimeServiceStub"),
+}
+
+
+def __getattr__(name: str):  # type: ignore[no-untyped-def]
+    target = _LAZY_ATTRS.get(name)
+    if target is not None:
+        module_path, attr_name = target
+        import importlib
+
+        module = importlib.import_module(module_path)
+        value = getattr(module, attr_name)
+        globals()[name] = value
+        return value
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

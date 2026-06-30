@@ -30,7 +30,7 @@ from heretek_swarm.actors.mixins import (
 )
 
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm_core.security.zero_trust import ZeroTrustValidator
 
 from .types import CommunicationChannel, CommunicationStyle, TranslationRule
 

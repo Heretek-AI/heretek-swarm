@@ -3,7 +3,7 @@
 Phase 2 Task 3 moved ``security/zero_trust/`` to
 ``packages/core/src/heretek_swarm_core/security/zero_trust/``.
 This stub forwards every attribute to the canonical sub-package
-so ``from heretek_swarm.security.zero_trust import …`` keeps
+so ``from heretek_swarm_core.security.zero_trust import …`` keeps
 working without re-running ``heretek_swarm_core.__init__.py``.
 """
 

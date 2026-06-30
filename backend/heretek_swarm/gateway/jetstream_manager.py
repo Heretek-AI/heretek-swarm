@@ -28,7 +28,7 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult, ZeroTrustValidator
+from heretek_swarm_core.security.zero_trust import LayerResult, ZeroTrustResult, ZeroTrustValidator
 
 logger = structlog.get_logger(__name__)
 

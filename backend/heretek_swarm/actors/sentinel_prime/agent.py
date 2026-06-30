@@ -30,7 +30,7 @@ from heretek_swarm.actors.mixins import (
     PatternMixin,
     ValidationMixin,
 )
-from heretek_swarm.security.threat_detection import (
+from heretek_swarm_core.security.threat_detection import (
     AlertPriority,
     ThreatDetectionConfig,
     create_default_detector,

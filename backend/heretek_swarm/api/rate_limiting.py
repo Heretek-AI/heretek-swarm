@@ -11,7 +11,7 @@ Features:
 - Graceful degradation when Redis unavailable
 
 Note (Phase 1.5 of PLAN.md, §3.1 Replace): the canonical limiter
-implementation now lives in :mod:`heretek_swarm.security.rate_limiter`.
+implementation now lives in :mod:`heretek_swarm_core.security.rate_limiter`.
 This module is the FastAPI app wiring layer; it delegates to that
 module so there is one source of truth.
 """
@@ -27,7 +27,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from heretek_swarm.security.rate_limiter import install_rate_limiter, limiter
+from heretek_swarm_core.security.rate_limiter import install_rate_limiter, limiter
 
 logger = structlog.get_logger(__name__)
 
@@ -293,7 +293,7 @@ def setup_rate_limiting(app: FastAPI, enabled: bool = True) -> None:
 
     Notes
     -----
-    Delegates to :func:`heretek_swarm.security.rate_limiter.install_rate_limiter`
+    Delegates to :func:`heretek_swarm_core.security.rate_limiter.install_rate_limiter`
     so the canonical limiter instance lives in one place. The
     ``REDIS_URL`` env var is honored here (where the app's config
     surface lives) rather than in the security module.

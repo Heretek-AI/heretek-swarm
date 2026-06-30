@@ -16,7 +16,7 @@ from heretek_swarm.governance.agent_identity import AgentIdentity
 from heretek_swarm.governance.protocol import (
     GovernanceProtocol,
 )
-from heretek_swarm.security.zero_trust import (
+from heretek_swarm_core.security.zero_trust import (
     Severity,
     ZeroTrustResult,
     ZeroTrustValidator,

@@ -28,7 +28,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm_core.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger(__name__)
 

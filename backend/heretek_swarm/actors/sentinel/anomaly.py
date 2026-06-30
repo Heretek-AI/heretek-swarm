@@ -28,8 +28,8 @@ from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.security.immune import ResponseOutcome
-from heretek_swarm.security.anomaly_detection import (
+from heretek_swarm_core.security.immune import ResponseOutcome
+from heretek_swarm_core.security.anomaly_detection import (
     AnomalyDetectionConfig,
     AnomalyDetectionResult,
     AnomalyResponse,
@@ -41,7 +41,7 @@ from heretek_swarm.security.anomaly_detection import (
 
 if TYPE_CHECKING:
     from heretek_swarm.actors.sentinel.types import AnomalyAlert
-    from heretek_swarm.security.behavioral_baseline import BehavioralBaseline
+    from heretek_swarm_core.security.behavioral_baseline import BehavioralBaseline
 
 logger = structlog.get_logger("AnomalyMonitor")
 

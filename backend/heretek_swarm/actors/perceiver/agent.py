@@ -54,7 +54,7 @@ from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
 from heretek_swarm_core.memory.access_patterns import AccessPatternAnalyzer
 
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm_core.security.zero_trust import ZeroTrustValidator
 from heretek_swarm.workflow.validator import ValidationError
 
 logger = structlog.get_logger("PerceiverAgent")

@@ -54,7 +54,7 @@ from heretek_swarm.config_api import (  # noqa: F401
     AVAILABLE_PROVIDERS,
     AGENT_TIERS,
 )
-from heretek_swarm.security.rate_limiter import (  # noqa: F401
+from heretek_swarm_core.security.rate_limiter import (  # noqa: F401
     limiter,
     install_rate_limiter,
 )

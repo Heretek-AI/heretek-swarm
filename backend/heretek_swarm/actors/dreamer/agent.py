@@ -57,7 +57,7 @@ from heretek_swarm.creativity.novel_connections import (
 )
 
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm_core.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger("DreamerAgent")
 

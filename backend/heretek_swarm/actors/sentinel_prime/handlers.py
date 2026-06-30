@@ -12,7 +12,7 @@ import structlog
 
 from heretek_swarm.actors.base import ActorMessage
 from heretek_swarm.actors.validation import validate_message
-from heretek_swarm.security.threat_detection import AlertPriority
+from heretek_swarm_core.security.threat_detection import AlertPriority
 
 logger = structlog.get_logger("SentinelPrimeAgent")
 
@@ -76,7 +76,7 @@ class SentinelPrimeHandlers:
             )
 
             # Convert threat type if specified
-            from heretek_swarm.security.threat_detection import ExternalThreatType
+            from heretek_swarm_core.security.threat_detection import ExternalThreatType
 
             threat_type = None
             if threat_type_str:

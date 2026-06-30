@@ -31,16 +31,16 @@ from heretek_swarm.actors.sentinel.immune import ImmuneResponseManager
 from heretek_swarm.actors.sentinel.safety import SafetyScanner
 from heretek_swarm.actors.sentinel.types import AnomalyAlert, SafetyLevel
 from heretek_swarm.actors.validation import validate_message
-from heretek_swarm.security.immune import (
+from heretek_swarm_core.security.immune import (
     ImmuneResponseBuilding,
     PatternClassification,
     ResponseOutcome,
 )
 from heretek_swarm.consensus.tribunal import Tribunal
-from heretek_swarm.security.anomaly_detection import (
+from heretek_swarm_core.security.anomaly_detection import (
     AnomalyDetectionConfig,
 )
-from heretek_swarm.security.behavioral_baseline import create_behavioral_baseline
+from heretek_swarm_core.security.behavioral_baseline import create_behavioral_baseline
 
 _STAT_RETRIEVAL_FAILED = "Failed to retrieve agent statistics"
 _MISSING_AGENT_ID = "Missing agent ID in request"

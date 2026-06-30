@@ -39,7 +39,7 @@ from heretek_swarm.goals.proposer import GoalProposer
 from heretek_swarm_core.memory.access_patterns import AccessPatternAnalyzer
 
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm_core.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger("MetisAgent")
 

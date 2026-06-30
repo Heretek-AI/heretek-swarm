@@ -24,7 +24,7 @@ from heretek_swarm.consensus.deliberation import (
 )
 from heretek_swarm.governance.agent_identity import AgentIdentity, AgentRole, TrustLevel
 from heretek_swarm.governance.coordinator import GovernanceCoordinator
-from heretek_swarm.security.zero_trust import ZeroTrustResult
+from heretek_swarm_core.security.zero_trust import ZeroTrustResult
 
 logger = structlog.get_logger("GovernanceDeliberationEngine")
 

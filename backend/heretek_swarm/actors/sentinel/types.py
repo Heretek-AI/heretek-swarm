@@ -16,7 +16,7 @@ from enum import StrEnum
 
 import structlog
 
-from heretek_swarm.security.anomaly_detection import (
+from heretek_swarm_core.security.anomaly_detection import (
     AnomalySeverity,
     AnomalyType,
     ResponseStatus,

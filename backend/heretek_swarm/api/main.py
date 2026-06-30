@@ -664,7 +664,7 @@ logging_logger.info("Logging middleware configured")
 # moving-window strategy. Routes opt in via ``@limiter.limit("100/minute")``
 # in their handlers. The state is exposed on app.state.limiter for
 # middleware-style enforcement.
-from heretek_swarm.security.rate_limiter import install_rate_limiter  # noqa: E402
+from heretek_swarm_core.security.rate_limiter import install_rate_limiter  # noqa: E402
 
 install_rate_limiter(app)
 logging_logger.info("Rate limiter (slowapi) configured")
