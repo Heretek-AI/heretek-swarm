@@ -34,7 +34,7 @@ async def test_goal_pipeline_wiring_does_not_crash(
     swarm = AutonomousSwarm(config={}, no_infra=True)
 
     # --- Wire the minimum components needed by _run_goal_pipeline ------
-    from heretek_swarm.consensus.maker import MAKERConsensus
+    from heretek_swarm_core.consensus.maker import MAKERConsensus
 
     swarm.consensus = MAKERConsensus(
         ahead_by_k=2,
@@ -101,7 +101,7 @@ async def test_goal_pipeline_handles_missing_metis_gracefully(
     """When metis is None, _run_goal_pipeline should not crash."""
     swarm = AutonomousSwarm(config={}, no_infra=True)
 
-    from heretek_swarm.consensus.maker import MAKERConsensus
+    from heretek_swarm_core.consensus.maker import MAKERConsensus
 
     swarm.consensus = MAKERConsensus(
         ahead_by_k=2,
