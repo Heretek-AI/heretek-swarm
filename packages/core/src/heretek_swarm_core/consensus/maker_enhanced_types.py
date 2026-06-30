@@ -24,7 +24,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from heretek_swarm.consensus.maker import Vote
+    from heretek_swarm_core.consensus.maker import Vote
 
 
 class ReasoningChainStatus(Enum):

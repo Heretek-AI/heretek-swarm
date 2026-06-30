@@ -29,7 +29,7 @@ from heretek_swarm.actors.mixins import (
 from heretek_swarm.collective.learning import PatternExtractor
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
+from heretek_swarm_core.consensus.swarm_deliberation import SwarmDeliberationEngine
 
 # Goal proposal generation
 from heretek_swarm.goals.models import Goal

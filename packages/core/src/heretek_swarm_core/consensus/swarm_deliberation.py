@@ -13,7 +13,7 @@ and converge toward consensus through iterative rounds.
 
 Example:
     ```python
-    from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
+    from heretek_swarm_core.consensus.swarm_deliberation import SwarmDeliberationEngine
 
     # Initialize engine
     engine = SwarmDeliberationEngine(

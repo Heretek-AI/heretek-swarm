@@ -46,15 +46,15 @@ from heretek_swarm.actors.base.core import AgentActor, ActorMessage  # noqa: F40
 # that the backward-compat security/ shim had to work around (Task 3),
 # and it will resurface when Task 4 moves consensus/ into this package.
 from heretek_swarm.actors.factory import ActorFactory  # noqa: F401
-from heretek_swarm.consensus import (  # noqa: F401
+from heretek_swarm_core.consensus import (  # noqa: F401
     MAKERConsensus,
     EnhancedMAKERConsensus,
     SwarmDeliberationEngine,
 )
-from heretek_swarm.consensus.deliberation import (  # noqa: F401
+from heretek_swarm_core.consensus.deliberation import (  # noqa: F401
     DeliberationEngine,
 )
-from heretek_swarm.consensus.protocol import (  # noqa: F401
+from heretek_swarm_core.consensus.protocol import (  # noqa: F401
     ConsensusEngine,
     compute_consensus_for,
     is_consensus_engine,

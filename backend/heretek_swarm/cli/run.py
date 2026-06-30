@@ -125,7 +125,7 @@ async def _start_autonomous_swarm(
     _print_startup_banner(swarm)
 
     if prompt:
-        from heretek_swarm.consensus.complexity import ComplexityHeuristic
+        from heretek_swarm_core.consensus.complexity import ComplexityHeuristic
 
         click.echo("")
         if target_agent:

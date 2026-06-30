@@ -9,11 +9,11 @@ All types and the main class are re-exported from the split modules:
 - audit_query:   AuditQueryMixin (querying/reading methods, composed into main class)
 
 For new code, import directly from the split modules:
-    from heretek_swarm.consensus.audit_models import AuditEvent, DecisionOutcome
-    from heretek_swarm.consensus.audit_trail import ConsensusAuditTrail
+    from heretek_swarm_core.consensus.audit_models import AuditEvent, DecisionOutcome
+    from heretek_swarm_core.consensus.audit_trail import ConsensusAuditTrail
 
 Example:
-    from heretek_swarm.consensus.audit import ConsensusAuditTrail
+    from heretek_swarm_core.consensus.audit import ConsensusAuditTrail
 
     audit = ConsensusAuditTrail()
     audit.record_decision(decision_id="deploy-001", ...)

@@ -31,7 +31,7 @@ async def initialize_election_manager(swarm: "AutonomousSwarm") -> None:
     election just runs without a manager.
     """
     try:
-        from heretek_swarm.consensus.election_manager import ElectionManager
+        from heretek_swarm_core.consensus.election_manager import ElectionManager
 
         swarm._election_manager = ElectionManager()
         logger.info(

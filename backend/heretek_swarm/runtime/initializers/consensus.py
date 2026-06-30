@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from heretek_swarm.runtime.main_loop import AutonomousSwarm
 
-from heretek_swarm.consensus import MAKERConsensus
+from heretek_swarm_core.consensus import MAKERConsensus
 
 logger = logging.getLogger("heretek_swarm.runtime.initializers.consensus")
 

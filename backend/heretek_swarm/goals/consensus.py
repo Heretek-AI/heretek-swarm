@@ -18,7 +18,7 @@ import structlog
 from heretek_swarm.goals.models import Goal, Vote
 
 if TYPE_CHECKING:
-    from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
+    from heretek_swarm_core.consensus.consensus_coordinator import ConsensusCoordinator
 
 logger = structlog.get_logger("GoalConsensus")
 

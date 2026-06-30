@@ -721,7 +721,7 @@ class MAKERConsensusWithRaft:
             maker_config: Configuration for MAKER consensus
             raft_config: Configuration for Raft election
         """
-        from heretek_swarm.consensus.maker import MAKERConsensus
+        from heretek_swarm_core.consensus.maker import MAKERConsensus
 
         self.node_id = node_id
         self.peers = peers or []

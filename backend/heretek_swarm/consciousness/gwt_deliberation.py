@@ -24,7 +24,7 @@ from heretek_swarm.consciousness.gwt import (
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from heretek_swarm.consensus.swarm_deliberation import (
+    from heretek_swarm_core.consensus.swarm_deliberation import (
         DeliberationResult,
         SwarmDeliberationEngine,
     )

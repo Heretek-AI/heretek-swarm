@@ -22,21 +22,21 @@ import structlog
 from fastapi import APIRouter, Depends, Header, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from heretek_swarm.consensus import (
+from heretek_swarm_core.consensus import (
     ConsensusState,
     MAKERConsensus,
     Vote,
 )
-from heretek_swarm.consensus.audit import (
+from heretek_swarm_core.consensus.audit import (
     ConsensusAuditTrail,
 )
-from heretek_swarm.consensus.deliberation import (
+from heretek_swarm_core.consensus.deliberation import (
     Argument,
     DeliberationEngine,
     Evidence,
     Position,
 )
-from heretek_swarm.consensus.tribunal import (
+from heretek_swarm_core.consensus.tribunal import (
     EvidenceType,
     RulingType,
     Tribunal,

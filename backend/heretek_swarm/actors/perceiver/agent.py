@@ -48,7 +48,7 @@ from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.collective.learning import PatternExtractor
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
+from heretek_swarm_core.consensus.swarm_deliberation import SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm_core.memory.access_patterns import AccessPatternAnalyzer

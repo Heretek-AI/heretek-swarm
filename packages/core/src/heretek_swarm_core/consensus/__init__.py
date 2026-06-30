@@ -15,7 +15,7 @@ This package provides comprehensive consensus mechanisms for multi-agent decisio
 
 import structlog
 
-from heretek_swarm.consensus.audit import (
+from heretek_swarm_core.consensus.audit import (
     ArgumentRecord,
     ConsensusAuditTrail,
     DecisionOutcome,
@@ -23,33 +23,33 @@ from heretek_swarm.consensus.audit import (
     QueryResult,
     VoteRecord,
 )
-from heretek_swarm.consensus.complexity import (
+from heretek_swarm_core.consensus.complexity import (
     ComplexityHeuristic,
     ComplexityResult,
 )
-from heretek_swarm.consensus.consensus_coordinator import (
+from heretek_swarm_core.consensus.consensus_coordinator import (
     ConsensusCoordinator,
 )
-from heretek_swarm.consensus.deliberation_mesh import (
+from heretek_swarm_core.consensus.deliberation_mesh import (
     HXADebateCycle,
     HXADebateState,
     NATSDeliberationMesh,
 )
-from heretek_swarm.consensus.domain_selector import (
+from heretek_swarm_core.consensus.domain_selector import (
     DEFAULT_FALLBACK_AGENTS,
     DomainSelector,
 )
-from heretek_swarm.consensus.election_manager import (
+from heretek_swarm_core.consensus.election_manager import (
     GOVERNANCE_AGENT_IDS,
     ElectionManager,
 )
-from heretek_swarm.consensus.expertise import (
+from heretek_swarm_core.consensus.expertise import (
     AgentExpertiseProfile,
     AgentExpertiseProfiler,
     DomainExpertise,
     ExpertiseLevel,
 )
-from heretek_swarm.consensus.immune import (
+from heretek_swarm_core.consensus.immune import (
     ImmunePattern,
     ImmuneQuorum,
     ImmuneResponse,
@@ -58,13 +58,13 @@ from heretek_swarm.consensus.immune import (
     PatternClassification,
     ResponseOutcome,
 )
-from heretek_swarm.consensus.maker import (
+from heretek_swarm_core.consensus.maker import (
     ConsensusResult,
     ConsensusState,
     MAKERConsensus,
     Vote,
 )
-from heretek_swarm.consensus.maker_enhanced import (
+from heretek_swarm_core.consensus.maker_enhanced import (
     DecisionProvenance,
     EnhancedMAKERConsensus,
     EnhancedVote,
@@ -73,7 +73,7 @@ from heretek_swarm.consensus.maker_enhanced import (
     ReasoningStep,
     RollbackResult,
 )
-from heretek_swarm.consensus.raft_election import (
+from heretek_swarm_core.consensus.raft_election import (
     AppendEntriesRequest,
     AppendEntriesResponse,
     LeaderState,
@@ -84,7 +84,7 @@ from heretek_swarm.consensus.raft_election import (
     RequestVoteRequest,
     RequestVoteResponse,
 )
-from heretek_swarm.consensus.swarm_deliberation import (
+from heretek_swarm_core.consensus.swarm_deliberation import (
     AgentPosition,
     Argument,
     DeliberationResult,
@@ -93,7 +93,7 @@ from heretek_swarm.consensus.swarm_deliberation import (
     Position,
     SwarmDeliberationEngine,
 )
-from heretek_swarm.consensus.tribunal import (
+from heretek_swarm_core.consensus.tribunal import (
     CaseStatus,
     EvidenceType,
     RulingType,

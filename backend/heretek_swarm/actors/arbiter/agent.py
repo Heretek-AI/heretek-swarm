@@ -28,7 +28,7 @@ from heretek_swarm.actors.mixins import (
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import (
+from heretek_swarm_core.consensus.swarm_deliberation import (
     DeliberationResult,
     Position,
     SwarmDeliberationEngine,

@@ -17,7 +17,7 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.consensus.raft_election import RaftElection
+from heretek_swarm_core.consensus.raft_election import RaftElection
 
 logger = structlog.get_logger("ElectionManager")
 

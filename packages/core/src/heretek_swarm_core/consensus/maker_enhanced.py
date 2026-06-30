@@ -12,7 +12,7 @@ more robust decision-making with full audit trails and recovery mechanisms.
 
 Example:
     ```python
-    from heretek_swarm.consensus.maker_enhanced import EnhancedMAKERConsensus
+    from heretek_swarm_core.consensus.maker_enhanced import EnhancedMAKERConsensus
 
     # Initialize enhanced consensus
     consensus = EnhancedMAKERConsensus(
@@ -52,14 +52,14 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.consensus.expertise import AgentExpertiseProfiler
-from heretek_swarm.consensus.maker import (
+from heretek_swarm_core.consensus.expertise import AgentExpertiseProfiler
+from heretek_swarm_core.consensus.maker import (
     ConsensusResult,
     ConsensusState,
     MAKERConsensus,
     Vote,
 )
-from heretek_swarm.consensus.maker_enhanced_types import (
+from heretek_swarm_core.consensus.maker_enhanced_types import (
     DecisionProvenance,
     EnhancedVote,
     EvidenceQuality,

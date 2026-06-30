@@ -5,7 +5,7 @@ Backwards-compat shim. The immune-response engine moved to
 
 New code should import from ``heretek_swarm_core.security.immune``
 directly. This module remains so existing
-``from heretek_swarm.consensus.immune import …`` call sites
+``from heretek_swarm_core.consensus.immune import …`` call sites
 keep working unchanged.
 """
 

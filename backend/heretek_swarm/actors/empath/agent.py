@@ -152,7 +152,7 @@ class EmpathAgent(
         self.pattern_extractor = _pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
 
         # Session 44: Consensus Integration - initialize deliberation engine
-        from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
+        from heretek_swarm_core.consensus.swarm_deliberation import SwarmDeliberationEngine
 
         self.deliberation_engine = _deliberation_engine or SwarmDeliberationEngine(
             max_rounds=5, consensus_threshold=0.75, min_participants=2

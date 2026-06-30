@@ -84,7 +84,7 @@ from heretek_swarm.testing.stress_testing import (
 )
 
 if TYPE_CHECKING:
-    from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
+    from heretek_swarm_core.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
     from heretek_swarm_core.memory.access_patterns import AccessPatternAnalyzer
     from heretek_swarm_core.security.zero_trust import ZeroTrustValidator
 

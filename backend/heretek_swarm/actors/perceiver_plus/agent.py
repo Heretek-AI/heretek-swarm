@@ -43,7 +43,7 @@ from heretek_swarm.collective.learning import PatternType
 # Session 44: Consensus Integration
 from heretek_swarm.knowledge.unified_access import KnowledgeQueryResult, UnifiedKnowledgeAccess
 
-from heretek_swarm.consensus.swarm_deliberation import Position
+from heretek_swarm_core.consensus.swarm_deliberation import Position
 
 logger = structlog.get_logger("PerceiverPlusAgent")
 

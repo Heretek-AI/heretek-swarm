@@ -7,7 +7,7 @@ provides binding resolutions for disputed outcomes.
 
 Example:
     ```python
-    from heretek_swarm.consensus.tribunal import Tribunal, Evidence, TribunalCase
+    from heretek_swarm_core.consensus.tribunal import Tribunal, Evidence, TribunalCase
 
     tribunal = Tribunal()
 

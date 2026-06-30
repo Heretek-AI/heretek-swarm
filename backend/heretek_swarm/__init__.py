@@ -12,7 +12,7 @@ __email__ = "ai@heretek.io"
 
 from heretek_swarm.actors.base import AgentActor
 from heretek_swarm.actors.supervisor import ActorSupervisor
-from heretek_swarm.consensus.maker import MAKERConsensus
+from heretek_swarm_core.consensus.maker import MAKERConsensus
 from heretek_swarm_core.memory.cognee_reader import CogneeMemoryReader
 from heretek_swarm_core.memory.cognee_writer import CogneeMemoryWriter
 from heretek_swarm.orchestration.langgraph_workflow import (

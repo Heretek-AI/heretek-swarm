@@ -77,10 +77,10 @@ async def prompt_endpoint(
     # Imported here (not at module top) to avoid a circular import
     # with main.py: this module is included by main.py; the
     # deliberation_engine lives in api.consensus which itself
-    # imports from heretek_swarm.consensus.*.
+    # imports from heretek_swarm_core.consensus.*.
     from heretek_swarm.api.consensus import deliberation_engine
     from heretek_swarm.api.main import manager, supervisor
-    from heretek_swarm.consensus.deliberation import Position
+    from heretek_swarm_core.consensus.deliberation import Position
 
     logger.info("prompt_received", prompt=request.prompt[:200])
 

@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any
 
 import structlog
 
-from heretek_swarm.consensus.verdict import aggregate_triad_ruling
+from heretek_swarm_core.consensus.verdict import aggregate_triad_ruling
 
 if TYPE_CHECKING:
     from heretek_swarm.runtime.main_loop import AutonomousSwarm

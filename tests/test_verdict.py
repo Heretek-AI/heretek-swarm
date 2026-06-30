@@ -1,6 +1,6 @@
 """Tests for consensus/verdict.py — structured tribunal ruling (G-02)."""
 
-from heretek_swarm.consensus.verdict import (
+from heretek_swarm_core.consensus.verdict import (
     RulingVerdict,
     aggregate_triad_ruling,
     keyword_fallback_verdict,

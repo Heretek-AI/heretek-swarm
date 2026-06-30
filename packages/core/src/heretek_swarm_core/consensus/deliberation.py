@@ -13,7 +13,7 @@ and converge toward consensus through iterative rounds.
 
 Example:
     ```python
-    from heretek_swarm.consensus.deliberation import (
+    from heretek_swarm_core.consensus.deliberation import (
         DeliberationEngine,
         DeliberationConfig,
         Argument,
@@ -53,7 +53,7 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.consensus.deliberation_types import (
+from heretek_swarm_core.consensus.deliberation_types import (
     Argument,
     ArgumentType,
     ConsensusConfidence,

@@ -8,15 +8,51 @@ Manages structured inter-agent deliberation streams and state transitions
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any
+from typing import TYPE_CHECKING, Any, Protocol
 
 import structlog
 from pydantic import BaseModel, Field
 
-from heretek_swarm.actors.validation import DeliberationRequest
-from heretek_swarm.consensus.audit_trail import ConsensusAuditTrail
+from heretek_swarm_core.consensus.audit_trail import ConsensusAuditTrail
+
+if TYPE_CHECKING:
+    from heretek_swarm_core.actors.validation import DeliberationRequest
 
 logger = structlog.get_logger("NATSDeliberationMesh")
+
+
+class _DeliberationRequestProtocol(Protocol):
+    """Structural protocol for DeliberationRequest — breaks the actors cycle.
+
+    DeliberationRequest lives in ``heretek_swarm_core.actors.validation``,
+    which transitively pulls actors.supervisor at import time and cycles
+    back through this package via security/fep_active_inference. To avoid
+    that import-time cycle, we declare the attributes we actually use as a
+    ``Protocol`` and import the concrete class only inside the call sites
+    that need it (see ``_load_deliberation_request_class`` below).
+    """
+
+    deliberation_id: str
+    topic: str
+    triad_members: list[str]
+    reason: str
+    blocked_by: str
+    reviewer_id: str
+    consensus_score: float
+    resolution: str
+    dissenting_opinions: list[str]
+
+
+def _load_deliberation_request_class() -> type:
+    """Lazily resolve the concrete ``DeliberationRequest`` from actors.
+
+    Imported inside a function so the actors package is only touched on
+    first call rather than at module import time. Keeps the cycle at
+    runtime (one-shot) instead of module-load (per-import).
+    """
+    from heretek_swarm_core.actors.validation import DeliberationRequest
+
+    return DeliberationRequest
 
 
 class HXADebateState(StrEnum):
@@ -29,6 +65,7 @@ class HXADebateState(StrEnum):
 
 
 _DELIBERATION_ID_PATTERN = r"^del_[0-9]{8}_[0-9]{6}$"
+
 
 class DeliberationBlockedPayload(BaseModel):
     """Schema for blocking/suspending an active debate."""
@@ -156,7 +193,7 @@ class NATSDeliberationMesh:
         """Handle incoming deliberation initialization requests with strict Pydantic validation."""
         try:
             # Validate input schema strictly
-            validated = DeliberationRequest(**data)
+            validated = _load_deliberation_request_class()(**data)
             delib_id = validated.deliberation_id
 
             if delib_id in self.active_debates:

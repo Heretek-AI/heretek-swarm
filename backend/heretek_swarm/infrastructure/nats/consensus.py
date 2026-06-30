@@ -7,7 +7,7 @@ Supports vote submission, collection, quorum detection, and decision finalizatio
 Example:
     ```python
     from heretek_swarm.infrastructure.nats.consensus import ConsensusVoting
-    from heretek_swarm.consensus.swarm_deliberation import Position
+    from heretek_swarm_core.consensus.swarm_deliberation import Position
 
     voting = ConsensusVoting()
     await voting.initialize()
@@ -37,7 +37,7 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.consensus.swarm_deliberation import Position
+from heretek_swarm_core.consensus.swarm_deliberation import Position
 from heretek_swarm.infrastructure.nats.client import NATSClient, get_nats_client
 
 logger = structlog.get_logger("nats.consensus")

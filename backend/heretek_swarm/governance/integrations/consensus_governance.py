@@ -14,7 +14,7 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.consensus.deliberation import (
+from heretek_swarm_core.consensus.deliberation import (
     ArgumentType,
     DeliberationEngine,
     DeliberationResult,

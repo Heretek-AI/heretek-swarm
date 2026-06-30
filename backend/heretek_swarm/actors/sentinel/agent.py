@@ -36,7 +36,7 @@ from heretek_swarm_core.security.immune import (
     PatternClassification,
     ResponseOutcome,
 )
-from heretek_swarm.consensus.tribunal import Tribunal
+from heretek_swarm_core.consensus.tribunal import Tribunal
 from heretek_swarm_core.security.anomaly_detection import (
     AnomalyDetectionConfig,
 )

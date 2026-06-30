@@ -12,7 +12,7 @@ agent votes based on their demonstrated expertise in relevant domains.
 
 Example:
     ```python
-    from heretek_swarm.consensus.expertise import AgentExpertiseProfiler
+    from heretek_swarm_core.consensus.expertise import AgentExpertiseProfiler
 
     # Initialize profiler
     profiler = AgentExpertiseProfiler()

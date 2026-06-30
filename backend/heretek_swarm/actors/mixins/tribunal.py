@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any
 import structlog
 
 if TYPE_CHECKING:
-    from heretek_swarm.consensus.tribunal import (
+    from heretek_swarm_core.consensus.tribunal import (
         EvidenceType,
         RulingType,
         Tribunal,
@@ -90,7 +90,7 @@ class TribunalMixin:
         metadata: dict[str, Any] | None = None,
     ) -> "TribunalEvidence":
         """Submit evidence to a Tribunal case."""
-        from heretek_swarm.consensus.tribunal import EvidenceType
+        from heretek_swarm_core.consensus.tribunal import EvidenceType
 
         if not self.tribunal:
             raise TypeError("_submit_tribunal_evidence requires tribunal")

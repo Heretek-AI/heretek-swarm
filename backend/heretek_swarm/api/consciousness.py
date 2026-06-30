@@ -871,7 +871,7 @@ async def get_deliberation_explanation(
     Prime Directive: "Unbounded Autonomy" — agents must be able to explain their
     decisions to maintain accountability while preserving independence.
     """
-    from heretek_swarm.consensus.deliberation import DeliberationEngine
+    from heretek_swarm_core.consensus.deliberation import DeliberationEngine
 
     engine = DeliberationEngine()
     explanation = engine.get_deliberation_explanation(deliberation_id)

@@ -32,10 +32,10 @@ from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.api.autonomous import push_analysis_record
 from heretek_swarm.api.consciousness import get_consciousness_plugin
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
-from heretek_swarm.consensus.consensus_coordinator import ConsensusCoordinator
-from heretek_swarm.consensus.domain_selector import DomainSelector
-from heretek_swarm.consensus.election_manager import ElectionManager
-from heretek_swarm.consensus.maker import MAKERConsensus
+from heretek_swarm_core.consensus.consensus_coordinator import ConsensusCoordinator
+from heretek_swarm_core.consensus.domain_selector import DomainSelector
+from heretek_swarm_core.consensus.election_manager import ElectionManager
+from heretek_swarm_core.consensus.maker import MAKERConsensus
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMeshWithJetStream
 from heretek_swarm.goals.pipeline import run_goal_cycle
 from heretek_swarm.goals.store import FileGoalStore
